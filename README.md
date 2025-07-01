@@ -1,4 +1,6 @@
-# otf-sisacad
+# OTEC TuFuturo - Sistema Académico
+
+## TBD
 
 [![codecov](https://codecov.io/gh/keber/otf-sisacad/graph/badge.svg?token=9SP56NUD2K)](https://codecov.io/gh/keber/otf-sisacad)
 [![Java CI](https://github.com/keber/otf-sisacad/actions/workflows/test.yml/badge.svg)](https://github.com/keber/otf-sisacad/actions/workflows/test.yml)
