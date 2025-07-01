@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cl.keber</groupId>
-    <artifactId>calculadora</artifactId>
+    <artifactId>otf-sisacad</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -13,7 +13,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <junit.version>5.10.0</junit.version>
         <mockito.version>5.11.0</mockito.version>
-	<sonar.projectKey>keber_java-calc</sonar.projectKey>
+	<sonar.projectKey>keber_otf-sisacad</sonar.projectKey>
 	<sonar.organization>keber</sonar.organization>
 	<sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
