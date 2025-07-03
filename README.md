@@ -110,7 +110,6 @@ Desarrollar una plataforma web interna para registrar, organizar y consultar inf
 
 Este documento contiene las historias de usuario organizadas en 4 sprints, alineadas con el documento de visión funcional. Cada historia incluye su redacción en formato estándar, prioridad y criterios de aceptación.
 
----
 
 ## Sprint 1 – Fundaciones del sistema
 
@@ -154,7 +153,6 @@ Como administrador académico, quiero asignar a cada facilitador los programas p
 * Se puede seleccionar un programa para un facilitador con fecha y estado de habilitación.
 * Se puede consultar qué programas tiene habilitado un facilitador.
 
----
 
 ## Sprint 2 – Cursos y secciones
 
@@ -188,7 +186,6 @@ Como administrador académico, quiero asignar un facilitador habilitado a cada s
 * Sólo se pueden seleccionar facilitadores habilitados para ese programa.
 * Se valida que no haya superposición horaria en secciones asignadas.
 
----
 
 ## Sprint 3 – Matrícula de alumnos
 
@@ -222,7 +219,6 @@ Como sistema, quiero distribuir automáticamente a los alumnos matriculados en l
 * Cada sección tiene máximo 20 alumnos.
 * Se puede revisar y ajustar manualmente las asignaciones.
 
----
 
 ## Sprint 4 – Evaluación y resultados
 
