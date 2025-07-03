@@ -79,7 +79,7 @@ classDiagram
         +string empresa
     }
 
-    class ParticipacionAlumno {
+    class Matricula {
         +float asistencia
         +float puntaje_diagnostico
         +float puntaje_final
