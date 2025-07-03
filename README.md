@@ -182,7 +182,7 @@ Facilitador ||--o{ Seccion : imparte
 Facilitador ||--o{ HabilitacionFacilitador : habilitado_para
 ProgramaFormativo ||--o{ HabilitacionFacilitador : asociado_a
 
-%.
+
 ```
 
 [![codecov](https://codecov.io/gh/keber/otf-sisacad/graph/badge.svg?token=9SP56NUD2K)](https://codecov.io/gh/keber/otf-sisacad)
