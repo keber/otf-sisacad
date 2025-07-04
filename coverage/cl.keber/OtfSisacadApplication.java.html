@@ -25,12 +25,12 @@ import java.sql.Connection;
 
     @Override
     public void run(String... args) throws Exception {
-<span class="fc" id="L28">        log.info(&quot;Datasource: &quot; + dataSource.getConnection().getMetaData().getURL());</span>
+<span class="fc" id="L28">        log.info(&quot;Datasource: &quot;, dataSource.getConnection().getMetaData().getURL());</span>
 
 <span class="fc" id="L30">        try (Connection connection = dataSource.getConnection()) {</span>
-<span class="fc" id="L31">            log.info(&quot;✅ Conexión OK: &quot; + connection.getMetaData().getURL());</span>
+<span class="fc" id="L31">            log.info(&quot;✅ Conexión OK: &quot;, connection.getMetaData().getURL());</span>
 <span class="nc" id="L32">        } catch (Exception e) {</span>
-<span class="nc" id="L33">            log.error(&quot;❌ Error de conexión: &quot; + e.getMessage());</span>
+<span class="nc" id="L33">            log.error(&quot;❌ Error de conexión: &quot;, e.getMessage());</span>
 <span class="fc" id="L34">        }</span>
 <span class="fc" id="L35">    }</span>
 }
