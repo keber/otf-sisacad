@@ -4,6 +4,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -11,6 +13,8 @@ import java.sql.Connection;
 
 @SpringBootApplication
 public class OtfSisacadApplication implements CommandLineRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(OtfSisacadApplication.class);
 
     @Autowired
     private DataSource dataSource;
@@ -21,12 +25,12 @@ public class OtfSisacadApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("Datasource: " + dataSource.getConnection().getMetaData().getURL());
+        log.info("Datasource: " + dataSource.getConnection().getMetaData().getURL());
 
         try (Connection connection = dataSource.getConnection()) {
-            System.out.println("✅ Conexión OK: " + connection.getMetaData().getURL());
+            log.info("✅ Conexión OK: " + connection.getMetaData().getURL());
         } catch (Exception e) {
-            System.err.println("❌ Error de conexión: " + e.getMessage());
+            log.error("❌ Error de conexión: " + e.getMessage());
         }
     }
 }
