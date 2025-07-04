@@ -12,6 +12,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <spring-boot.version>3.3.0</spring-boot.version>
+        <spring-boot.version>3.3.0</spring-boot.version>
         <junit.version>5.10.0</junit.version>
         <mockito.version>5.11.0</mockito.version>
 	<sonar.projectKey>keber_otf-sisacad</sonar.projectKey>
@@ -20,6 +21,13 @@
     </properties>
 
     <dependencies>
+        <!-- Spring Boot Starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+
         <!-- Spring Boot Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -52,6 +60,12 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
+            <!-- Plugin Spring Boot -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            
             <!-- Plugin Surefire para JUnit -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
