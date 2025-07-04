@@ -25,12 +25,12 @@ public class OtfSisacadApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("Datasource: " + dataSource.getConnection().getMetaData().getURL());
+        log.info("Datasource: ", dataSource.getConnection().getMetaData().getURL());
 
         try (Connection connection = dataSource.getConnection()) {
-            log.info("✅ Conexión OK: " + connection.getMetaData().getURL());
+            log.info("✅ Conexión OK: ", connection.getMetaData().getURL());
         } catch (Exception e) {
-            log.error("❌ Error de conexión: " + e.getMessage());
+            log.error("❌ Error de conexión: ", e.getMessage());
         }
     }
 }
