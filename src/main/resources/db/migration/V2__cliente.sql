@@ -1,0 +1,7 @@
+CREATE TABLE cliente (
+    id SERIAL PRIMARY KEY,
+    razon_social VARCHAR(100) NOT NULL,
+    rut VARCHAR(12) NOT NULL UNIQUE,
+    contacto VARCHAR(100) NOT NULL,
+    correo VARCHAR(100) NOT NULL
+);
