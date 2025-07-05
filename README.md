@@ -22,6 +22,6 @@ Dado que cada clase admite un máximo de 20 participantes, los alumnos de un man
 
 - [ Documento de Requerimientos funcionales ](docs/frd.md)
 - [ Backlog ](docs/backlog.md)
-- [ Diagrama de clases ](doc/diag-class.md)
-- [ Diagrama ER ](doc/diag-er.md)
+- [ Diagrama de clases ](docs/diag-class.md)
+- [ Diagrama ER ](docs/diag-er.md)
 - [ Sprint 0 – Registro de configuración inicial](docs/sprint-0.md)
