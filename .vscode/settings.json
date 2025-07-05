@@ -1,0 +1,6 @@
+{
+    "sonarlint.connectedMode.project": {
+        "connectionId": "keber-sonarcloud",
+        "projectKey": "keber_otf-sisacad"
+    }
+}
