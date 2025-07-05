@@ -17,8 +17,11 @@ public class OtfSisacadApplication implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(OtfSisacadApplication.class);
 
     @Autowired
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
+    public OtfSisacadApplication(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
     public static void main(String[] args) {
         SpringApplication.run(OtfSisacadApplication.class, args); 
     }
