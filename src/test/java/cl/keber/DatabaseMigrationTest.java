@@ -1,6 +1,8 @@
 package cl.keber;
 
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,47 +15,21 @@ public class DatabaseMigrationTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Test
-    void tablaProgramaFormativoDebeExistir() {
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "programa_formativo",
+        "cliente",
+        "facilitador",
+        "habilitacion_facilitador"
+    })
+    void tablaDebeExistir(String nombreTabla) {
         String sql = "SELECT EXISTS (" +
                      "  SELECT FROM information_schema.tables " +
                      "  WHERE table_schema = 'public' " +
-                     "  AND table_name = 'programa_formativo'" +
+                     "  AND table_name = ?" +
                      ")";
-        Boolean existe = jdbcTemplate.queryForObject(sql, Boolean.class);
-        assertTrue(existe, "La tabla 'programa_formativo' debería existir.");
-    }
-
-    @Test
-    void tablaClienteDebeExistir() {
-        String sql = "SELECT EXISTS (" +
-                     "  SELECT FROM information_schema.tables " +
-                     "  WHERE table_schema = 'public' " +
-                     "  AND table_name = 'cliente'" +
-                     ")";
-        Boolean existe = jdbcTemplate.queryForObject(sql, Boolean.class);
-        assertTrue(existe, "La tabla 'cliente' debería existir.");
-    }
-
-    @Test
-    void tablaFacilitadorDebeExistir() {
-        String sql = "SELECT EXISTS (" +
-                     "  SELECT FROM information_schema.tables " +
-                     "  WHERE table_schema = 'public' " +
-                     "  AND table_name = 'facilitador'" +
-                     ")";
-        Boolean existe = jdbcTemplate.queryForObject(sql, Boolean.class);
-        assertTrue(existe, "La tabla 'facilitador' debería existir.");
-    }
-
-    @Test
-    void tablaHabilitacionFacilitadorDebeExistir() {
-        String sql = "SELECT EXISTS (" +
-                     "  SELECT FROM information_schema.tables " +
-                     "  WHERE table_schema = 'public' " +
-                     "  AND table_name = 'habilitacion_facilitador'" +
-                     ")";
-        Boolean existe = jdbcTemplate.queryForObject(sql, Boolean.class);
-        assertTrue(existe, "La tabla 'habilitacion_facilitador' debería existir.");
+        String msg = String.format("La tabla '%s' debería existir.",nombreTabla);
+        Boolean existe = jdbcTemplate.queryForObject(sql, Boolean.class, nombreTabla);
+        assertTrue(existe, msg);
     }
 }
