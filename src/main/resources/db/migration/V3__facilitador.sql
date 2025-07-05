@@ -1,0 +1,7 @@
+CREATE TABLE facilitador (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    rut VARCHAR(12) NOT NULL UNIQUE,
+    correo VARCHAR(100) NOT NULL,
+    profesion VARCHAR(100) NOT NULL
+);
