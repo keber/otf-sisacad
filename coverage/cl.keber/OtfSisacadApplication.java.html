@@ -3,7 +3,6 @@
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,26 +13,25 @@ import java.sql.Connection;
 @SpringBootApplication
 public class OtfSisacadApplication implements CommandLineRunner {
 
-<span class="fc" id="L17">    private static final Logger log = LoggerFactory.getLogger(OtfSisacadApplication.class);</span>
+<span class="fc" id="L16">    private static final Logger log = LoggerFactory.getLogger(OtfSisacadApplication.class);</span>
 
-    @Autowired
     private final DataSource dataSource;
 
-<span class="fc" id="L22">    public OtfSisacadApplication(DataSource dataSource) {</span>
-<span class="fc" id="L23">        this.dataSource = dataSource;</span>
-<span class="fc" id="L24">    }</span>
+<span class="fc" id="L20">    public OtfSisacadApplication(DataSource dataSource) {</span>
+<span class="fc" id="L21">        this.dataSource = dataSource;</span>
+<span class="fc" id="L22">    }</span>
     public static void main(String[] args) {
-<span class="nc" id="L26">        SpringApplication.run(OtfSisacadApplication.class, args); </span>
-<span class="nc" id="L27">    }</span>
+<span class="nc" id="L24">        SpringApplication.run(OtfSisacadApplication.class, args); </span>
+<span class="nc" id="L25">    }</span>
 
     @Override
     public void run(String... args) throws Exception {
   
-<span class="fc" id="L32">        try (Connection connection = dataSource.getConnection()) {</span>
-<span class="fc" id="L33">            log.info(&quot;✅ Conexión OK: {}&quot;, connection.getMetaData().getURL());</span>
-<span class="nc" id="L34">        } catch (Exception e) {</span>
-<span class="nc" id="L35">            log.error(&quot;❌ Error de conexión: {}&quot;, e.getMessage());</span>
-<span class="fc" id="L36">        }</span>
-<span class="fc" id="L37">    }</span>
+<span class="fc" id="L30">        try (Connection connection = dataSource.getConnection()) {</span>
+<span class="fc" id="L31">            log.debug(&quot;✅ Conexión OK: {}&quot;, connection.getMetaData().getURL());</span>
+<span class="nc" id="L32">        } catch (Exception e) {</span>
+<span class="nc" id="L33">            log.debug(&quot;❌ Error de conexión: {}&quot;, e.getMessage());</span>
+<span class="fc" id="L34">        }</span>
+<span class="fc" id="L35">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

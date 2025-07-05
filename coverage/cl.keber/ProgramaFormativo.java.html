@@ -12,17 +12,29 @@ public class ProgramaFormativo{
     private LocalDate fechaFin;
     private String estado;
 
-<span class="fc" id="L15">    public ProgramaFormativo(String codigo, String nombre, LocalDate fechaInicio, LocalDate fechaFin, String estado) {</span>
+<span class="fc" id="L15">    private static final Logger log = LoggerFactory.getLogger(ProgramaFormativo.class);</span>
 
-<span class="pc bpc" id="L17" title="1 of 2 branches missed.">        if (!fechaInicio.isBefore(fechaFin)) {</span>
-<span class="fc" id="L18">            throw new IllegalArgumentException(&quot;La fecha de término debe ser posterior a la de inicio&quot;);</span>
+<span class="fc" id="L17">    public ProgramaFormativo(String codigo, String nombre, LocalDate fechaInicio, LocalDate fechaFin, String estado) {</span>
+
+<span class="fc" id="L19">        log.debug(&quot;Fecha Inicio: {}&quot;, fechaInicio);</span>
+<span class="fc" id="L20">        log.debug(&quot;Fecha Término: {}&quot;, fechaFin);</span>
+
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        if (!fechaInicio.isBefore(fechaFin)) {</span>
+<span class="fc" id="L23">            throw new IllegalArgumentException(&quot;La fecha de término debe ser posterior a la de inicio&quot;);</span>
         }
 
-<span class="nc" id="L21">        this.codigo = codigo;</span>
-<span class="nc" id="L22">        this.nombre = nombre;</span>
-<span class="nc" id="L23">        this.fechaInicio = fechaInicio;</span>
-<span class="nc" id="L24">        this.fechaFin = fechaFin;</span>
-<span class="nc" id="L25">        this.estado = estado;</span>
-<span class="nc" id="L26">    }</span>
+<span class="nc" id="L26">        this.codigo = codigo;</span>
+<span class="nc" id="L27">        this.nombre = nombre;</span>
+<span class="nc" id="L28">        this.fechaInicio = fechaInicio;</span>
+<span class="nc" id="L29">        this.fechaFin = fechaFin;</span>
+<span class="nc" id="L30">        this.estado = estado;</span>
+
+<span class="nc" id="L32">        log.debug(&quot;codigo: {}&quot;, this.codigo);</span>
+<span class="nc" id="L33">        log.debug(&quot;nombre: {}&quot;, this.nombre);</span>
+<span class="nc" id="L34">        log.debug(&quot;fechaInicio: {}&quot;, this.fechaInicio);</span>
+<span class="nc" id="L35">        log.debug(&quot;fechaFin: {}&quot;, this.fechaFin);</span>
+<span class="nc" id="L36">        log.debug(&quot;estado: {}&quot;, this.estado);</span>
+
+<span class="nc" id="L38">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
