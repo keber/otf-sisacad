@@ -12,7 +12,12 @@ public class ProgramaFormativo{
     private LocalDate fechaFin;
     private String estado;
 
+    private static final Logger log = LoggerFactory.getLogger(ProgramaFormativo.class);
+
     public ProgramaFormativo(String codigo, String nombre, LocalDate fechaInicio, LocalDate fechaFin, String estado) {
+
+        log.debug("Fecha Inicio: {}", fechaInicio);
+        log.debug("Fecha Término: {}", fechaFin);
 
         if (!fechaInicio.isBefore(fechaFin)) {
             throw new IllegalArgumentException("La fecha de término debe ser posterior a la de inicio");
@@ -23,5 +28,12 @@ public class ProgramaFormativo{
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.estado = estado;
+
+        log.debug("codigo: {}", this.codigo);
+        log.debug("nombre: {}", this.nombre);
+        log.debug("fechaInicio: {}", this.fechaInicio);
+        log.debug("fechaFin: {}", this.fechaFin);
+        log.debug("estado: {}", this.estado);
+
     }
 }
