@@ -3,7 +3,6 @@ package cl.keber;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +15,11 @@ public class OtfSisacadApplication implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(OtfSisacadApplication.class);
 
-    @Autowired
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
+    public OtfSisacadApplication(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
     public static void main(String[] args) {
         SpringApplication.run(OtfSisacadApplication.class, args); 
     }
@@ -27,9 +28,9 @@ public class OtfSisacadApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
   
         try (Connection connection = dataSource.getConnection()) {
-            log.info("✅ Conexión OK: {}", connection.getMetaData().getURL());
+            log.debug("✅ Conexión OK: {}", connection.getMetaData().getURL());
         } catch (Exception e) {
-            log.error("❌ Error de conexión: {}", e.getMessage());
+            log.debug("❌ Error de conexión: {}", e.getMessage());
         }
     }
 }

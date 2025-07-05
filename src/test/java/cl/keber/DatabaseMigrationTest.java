@@ -1,6 +1,5 @@
 package cl.keber;
 
-//import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class DatabaseMigrationTest {
+class DatabaseMigrationTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
