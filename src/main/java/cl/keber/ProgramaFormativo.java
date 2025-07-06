@@ -14,41 +14,42 @@ public class ProgramaFormativo{
 
     private static final Logger log = LoggerFactory.getLogger(ProgramaFormativo.class);
 
+    private String validarTexto(String campo, String nombreCampo) {
+        if (campo == null || campo.isBlank()) {
+            throw new IllegalArgumentException("El " + nombreCampo + " no puede ser nulo ni vacío");
+        }
+        return campo;
+    }
+    private LocalDate validarFecha(LocalDate fecha, String nombreCampo) {
+        if (fecha == null) {
+            throw new IllegalArgumentException("La " + nombreCampo + " no puede ser nula");
+        }
+        return fecha;
+    }
+    @Override
+    public String toString() {
+        return "ProgramaFormativo{" +
+            "codigo='" + codigo + '\'' +
+            ", nombre='" + nombre + '\'' +
+            ", fechaInicio=" + fechaInicio +
+            ", fechaFin=" + fechaFin +
+            ", estado='" + estado + '\'' +
+            '}';
+    }
+
     public ProgramaFormativo(String codigo, String nombre, LocalDate fechaInicio, LocalDate fechaFin, String estado) {
 
-        log.debug("Fecha Inicio: {}", fechaInicio);
-        log.debug("Fecha Término: {}", fechaFin);
-
-        if (codigo == null || codigo.isBlank()) {
-            throw new IllegalArgumentException("El código no puede ser nulo ni vacío");
-        }
-        if (nombre == null || nombre.isBlank()) {
-            throw new IllegalArgumentException("El nombre no puede ser nulo ni vacío");
-        }
-        if (estado == null || estado.isBlank()) {
-            throw new IllegalArgumentException("El estado no puede ser nulo ni vacío");
-        }
-        if (fechaInicio == null) {
-            throw new IllegalArgumentException("La fecha de inicio no puede ser nula");
-        }
-        if (fechaFin == null) {
-            throw new IllegalArgumentException("La fecha de término no puede ser nula");
-        }
-        if (!fechaInicio.isBefore(fechaFin)) {
+        this.codigo = validarTexto(codigo, "código");
+        this.nombre = validarTexto(nombre, "nombre");
+        this.estado = validarTexto(estado, "estado");
+        this.fechaInicio = validarFecha(fechaInicio, "fecha de inicio");
+        this.fechaFin = validarFecha(fechaFin, "fecha de término");
+        
+        if (!this.fechaInicio.isBefore(this.fechaFin)) {
             throw new IllegalArgumentException("La fecha de término debe ser posterior a la de inicio");
         }
 
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
-        this.estado = estado;
-
-        log.debug("codigo: {}", this.codigo);
-        log.debug("nombre: {}", this.nombre);
-        log.debug("fechaInicio: {}", this.fechaInicio);
-        log.debug("fechaFin: {}", this.fechaFin);
-        log.debug("estado: {}", this.estado);
-
+        log.debug("ProgramaFormativo creado: {}", this);
+  
     }
 }
