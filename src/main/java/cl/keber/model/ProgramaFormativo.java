@@ -1,11 +1,17 @@
 package cl.keber.model;
 
 import java.time.LocalDate;
+import jakarta.persistence.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Entity
+@Table(name = "programa_formativo")
 public class ProgramaFormativo{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String codigo;
     private String nombre;
     private LocalDate fechaInicio;
