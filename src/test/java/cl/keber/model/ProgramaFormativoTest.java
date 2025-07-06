@@ -1,16 +1,26 @@
-package cl.keber;
+package cl.keber.model;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.GeneratedValue;
+
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.DisplayName;
+
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ProgramaFormativoTest {
 
@@ -46,6 +56,23 @@ class ProgramaFormativoTest {
         );
     }
 
+    @Test
+    void debeEstarAnotadoConEntityYTable() {
+        assertTrue(ProgramaFormativo.class.isAnnotationPresent(Entity.class),
+            "La clase debe estar anotada con @Entity");
+
+        assertTrue(ProgramaFormativo.class.isAnnotationPresent(Table.class),
+            "La clase debe estar anotada con @Table");
+    }
+
+    @Test
+    void debeTenerCampoIdConAnotacionesJPA() throws NoSuchFieldException {
+        Field campoId = ProgramaFormativo.class.getDeclaredField("id");
+
+        assertNotNull(campoId, "Debe existir el campo 'id'");
+        assertTrue(campoId.isAnnotationPresent(Id.class), "El campo 'id' debe tener @Id");
+        assertTrue(campoId.isAnnotationPresent(GeneratedValue.class), "El campo 'id' debe tener @GeneratedValue");
+    }
     
 }
 
