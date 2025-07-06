@@ -25,4 +25,8 @@ public class ProgramaFormativoService {
     public Optional<ProgramaFormativo> buscarPorId(Long id) {
         return repository.findById(id);
     }
+
+    public void eliminarPrograma(Long id) {
+        repository.deleteById(id);
+    }
 }
