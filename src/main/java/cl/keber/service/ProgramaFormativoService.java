@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import cl.keber.model.ProgramaFormativo;
 import cl.keber.repository.ProgramaFormativoRepository;
+import cl.keber.exception.ProgramaNoEncontradoException;
 
 public class ProgramaFormativoService {
 
@@ -31,11 +32,13 @@ public class ProgramaFormativoService {
     }
 
     public ProgramaFormativo actualizarPrograma(Long id, ProgramaFormativo actualizado) {
-        Optional<ProgramaFormativo> existente = repository.findById(id);
-        if (existente.isPresent()) {
-            return repository.save(actualizado);
-        } else {
-            throw new IllegalArgumentException("No se encontró el programa con ID: " + id);
+        repository.findById(id)
+            .orElseThrow(() -> new ProgramaNoEncontradoException(id));
+
+        if (actualizado.getId() != null && !actualizado.getId().equals(id)) {
+            throw new IllegalArgumentException("El ID del programa no coincide con el ID proporcionado");
         }
+
+        return repository.save(actualizado);
     }
 }
