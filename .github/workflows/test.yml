@@ -80,6 +80,9 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
         
+    - name: Compile for Sonar
+      run: mvn compile
+
     - name: Download reports
       uses: actions/download-artifact@v4
       with:
