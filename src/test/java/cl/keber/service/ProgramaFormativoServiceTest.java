@@ -77,4 +77,28 @@ class ProgramaFormativoServiceTest {
         Mockito.verify(repository).deleteById(id);
     }
 
+    @Test
+    void debeActualizarProgramaFormativo() {
+        Long id = 1L;
+
+        ProgramaFormativo original = new ProgramaFormativo(
+            "PF001", "Curso Original", 
+            LocalDate.of(2025, 1, 1), LocalDate.of(2025, 2, 1), "vigente"
+        );
+
+        ProgramaFormativo actualizado = new ProgramaFormativo(
+            "PF001", "Curso Actualizado", 
+            LocalDate.of(2025, 1, 1), LocalDate.of(2025, 2, 1), "vigente"
+        );
+
+        Mockito.when(repository.findById(id)).thenReturn(Optional.of(original));
+        Mockito.when(repository.save(actualizado)).thenReturn(actualizado);
+
+        ProgramaFormativo resultado = service.actualizarPrograma(id, actualizado);
+
+        assertEquals("Curso Actualizado", resultado.getNombre());
+        Mockito.verify(repository).findById(id);
+        Mockito.verify(repository).save(actualizado);
+    }
+
 }
