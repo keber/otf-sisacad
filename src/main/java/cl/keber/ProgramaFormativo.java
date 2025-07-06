@@ -19,6 +19,21 @@ public class ProgramaFormativo{
         log.debug("Fecha Inicio: {}", fechaInicio);
         log.debug("Fecha Término: {}", fechaFin);
 
+        if (codigo == null || codigo.isBlank()) {
+            throw new IllegalArgumentException("El código no puede ser nulo ni vacío");
+        }
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("El nombre no puede ser nulo ni vacío");
+        }
+        if (estado == null || estado.isBlank()) {
+            throw new IllegalArgumentException("El estado no puede ser nulo ni vacío");
+        }
+        if (fechaInicio == null) {
+            throw new IllegalArgumentException("La fecha de inicio no puede ser nula");
+        }
+        if (fechaFin == null) {
+            throw new IllegalArgumentException("La fecha de término no puede ser nula");
+        }
         if (!fechaInicio.isBefore(fechaFin)) {
             throw new IllegalArgumentException("La fecha de término debe ser posterior a la de inicio");
         }
