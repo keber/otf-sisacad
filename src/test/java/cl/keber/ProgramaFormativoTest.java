@@ -42,7 +42,7 @@ class ProgramaFormativoTest {
             Arguments.of("nombre", new ProgramaFormativoBuilder().conNombre(null), "El nombre no puede ser nulo ni vacío"),
             Arguments.of("fechaInicio", new ProgramaFormativoBuilder().conFechaInicio(null), "La fecha de inicio no puede ser nula"),
             Arguments.of("fechaFin", new ProgramaFormativoBuilder().conFechaFin(null), "La fecha de término no puede ser nula"),
-            Arguments.of("estado", new ProgramaFormativoBuilder().conEstado(null), "El estado no puede ser nulo")
+            Arguments.of("estado", new ProgramaFormativoBuilder().conEstado(null), "El estado no puede ser nulo ni vacío")
         );
     }
 
