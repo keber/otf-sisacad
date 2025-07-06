@@ -25,3 +25,4 @@ Dado que cada clase admite un máximo de 20 participantes, los alumnos de un man
 - [ Diagrama de clases ](docs/diag-class.md)
 - [ Diagrama ER ](docs/diag-er.md)
 - [ Sprint 0 – Registro de configuración inicial](docs/sprint-0.md)
+- [ Sprint 1: 44 Registrar programas formativos: 106 Crear clase ProgramaFormativo](docs/106.md)
