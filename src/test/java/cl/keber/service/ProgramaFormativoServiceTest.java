@@ -67,4 +67,14 @@ class ProgramaFormativoServiceTest {
         assertEquals(pf, resultado.get());
         Mockito.verify(repository).findById(1L);
     }
+
+    @Test
+    void debeEliminarProgramaFormativo() {
+        Long id = 1L;
+    
+        service.eliminarPrograma(id);
+
+        Mockito.verify(repository).deleteById(id);
+    }
+
 }
