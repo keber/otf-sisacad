@@ -29,4 +29,13 @@ public class ProgramaFormativoService {
     public void eliminarPrograma(Long id) {
         repository.deleteById(id);
     }
+
+    public ProgramaFormativo actualizarPrograma(Long id, ProgramaFormativo actualizado) {
+        Optional<ProgramaFormativo> existente = repository.findById(id);
+        if (existente.isPresent()) {
+            return repository.save(actualizado);
+        } else {
+            throw new IllegalArgumentException("No se encontró el programa con ID: " + id);
+        }
+    }
 }
