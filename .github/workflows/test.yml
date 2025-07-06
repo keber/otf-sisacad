@@ -32,11 +32,7 @@ jobs:
       run: mvn clean compile
   
   test:
-<<<<<<< HEAD
     name: Run Tests
-=======
-    name: Run Tests and Upload Coverage
->>>>>>> 56a68ac (refactor: improvements in ci pipeline jobs)
     runs-on: ubuntu-latest
     needs: build
     continue-on-error: ${{ github.ref != 'refs/heads/main' }}
@@ -69,11 +65,7 @@ jobs:
           target/site/surefire-report/
 
   publish-reports:
-<<<<<<< HEAD
     name: Upload Coverage and Publish Reports to GitHub Pages
-=======
-    name: Publish Reports to GitHub Pages
->>>>>>> 56a68ac (refactor: improvements in ci pipeline jobs)
     needs: test
     if: always()
     runs-on: ubuntu-latest
@@ -88,12 +80,9 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
         
-<<<<<<< HEAD
     - name: Compile for Sonar
       run: mvn compile
 
-=======
->>>>>>> 56a68ac (refactor: improvements in ci pipeline jobs)
     - name: Download reports
       uses: actions/download-artifact@v4
       with:
