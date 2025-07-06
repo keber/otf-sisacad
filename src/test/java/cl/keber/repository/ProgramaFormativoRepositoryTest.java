@@ -34,7 +34,7 @@ class ProgramaFormativoRepositoryTest {
 
         // Assert
         assertTrue(recuperado.isPresent());
-        assertEquals("PF-001", recuperado.get().getCodigo());
-        assertEquals("Curso Seguridad", recuperado.get().getNombre());
+        assertEquals("PF001", recuperado.get().getCodigo());
+        assertEquals("Seguridad y Salud Ocupacional", recuperado.get().getNombre());
     }
 }
