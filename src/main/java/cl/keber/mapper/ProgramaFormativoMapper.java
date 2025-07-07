@@ -5,6 +5,10 @@ import cl.keber.model.ProgramaFormativo;
 
 public class ProgramaFormativoMapper {
 
+    private ProgramaFormativoMapper() {
+        // Previene la instanciación
+    }
+
     public static ProgramaFormativoDTO toDTO(ProgramaFormativo entity) {
         if (entity == null) return null;
         return new ProgramaFormativoDTO(
