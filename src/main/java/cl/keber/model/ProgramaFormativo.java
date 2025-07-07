@@ -47,6 +47,10 @@ public class ProgramaFormativo{
             '}';
     }
 
+    public ProgramaFormativo() {
+    // Requerido por JPA y Jackson
+    }
+    
     public ProgramaFormativo(String codigo, String nombre, LocalDate fechaInicio, LocalDate fechaFin, String estado) {
 
         this.codigo = validarTexto(codigo, "código");
