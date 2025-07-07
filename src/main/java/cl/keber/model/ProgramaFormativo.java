@@ -20,6 +20,10 @@ public class ProgramaFormativo{
 
     private static final Logger log = LoggerFactory.getLogger(ProgramaFormativo.class);
 
+    public Long getId() { return id; }
+    public String getCodigo() { return codigo; }
+    public String getNombre() { return nombre; }
+
     private String validarTexto(String campo, String nombreCampo) {
         if (campo == null || campo.isBlank()) {
             throw new IllegalArgumentException("El " + nombreCampo + " no puede ser nulo ni vacío");

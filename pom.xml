@@ -62,12 +62,27 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Spring Boot Test (JUnit, Mockito, AssertJ, etc.) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring-boot.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- H2 solo para test -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+            <version>2.2.224</version>
         </dependency>
 
     </dependencies>
@@ -110,34 +125,38 @@
                         </goals>
                     </execution>
                 </executions>
-	     </plugin>
+	        </plugin>
 
 
-	     <plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-surefire-report-plugin</artifactId>
-		<version>3.2.5</version>
-		<configuration>
-    		    <outputDirectory>${project.build.directory}/site/surefire-report</outputDirectory>
-		</configuration>
-		<executions>
-    		    <execution>
-			<id>generate-surefire-report</id>
-			<phase>verify</phase>
-      			<goals>
-        		    <goal>report-only</goal>
-      			</goals>
-    		    </execution>
-  		</executions>
-	    </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                        <outputDirectory>${project.build.directory}/site/surefire-report</outputDirectory>
+                </configuration>
+                <executions>
+                        <execution>
+                    <id>generate-surefire-report</id>
+                    <phase>verify</phase>
+                        <goals>
+                            <goal>report-only</goal>
+                        </goals>
+                        </execution>
+                </executions>
+            </plugin>
 
 	    <plugin>
-		<groupId>org.sonarsource.scanner.maven</groupId>
-		<artifactId>sonar-maven-plugin</artifactId>
- 		<version>3.11.0.3922</version>
+            <groupId>org.sonarsource.scanner.maven</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>3.11.0.3922</version>
 	    </plugin>
 
-
+        <plugin>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-maven-plugin</artifactId>
+            <version>9.22.3</version> <!-- O la más reciente que estés usando -->
+        </plugin>
         </plugins>
     </build>
 </project>
