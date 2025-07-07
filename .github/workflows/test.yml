@@ -55,6 +55,13 @@ jobs:
         
     - name: Run tests
       run: mvn verify
+      
+    - name: Generate Test badge
+      if: success() || failure()
+      uses: gaelgirodon/ci-badges-action@v1
+      with:
+        gist-id: ${{ secrets.GIST_ID }} 
+        token: ${{ secrets.GIST_TOKEN }}
 
     - name: Upload reports
       uses: actions/upload-artifact@v4
@@ -103,13 +110,6 @@ jobs:
         flags: unittests
         name: codecov-coverage
         fail_ci_if_error: true
-
-    - name: Generate Test badge
-      if: success() || failure()
-      uses: gaelgirodon/ci-badges-action@v1
-      with:
-        gist-id: ${{ secrets.GIST_ID }} 
-        token: ${{ secrets.GIST_TOKEN }}
 
     - name: Combine JaCoCo and Surefire reports
       if: success() || failure()
