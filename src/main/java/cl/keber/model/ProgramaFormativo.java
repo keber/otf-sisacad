@@ -23,6 +23,9 @@ public class ProgramaFormativo{
     public Long getId() { return id; }
     public String getCodigo() { return codigo; }
     public String getNombre() { return nombre; }
+    public LocalDate getFechaInicio() { return fechaInicio; }
+    public LocalDate getFechaFin() { return fechaFin; }
+    public String getEstado() { return estado; }
 
     private String validarTexto(String campo, String nombreCampo) {
         if (campo == null || campo.isBlank()) {
@@ -47,6 +50,10 @@ public class ProgramaFormativo{
             '}';
     }
 
+    public ProgramaFormativo() {
+    // Requerido por JPA y Jackson
+    }
+    
     public ProgramaFormativo(String codigo, String nombre, LocalDate fechaInicio, LocalDate fechaFin, String estado) {
 
         this.codigo = validarTexto(codigo, "código");
