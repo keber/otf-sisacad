@@ -1,0 +1,11 @@
+[general]
+ignore=title-match-regex
+verbosity=3
+
+[title-max-length]
+line-length=100
+
+[body-max-line-length]
+line-length=120
+
+
