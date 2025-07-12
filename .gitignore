@@ -1,3 +1,22 @@
 target/*
 .env
 flyway-plugin.txt
+
+# Node.js
+node_modules/
+*.log
+
+# Build outputs
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS-specific
+.DS_Store
+
+# React-specific
+.env*
+coverage/
