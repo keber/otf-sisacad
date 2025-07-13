@@ -11,7 +11,6 @@ const ProgramaList = ({ programas, onEditar, refrescar }) => {
     refrescar();
   }, []);
 
-
   const confirmarEliminacion = (programa) => {
     setProgramaSeleccionado(programa);
     const modal = new bootstrap.Modal(document.getElementById('confirmarModal'));

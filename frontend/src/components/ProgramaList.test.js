@@ -9,6 +9,10 @@ describe('ProgramaList', () => {
   ];
 
   beforeEach(() => {
+    let programas = [
+      { id: 1, codigo: 'PF001', nombre: 'Programa A', fechaInicio: '2024-01-01', fechaFin: '2024-12-31', estado: 'Activo' },
+      { id: 2, codigo: 'PF002', nombre: 'Programa B', fechaInicio: '2024-02-01', fechaFin: '2024-11-30', estado: 'Activo' }
+    ];
 
     global.fetch = jest.fn((url, options) => {
       
