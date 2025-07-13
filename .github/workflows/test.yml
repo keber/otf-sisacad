@@ -71,6 +71,38 @@ jobs:
           target/site/jacoco/
           target/site/surefire-report/
 
+  frontend:
+    name: Build and Test Frontend
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+        
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build frontend tests
+        run: npm test -- --watchAll=false
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/build
+
   publish-reports:
     name: Upload Coverage and Publish Reports to GitHub Pages
     needs: test

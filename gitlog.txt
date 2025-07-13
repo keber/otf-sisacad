@@ -1,0 +1,2329 @@
+commit 37c33bad12b085b8fa121e6e1ab427504f5eb97b
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-07T04:35:46-04:00
+
+    doc: update Readme with tasks AB#106 - AB#110 (#46)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * AB#44--US-Registrar-programas-formativos (#39)
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge pull request #38 from keber:Ci-testing - fix: move back test badge generation after the tests run
+    
+    * refactor: improvements in ci pipeline jobs
+    
+    * fix: added missing compile step in publish-reports job
+    
+    * fix: minor naming change in jobs
+    
+    * fix: move test badge generation back after the tests run
+    
+    * refactor: improvements in ci pipeline jobs
+    
+    * fix: added missing compile step in publish-reports job
+    
+    * fix: move test badge generation back after the tests run
+    
+    * Merge branch 'ci-testing' of https://github.com/keber/otf-sisacad into ci-testing
+    
+    * Merge branch 'AB#109' into AB#44 - add controller tests for ProgramaFormativo [RED] (#40)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN] (#41)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN]
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' into AB#44--US-Registrar-programas-formativos (#42)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN]
+    
+    * doc: add summary of task AB#109
+    
+    * Merge branch 'main' into AB#44--US-Registrar-programas-formativos
+    
+    * AB#110---Crear-DTO-y-Mapper-ProgramaFormativo (#44)
+    
+    * AB#44--US-Registrar-programas-formativos (#43)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * AB#44--US-Registrar-programas-formativos (#39)
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge pull request #38 from keber:Ci-testing - fix: move back test badge generation after the tests run
+    
+    * refactor: improvements in ci pipeline jobs
+    
+    * fix: added missing compile step in publish-reports job
+    
+    * fix: minor naming change in jobs
+    
+    * fix: move test badge generation back after the tests run
+    
+    * refactor: improvements in ci pipeline jobs
+    
+    * fix: added missing compile step in publish-reports job
+    
+    * fix: move test badge generation back after the tests run
+    
+    * Merge branch 'ci-testing' of https://github.com/keber/otf-sisacad into ci-testing
+    
+    * Merge branch 'AB#109' into AB#44 - add controller tests for ProgramaFormativo [RED] (#40)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN] (#41)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN]
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' into AB#44--US-Registrar-programas-formativos (#42)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN]
+    
+    * doc: add summary of task AB#109
+    
+    * Merge branch 'main' into AB#44--US-Registrar-programas-formativos
+    
+    * test: add mapper tests for ProgramaFormativo [RED]
+    
+    * fix: add DTO and Mapper for ProgramaFormativo [GREEN]
+    
+    * refactor: prevent instantiation of ProgramaFormativoMapper [REFACTOR]
+    
+    * doc: add summary of task AB#110
+    
+    * doc: update Readme with tasks AB#106 - AB#110
+
+5	1	README.md
+29	0	docs/110.md
+
+commit f0ab4510d4a3cd78ce1e546e2e50ec2da171b7c2
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-07T04:18:04-04:00
+
+    AB#44--US-Registrar-programas-formativos (#45)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * AB#44--US-Registrar-programas-formativos (#39)
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge pull request #38 from keber:Ci-testing - fix: move back test badge generation after the tests run
+    
+    * refactor: improvements in ci pipeline jobs
+    
+    * fix: added missing compile step in publish-reports job
+    
+    * fix: minor naming change in jobs
+    
+    * fix: move test badge generation back after the tests run
+    
+    * refactor: improvements in ci pipeline jobs
+    
+    * fix: added missing compile step in publish-reports job
+    
+    * fix: move test badge generation back after the tests run
+    
+    * Merge branch 'ci-testing' of https://github.com/keber/otf-sisacad into ci-testing
+    
+    * Merge branch 'AB#109' into AB#44 - add controller tests for ProgramaFormativo [RED] (#40)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN] (#41)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN]
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' into AB#44--US-Registrar-programas-formativos (#42)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN]
+    
+    * doc: add summary of task AB#109
+    
+    * Merge branch 'main' into AB#44--US-Registrar-programas-formativos
+    
+    * AB#110---Crear-DTO-y-Mapper-ProgramaFormativo (#44)
+    
+    * AB#44--US-Registrar-programas-formativos (#43)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * AB#44--US-Registrar-programas-formativos (#39)
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge pull request #38 from keber:Ci-testing - fix: move back test badge generation after the tests run
+    
+    * refactor: improvements in ci pipeline jobs
+    
+    * fix: added missing compile step in publish-reports job
+    
+    * fix: minor naming change in jobs
+    
+    * fix: move test badge generation back after the tests run
+    
+    * refactor: improvements in ci pipeline jobs
+    
+    * fix: added missing compile step in publish-reports job
+    
+    * fix: move test badge generation back after the tests run
+    
+    * Merge branch 'ci-testing' of https://github.com/keber/otf-sisacad into ci-testing
+    
+    * Merge branch 'AB#109' into AB#44 - add controller tests for ProgramaFormativo [RED] (#40)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN] (#41)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN]
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' into AB#44--US-Registrar-programas-formativos (#42)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN]
+    
+    * doc: add summary of task AB#109
+    
+    * Merge branch 'main' into AB#44--US-Registrar-programas-formativos
+    
+    * test: add mapper tests for ProgramaFormativo [RED]
+    
+    * fix: add DTO and Mapper for ProgramaFormativo [GREEN]
+    
+    * refactor: prevent instantiation of ProgramaFormativoMapper [REFACTOR]
+
+63	0	src/main/java/cl/keber/dto/ProgramaFormativoDTO.java
+33	0	src/main/java/cl/keber/mapper/ProgramaFormativoMapper.java
+3	0	src/main/java/cl/keber/model/ProgramaFormativo.java
+43	0	src/test/java/cl/keber/mapper/ProgramaFormativoMapperTest.java
+
+commit fc8588528310399d46d237a639645dba9ea17eeb
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-07T03:44:55-04:00
+
+    AB#44--US-Registrar-programas-formativos (#43)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * AB#44--US-Registrar-programas-formativos (#39)
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge pull request #38 from keber:Ci-testing - fix: move back test badge generation after the tests run
+    
+    * refactor: improvements in ci pipeline jobs
+    
+    * fix: added missing compile step in publish-reports job
+    
+    * fix: minor naming change in jobs
+    
+    * fix: move test badge generation back after the tests run
+    
+    * refactor: improvements in ci pipeline jobs
+    
+    * fix: added missing compile step in publish-reports job
+    
+    * fix: move test badge generation back after the tests run
+    
+    * Merge branch 'ci-testing' of https://github.com/keber/otf-sisacad into ci-testing
+    
+    * Merge branch 'AB#109' into AB#44 - add controller tests for ProgramaFormativo [RED] (#40)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN] (#41)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN]
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' into AB#44--US-Registrar-programas-formativos (#42)
+    
+    * Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+    
+    * Merge branch 'AB#109---Crear-controlador-ProgramaFormativoController' of https://github.com/keber/otf-sisacad into AB#109---Crear-controlador-ProgramaFormativoController
+    
+    * doc: add file for task AB#109 summary
+    
+    * fix: add Spring Boot Web dependency
+    
+    * fix: add parameter flag for compiler and solve jackson-bom version mix
+    
+    * fix: specify DataJpaTest instead of Spring-Boot Test and removes unnecessary connecrion test on main Application.
+    
+    * fix: specify use of DataJpaTest instead of SpringBootTest
+    
+    * fix: empty constructor needed by jackson
+    
+    * test: add controller tests for ProrgamaFormativo [RED]
+    
+    * fix: implement controller ProgramaFormativo [GREEN]
+    
+    * doc: add summary of task AB#109
+    
+    * Merge branch 'main' into AB#44--US-Registrar-programas-formativos
+
+78	0	docs/109.md
+52	11	pom.xml
+1	25	src/main/java/cl/keber/OtfSisacadApplication.java
+44	0	src/main/java/cl/keber/controller/ProgramaFormativoController.java
+4	0	src/main/java/cl/keber/model/ProgramaFormativo.java
+5	2	src/test/java/cl/keber/DatabaseMigrationTest.java
+5	3	src/test/java/cl/keber/OtfSisacadApplicationTest.java
+92	0	src/test/java/cl/keber/controller/ProgramaFormativoControllerTest.java
+
+commit a3609d0a5ad063267c473fbdf50b73a18763e3af
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-06T23:04:10-04:00
+
+    Merge pull request #38 from keber:Ci-testing - fix: move back test badge generation after the tests run
+    
+    * refactor: improvements in ci pipeline jobs
+    
+    * fix: added missing compile step in publish-reports job
+    
+    * fix: minor naming change in jobs
+    
+    * fix: move test badge generation back after the tests run
+    
+    * refactor: improvements in ci pipeline jobs
+    
+    * fix: added missing compile step in publish-reports job
+    
+    * fix: move test badge generation back after the tests run
+    
+    * Merge branch 'ci-testing' of https://github.com/keber/otf-sisacad into ci-testing
+
+7	7	.github/workflows/test.yml
+
+commit 6f17ee52849bd82a1e69249ac3b4c26f44717174
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-06T21:22:24-04:00
+
+    Main (#37)
+    
+    * fix: added getters for ProgramaFormativo
+    
+    * test: add test to verify ProgramaFormativoRepository saves and retrieves [RED]
+    
+    * fix: consolidate programa_formativo migration to avoid emerging problems with flyway
+    
+    * fix: wrong parameters in ProgramaFormativoRepositoryTest
+    
+    * fix: add h2 dependency for test
+    
+    * fix: add ProgramaFormativoRepository [GREEN]
+    
+    * Merge pull request #33 from keber:AB#107---Crear-repositorio-ProgramaFormativoRepository
+    
+    fix: add ProgramaFormativoRepository [GREEN]
+    
+    * test: add test to check ProgramaFormativoService operations save, findAll and findById [RED]
+    
+    * fix: add ProgramaFormativoService with save, findAll and findById [GREEN]
+    
+    * test: add test for ProgramaFormativoService eliminarPrograma method [RED]
+    
+    * fix: add eliminarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * test: add test to check actualizarPrograma method in ProgramaFormativoService [RED]
+    
+    * fix: add actualizarPrograma method in ProgramaFormativoService [GREEN]
+    
+    * refactor: improve actualizaPrograma with validations and specifc exceptions [REFACTOR]
+    
+    * Merge pull request #34 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * doc: add summary of task AB#108
+    
+    * Merge pull request #36 from keber:AB#108---Crear-servicio-ProgramaFormativoService
+    
+    AB#108---Crear-servicio-ProgramaFormativoService
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into AB#44--US-Registrar-programas-formativos
+
+58	0	docs/108.md
+43	24	pom.xml
+7	0	src/main/java/cl/keber/exception/ProgramaNoEncontradoException.java
+4	0	src/main/java/cl/keber/model/ProgramaFormativo.java
+7	0	src/main/java/cl/keber/repository/ProgramaFormativoRepository.java
+44	0	src/main/java/cl/keber/service/ProgramaFormativoService.java
+6	1	src/main/resources/db/migration/V1__programa_formativo.sql
+0	6	src/main/resources/db/migration/V5__expand_programa_formativo.sql
+40	0	src/test/java/cl/keber/repository/ProgramaFormativoRepositoryTest.java
+104	0	src/test/java/cl/keber/service/ProgramaFormativoServiceTest.java
+
+commit 1c2df1ac2e5ebc56769fdbe52761009a159eab71
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-06T21:06:20-04:00
+
+    Readme-minor-updates-and-fixes (#35)
+
+1	1	docs/106.md
+26	0	docs/107.md
+
+commit 1caca6200fa410807cee26781b1d0199944bf714
+Merge: 857dc55 e6d390a
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-06T11:00:03-04:00
+
+    Merge pull request #32 from keber:Readme-minor-updates-and-fixes
+    
+    feat: added commit links
+
+commit e6d390ad7c5ae98643467f781ef7de03e01b5840
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-06T10:58:42-04:00
+
+    feat: added commit links
+
+13	13	docs/106.md
+
+commit 857dc55570fc6a8325e9b7999d172bde39c74775
+Merge: cc4f091 8c22430
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-06T00:40:08-04:00
+
+    Merge pull request #31 from keber:Readme-minor-updates-and-fixes
+    
+    added summary of task AB#106 on Readme
+
+commit 8c22430a8fdde438e41b56ca7387f13a9dcd5aaa
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-06T00:38:47-04:00
+
+    added summary of task AB#106
+
+2	1	README.md
+57	0	docs/106.md
+
+commit cc4f091a3af5c9a06a6bd7efc466019fd94d3422
+Merge: ee73b43 ce256a7
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-06T00:11:17-04:00
+
+    Merge pull request #30 from keber:AB#106-Crear-clase-ProgramaFormativo
+    
+    AB#106-Crear-clase-ProgramaFormativo
+    
+    Close AB#106
+
+commit ce256a7565403b8168fb6bde5ebf04f78bf40090
+Merge: 335b774 a6222f7
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T23:59:02-04:00
+
+    Merge branch 'merge-temp' into AB#106-Crear-clase-ProgramaFormativo
+
+commit a6222f778875e5bf4b46c74540d4194aaa081dfb
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T23:19:08-04:00
+
+    feat: annotate ProgramaFormativo as JPA entity and add ID field [GREEN]
+
+6	0	src/main/java/cl/keber/model/ProgramaFormativo.java
+
+commit 7b10d559cb8bd54dd7b770fd332ab684af2ecabb
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T23:15:21-04:00
+
+    test: add test to verify ProgramaFormativo is a JPA entity [RED]
+
+0	55	src/main/java/cl/keber/ProgramaFormativo.java
+0	87	src/test/java/cl/keber/ProgramaFormativoTest.java
+
+commit 6aebba1cbcb446ade0ae86fff2d1dc9e91c35908
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T23:14:14-04:00
+
+    test: add test to verify ProgramaFormativo is a JPA entity [RED]
+
+55	0	src/main/java/cl/keber/model/ProgramaFormativo.java
+114	0	src/test/java/cl/keber/model/ProgramaFormativoTest.java
+
+commit 837e1915edae43a123ed86687668e1a79cd1c4e1
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T21:28:18-04:00
+
+    fix: add null validations in ProgramaFormativo constructor (TDD GREEN)
+
+1	1	src/main/java/cl/keber/ProgramaFormativo.java
+
+commit 335b774d01a95885b304a707ab9ec39ea7ef8309
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T23:19:08-04:00
+
+    feat: annotate ProgramaFormativo as JPA entity and add ID field [GREEN]
+
+6	0	src/main/java/cl/keber/model/ProgramaFormativo.java
+
+commit 355983b4cbe8237df96bb7c271055df86bd05d0b
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T23:15:21-04:00
+
+    test: add test to verify ProgramaFormativo is a JPA entity [RED]
+
+0	55	src/main/java/cl/keber/ProgramaFormativo.java
+0	87	src/test/java/cl/keber/ProgramaFormativoTest.java
+
+commit 89fd51a2558fe7fa965350cd5f3e9cf5daf6bd75
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T23:14:14-04:00
+
+    test: add test to verify ProgramaFormativo is a JPA entity [RED]
+
+55	0	src/main/java/cl/keber/model/ProgramaFormativo.java
+114	0	src/test/java/cl/keber/model/ProgramaFormativoTest.java
+
+commit ee73b430570f66730990c928c4be19202fee2032
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T22:45:38-04:00
+
+    AB#106-Crear-clase-ProgramaFormativo (#28)
+    
+    * test: add failing test for null validations to ProgramaFormativo constructor (TDD RED)
+    
+    * test: add failing test for null validations to ProgramaFormativo constructor (TDD RED)
+    
+    * Merge branch 'AB#106-Crear-clase-ProgramaFormativo' of https://github.com/keber/otf-sisacad into AB#106-Crear-clase-ProgramaFormativo
+    
+    * test: fix failing test for null validations on ProgramaFormativo constructor (TDD RED)
+    
+    * fix: add null validations in ProgramaFormativo constructor (TDD GREEN)
+    
+    * refactor: simplify ProgramaFormativo constructor using helper methods [REFACTOR]
+
+32	16	src/main/java/cl/keber/ProgramaFormativo.java
+64	3	src/test/java/cl/keber/ProgramaFormativoTest.java
+
+commit 97d2e4a3ba884e6cc2b46f0842305d4d7b534f3b
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T22:16:22-04:00
+
+    refactor: simplify ProgramaFormativo constructor using helper methods [REFACTOR]
+
+32	31	src/main/java/cl/keber/ProgramaFormativo.java
+
+commit 20f2058eebcc25b336419c3c574a29f94218957e
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T21:28:18-04:00
+
+    fix: add null validations in ProgramaFormativo constructor (TDD GREEN)
+
+15	0	src/main/java/cl/keber/ProgramaFormativo.java
+
+commit ebb875ffc3c21a3b2484ffd87851e10fc4cfd1cb
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T21:21:20-04:00
+
+    test: fix failing test for null validations on ProgramaFormativo constructor (TDD RED)
+
+1	1	src/test/java/cl/keber/ProgramaFormativoTest.java
+
+commit 68e81bb45b1ad941d470baf8a218b7afcb553371
+Merge: a4d48a4 7a04628
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T20:18:25-04:00
+
+    Merge branch 'AB#106-Crear-clase-ProgramaFormativo' of https://github.com/keber/otf-sisacad into AB#106-Crear-clase-ProgramaFormativo
+
+commit a4d48a4d184c58d03d86f03f9e23e0c1ee788e07
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T17:33:43-04:00
+
+    test: add failing test for null validations to ProgramaFormativo constructor (TDD RED)
+
+64	3	src/test/java/cl/keber/ProgramaFormativoTest.java
+
+commit 65aa33d16312d3ba35855100255b16cda5a45b54
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T20:14:19-04:00
+
+    refactor: improvements in ci pipeline jobs - Ci-testing (AB#27)
+    
+    * refactor: improvements in ci pipeline jobs
+    
+    * fix: added missing compile step in publish-reports job
+    
+    * fix: minor naming change in jobs
+
+63	34	.github/workflows/test.yml
+
+commit 7a04628d3e94aa8a35d2df041ccbd3edc8c58eed
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T17:33:43-04:00
+
+    test: add failing test for null validations to ProgramaFormativo constructor (TDD RED)
+
+64	3	src/test/java/cl/keber/ProgramaFormativoTest.java
+
+commit 2faf388cca7e88b56dc8ce80429f89fde2d82361
+Merge: 343f7f6 6834f99
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T14:29:08-04:00
+
+    Merge pull request #26 from keber:AB#111---Technical
+    
+    feat: added sonar-cloud integration in vscode
+
+commit 6834f99e06adba62372fdedf52e8cb89f5b4c6a4
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T14:23:19-04:00
+
+    feat: added sonar-cloud integration in vscode
+
+5	0	.sonarlint/connectedMode.json
+6	0	.vscode/settings.json
+
+commit 94aea6ee32b47ca7bc355b565dc9848a68b934ae
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T14:22:15-04:00
+
+    fix several sonar issues
+
+2	4	src/main/java/cl/keber/OtfSisacadApplication.java
+12	0	src/main/java/cl/keber/ProgramaFormativo.java
+1	2	src/test/java/cl/keber/DatabaseMigrationTest.java
+0	3	src/test/java/cl/keber/ProgramaFormativoTest.java
+
+commit f522459de28d0cce3f6bc58772cca29529b0dd2b
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T14:05:34-04:00
+
+    fix sonar java:S6813
+
+4	1	src/main/java/cl/keber/OtfSisacadApplication.java
+
+commit 343f7f64207b30a52c3adae40a4c7cb51287478c
+Merge: 475c448 c67effa
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T13:27:04-04:00
+
+    Merge pull request #24 from keber:AB#106-Crear-clase-ProgramaFormativo
+    
+    AB#106-Crear-clase-ProgramaFormativo
+
+commit 475c44820120ad3ecd47c9e5d18858edc29f1e25
+Merge: 1d93ca3 254259e
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T13:23:10-04:00
+
+    Merge pull request #25 from keber:ci-testing
+    
+    fix workflow
+
+commit 254259e092c72b03ecfbfc93cf54b5e478cdaafc
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T13:19:21-04:00
+
+    fix workflow
+
+2	1	.github/workflows/test.yml
+
+commit c67effad6df4dbab9fd8347bf44d56f746fc3577
+Merge: 353b0dc 29f0e32
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T11:46:11-04:00
+
+    Merge branch 'AB#106-Crear-clase-ProgramaFormativo' of https://github.com/keber/otf-sisacad into AB#106-Crear-clase-ProgramaFormativo
+
+commit 353b0dc050fc6d215bb5bd3d2ce6efda9ce0f149
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T11:25:06-04:00
+
+    fix: add date validation in ProgramaFormativo constructor (GREEN)
+
+8	0	src/main/java/cl/keber/ProgramaFormativo.java
+
+commit 6cca44e7689594f8ac22ed0e506e56fee93ee4c8
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T11:06:44-04:00
+
+    feat: added ProgramaFormativo constructor (test RED – no date validation yet)
+
+19	0	src/main/java/cl/keber/ProgramaFormativo.java
+
+commit 1d3e1b17d9734c9421f846503909f6dfe2cafbdb
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T11:05:27-04:00
+
+    test: fail test for ProgramaFormativo date validation (class not yet implemented)
+
+29	0	src/test/java/cl/keber/ProgramaFormativoTest.java
+
+commit 1d93ca3c62b0f47d74cb382ed3690bf65ec87a10
+Merge: 915f62a 15440ce
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T11:44:01-04:00
+
+    Merge pull request #23 from keber:ci-testing
+    
+    updated to run on all branches
+
+commit 15440ce1e9af9c1feb93c086d55dc9d15da1e209
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T11:41:27-04:00
+
+    updated to run on all branches
+
+1	1	.github/workflows/test.yml
+
+commit 29f0e32b5ecd2d1a3e217b82b0ded164fe885a62
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T11:25:06-04:00
+
+    fix: add date validation in ProgramaFormativo constructor (GREEN)
+
+8	0	src/main/java/cl/keber/ProgramaFormativo.java
+
+commit 151f4dcdb87d59ec5410e752d56bb42d721a40a1
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T11:06:44-04:00
+
+    feat: added ProgramaFormativo constructor (test RED – no date validation yet)
+
+19	0	src/main/java/cl/keber/ProgramaFormativo.java
+
+commit 1fcb32fb46b8c06386f7f75c5a74e1ebf1df4ab1
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T11:05:27-04:00
+
+    test: fail test for ProgramaFormativo date validation (class not yet implemented)
+
+29	0	src/test/java/cl/keber/ProgramaFormativoTest.java
+
+commit 915f62a016d00d94f244b23be0546f02fefd2de1
+Merge: 388868e f527c41
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T03:35:15-04:00
+
+    Merge pull request #22 from keber:AB#68---Crear-migraciones-iniciales-para-entidades-base
+    
+    fixed programa_formativo
+
+commit f527c416f888ff40dc1071e36da53203f89c14d8
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T03:34:16-04:00
+
+    fixed programa_formativo
+
+6	0	src/main/resources/db/migration/V5__expand_programa_formativo.sql
+
+commit 388868e6464189e0ca6cb6b5b288bd7ddcb26e22
+Merge: d987358 50ada8c
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T01:16:26-04:00
+
+    Merge pull request #21 from keber:AB#90-validate-applies-schema-in-railway
+    
+    fix AB#90 - refactor parametrized
+
+commit 50ada8cf1f7ed331ed91cff5e23244c2ef031b89
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T01:14:35-04:00
+
+    fix AB#90
+
+15	39	src/test/java/cl/keber/DatabaseMigrationTest.java
+
+commit d9873584912d396d5450f9b1dde4548ef2c966c8
+Merge: 2ae0814 0f8b75a
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T00:48:00-04:00
+
+    Merge pull request #20 from keber/Readme-minor-updates-and-fixes
+    
+    Readme-minor-updates-and-fixes
+
+commit 0f8b75a94ed61168eb6c42af09eaee6119a5bf2b
+Merge: 8835550 2ae0814
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T00:44:01-04:00
+
+    Merge branch 'main' into Readme-minor-updates-and-fixes
+
+commit 8835550070d82b50741d47cc3c1ff558e6960e9a
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-05T00:42:13-04:00
+
+    fixed typos in Readme links to subpages
+
+2	2	README.md
+
+commit 2ae0814ab7d5dd845633b050ee5382dee639decf
+Merge: fb179a2 1e61008
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T21:51:57-04:00
+
+    Merge pull request #19 from keber:AB#68---Crear-migraciones-iniciales-para-entidades-base
+    
+    AB#68---Crear-migraciones-iniciales-para-entidades-base
+
+commit 1e61008d34fee61214429169d5db1337d0df108f
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T21:37:05-04:00
+
+    fix AB#89
+
+17	0	src/main/resources/db/migration/V4__habilitacion_facilitador.sql
+
+commit 5b4003400f45a08816dd971daedf7eaeb2721fe8
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T21:36:39-04:00
+
+    fix AB#88
+
+7	0	src/main/resources/db/migration/V3__facilitador.sql
+
+commit 82b34d3567668fd3a385c935a633fdf33a954928
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T21:35:39-04:00
+
+    fix AB#87
+
+7	0	src/main/resources/db/migration/V2__cliente.sql
+
+commit fb179a2eb8eb94422f9b3630778a784d5d495369
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T19:34:45-04:00
+
+    AB#68---Crear-migraciones-iniciales-para-entidades-base (#18)
+    
+    * close AB#86 - created programa_formativo migration
+    
+    * removed dummy migration
+    
+    * added smoke tests for database migrations
+    
+    * Merge branch 'main' into AB#68---Crear-migraciones-iniciales-para-entidades-base
+
+33	0	src/test/java/cl/keber/DatabaseMigrationTest.java
+
+commit 2e2b723264dd5b8f515249c64f6b64ed3d3c27e2
+Merge: 81d3490 7dc41a4
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T19:33:59-04:00
+
+    Merge branch 'main' into AB#68---Crear-migraciones-iniciales-para-entidades-base
+
+commit 81d34905bda732f352a8c7cc848955d66229709d
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T19:22:33-04:00
+
+    added smoke tests for database migrations
+
+33	0	src/test/java/cl/keber/DatabaseMigrationTest.java
+
+commit 7dc41a41f9b9d7a24f725564e9a7c5fb6bedff27
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T18:02:20-04:00
+
+    close AB#86 - created programa_formativo migration
+    
+    * close AB#86 - created programa_formativo migration
+    
+    * removed dummy migration
+
+0	4	src/main/resources/db/migration/V1__create_dummy_table.sql
+5	0	src/main/resources/db/migration/V1__programa_formativo.sql
+26	0	src/test/java/cl/keber/DatabaseMigrationTest.java
+
+commit 58a8b9ae37b12d943b1a847f94f43794fc28be28
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T18:00:39-04:00
+
+    removed dummy migration
+
+0	4	src/main/resources/db/migration/V1__create_dummy_table.sql
+
+commit 6fd6fc366063ba6a0088626c1993fda79e9247a8
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T18:00:04-04:00
+
+    close AB#86 - created programa_formativo migration
+
+5	0	src/main/resources/db/migration/V1__programa_formativo.sql
+26	0	src/test/java/cl/keber/DatabaseMigrationTest.java
+
+commit b1ba9064cb715e8b1974c47cb49ca2906a22cbe4
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T15:21:41-04:00
+
+    Readme-minor-updates-and-fixes (#15)
+    
+    * fix naming update on class Matricula
+    
+    * added functional specs doc to Readme
+    
+    * Added Initial Backlog
+    
+    * fixed division lines
+    
+    * Reordered Readme and documentation
+    
+    * Merge branch 'main' of https://github.com/keber/otf-sisacad into Readme-minor-updates-and-fixes
+    
+    * readme fix
+
+5	410	README.md
+148	0	docs/backlog.md
+78	0	docs/diag-class.md
+93	0	docs/diag-er.md
+81	0	docs/frd.md
+71	0	docs/sprint-0.md
+
+commit 02a4860f4f25cda2827922ce5d91224f75947a15
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T15:20:26-04:00
+
+    readme fix
+
+0	236	README.md
+
+commit ed1399bf4a431f92eccc2c98d89035b4ec8e0b5c
+Merge: 8877e12 136c556
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T15:20:08-04:00
+
+    Merge branch 'main' of https://github.com/keber/otf-sisacad into Readme-minor-updates-and-fixes
+
+commit 8877e128b1e0b0d7b0267a88dd6ee8e498a2bd63
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T15:03:46-04:00
+
+    Reordered Readme and documentation
+
+5	410	README.md
+148	0	docs/backlog.md
+78	0	docs/diag-class.md
+93	0	docs/diag-er.md
+81	0	docs/frd.md
+71	0	docs/sprint-0.md
+
+commit 136c5569342ef0c65c721bc39cd0159b9dbfb117
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T14:20:58-04:00
+
+    fix: normalize line endings to LF across repo. applied flyway repair
+
+2	1	.gitignore
+
+commit a9421083cddd839c89512e67a7a9823baa8910c1
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T13:58:58-04:00
+
+    trying to fix cr-lf issue
+
+9	0	.gitattributes
+
+commit fadf02f0de3880213f5994d1d484c7d2844f45dc
+Merge: 475f498 271e7ed
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T13:43:02-04:00
+
+    Merge pull request #13 from keber:AB#67-Configurar-flyway-como-gestor-de-migraciones
+    
+    Close AB#81, AB#84, AB#85
+
+commit 271e7ed735c97ab7839f772f32230862b8c56e98
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T13:41:50-04:00
+
+    Close AB#81, AB#84, AB#85
+
+4	0	src/main/resources/db/migration/V1__create_dummy_table.sql
+
+commit 475f49886213eb254a9b7cbaf6833ebe4fc41ab2
+Merge: cda7027 65cd326
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T13:21:20-04:00
+
+    Merge pull request #12 from keber:AB#82-Add-Flyway-dependencies-to-pom.xml
+    
+    AB#82-Add-Flyway-dependencies-to-pom.xml
+
+commit 65cd3267d9375969d0e41eb97f65f470349a6896
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T13:19:40-04:00
+
+    closes AB#82
+
+1	1	pom.xml
+
+commit 9930cd3c5c0f13dd9b4fca270f9c14b6a097e2d9
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T13:18:43-04:00
+
+    closes AB#82
+
+6	0	pom.xml
+
+commit cda7027304460ae08a1fd7b4837fc2b2a50ecd79
+Merge: 56fe7a9 0d0e9ce
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T12:58:26-04:00
+
+    Merge pull request #11 from keber:AB#91---Technical-debt
+    
+    fix sonar Use try-with-resources or close this "Connection" in a "finally" clause.
+
+commit 0d0e9ce3d9edd742167a02f440e6136017b0dcbf
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T12:41:18-04:00
+
+    fix sonar Use try-with-resources or close this "Connection" in a "finally" clause.
+
+3	4	src/main/java/cl/keber/OtfSisacadApplication.java
+
+commit 56fe7a9c23381e0054c2ea9b34f2cdbb9259d938
+Merge: 74275af 0d9fd23
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T12:27:13-04:00
+
+    Merge pull request #10 from keber:AB#91---Technical-debt
+    
+    replaced string concatenation with format specifiers
+
+commit 0d9fd238e15038542f15990602da725697896d3d
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T12:25:42-04:00
+
+    replaced string concatenation with format specifiers
+
+3	3	src/main/java/cl/keber/OtfSisacadApplication.java
+
+commit 74275af9a9e2073a6a272316fd4e636a65e5e414
+Merge: c2f18ef 7aff7bc
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T12:15:40-04:00
+
+    Merge pull request #9 from keber:AB#91---Technical-debt
+    
+    changed system.out for log.info and log.error
+
+commit 7aff7bc501e86221e61e935309e17dd74a14f698
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T12:14:23-04:00
+
+    changed system.out for log.info and log.error
+
+7	3	src/main/java/cl/keber/OtfSisacadApplication.java
+
+commit c2f18ef81d522a410b13ac0413ff57b1fcc2105f
+Merge: d967900 e34ef23
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T10:40:46-04:00
+
+    Merge pull request #8 from keber:ci-testing
+    
+    updated workflow env vars for deploy-pages job
+
+commit e34ef238869afd37b9907eff7f129aaf7d7144cc
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T10:40:12-04:00
+
+    updated workflow env vars for deploy-pages job
+
+6	0	.github/workflows/test.yml
+
+commit d96790034fe40d0d20332f0c3f9c1bfdb4bfdf61
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T10:19:17-04:00
+
+    Closes AB#80 - Configure-application.properties---#80 (#7)
+    
+    * added .env to .gitignore for local tests
+    
+    * removed template files
+    
+    * fixes AB#80
+    
+    * added environment vars in workflow for db connection
+
+6	0	.github/workflows/test.yml
+2	1	.gitignore
+26	0	pom.xml
+0	8	src/main/java/cl/keber/Calculadora.java
+32	0	src/main/java/cl/keber/OtfSisacadApplication.java
+6	0	src/main/resources/application.properties
+0	20	src/test/java/cl/keber/CalculadoraServiceTest.java
+0	14	src/test/java/cl/keber/CalculadoraTest.java
+13	0	src/test/java/cl/keber/OtfSisacadApplicationTest.java
+
+commit 2213fc97256cc6ef67e3f550dceeb1a8fc326272
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T01:52:02-04:00
+
+    fixing mess
+
+0	14	pom.xml
+
+commit 15d6f7ade11856d7cecf2e5fc38bda5bf7ed6f26
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T01:49:42-04:00
+
+    mistakes been made
+
+1	0	.gitignore
+
+commit c61f93113cac5d93cca182dd9cfbd44da935fd7e
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T01:03:02-04:00
+
+    Revert "fix #70 and #72"
+    
+    This reverts commit f285ee7ff80f60d16a6613537ac366ae1ae1d02d.
+
+0	1	.gitignore
+
+commit f0c0e4a164750bcb8d7dd75d8b12bc6daf35cf3d
+Merge: f285ee7 0301a70
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T01:36:38-04:00
+
+    Merge pull request #5 from keber/Create-project-with-spring-initializr---#70
+    
+    fix AB#70 and AB#72
+
+commit 0301a70c20d5e7a8e4420b754a16b9acdc23dac3
+Merge: 3bed01d f285ee7
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T01:10:44-04:00
+
+    Merge branch 'main' into Create-project-with-spring-initializr---#70
+
+commit 3bed01d5c518c6c4e7afd38d23080792c053c941
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T01:07:46-04:00
+
+    fix AB#70 and AB#72
+
+1	0	.gitignore
+14	0	pom.xml
+
+commit f285ee7ff80f60d16a6613537ac366ae1ae1d02d
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T00:56:52-04:00
+
+    fix #70 and #72
+
+1	0	.gitignore
+14	0	pom.xml
+
+commit 581b60d46743d7b46bffd759c0b65cee56999bf2
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-04T00:38:00-04:00
+
+    Readme-minor-updates-and-fixes (#4)
+    
+    * fix naming update on class Matricula
+    
+    * added functional specs doc to Readme
+    
+    * Added Initial Backlog
+    
+    * fixed division lines
+
+237	2	README.md
+
+commit dce9a2f73ef4830874c1b50001e8826ba361c895
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-03T16:00:30-04:00
+
+    fixed division lines
+
+0	4	README.md
+
+commit 7f24b6e1a808320e17c34c85f84977f69a6d84d2
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-03T15:59:24-04:00
+
+    Added Initial Backlog
+
+153	0	README.md
+
+commit 74f1505eaf3f66de5c9a3ea668394dc585884fdc
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-03T15:41:53-04:00
+
+    added functional specs doc to Readme
+
+87	1	README.md
+
+commit 3a235fe8ee29a1450b874a55d6393eec9d31fbbe
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-03T13:23:45-04:00
+
+    fix naming update on class Matricula
+
+1	1	README.md
+
+commit 182903a096d9f55756e8b12ae6485fe5998668c2
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-03T12:56:02-04:00
+
+    moved badges on Readme from bottom to top
+
+9	7	README.md
+
+commit cb2ebe9d9ac0b4e110b30f64c1025a10cf29766b
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-03T02:15:50-04:00
+
+    fixed typo
+
+1	1	README.md
+
+commit 43eeaba76e39d67f8c53c20ff5956a280658d8c9
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-03T02:02:29-04:00
+
+    fix AB#42
+
+1	1	README.md
+
+commit 8354b41105143cf06a665378a02a8f89cdec23ea
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-03T02:46:01-04:00
+
+    Add-Class-and-ER-Diagrams---#42 (#2)
+    
+    * fix #42
+    
+    * fix AB#42
+    
+    * fixed typo
+
+93	0	README.md
+
+commit de8279e080a2e27189937e2c409d39c012c4231a
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-03T00:22:08-04:00
+
+    Update README.md
+    
+    Preliminar class diagram
+
+91	1	README.md
+
+commit 07f5563ad4bcdfe173c8876c44c17a5130cd17df
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-01T02:07:20-04:00
+
+    Updated Readme according to AB#41 (#1)
+
+3	1	README.md
+
+commit 3a4b6d304104604dfb3492482ca338fe340d890a
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-01T01:07:44-04:00
+
+    fixed sonar projectKey in pom.xml
+
+2	2	pom.xml
+
+commit fc5cc99eb1e765b24571f7d41fb622a63d62d1b9
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-01T01:05:11-04:00
+
+    fixed codecov badge in Readme
+
+1	1	README.md
+
+commit 5dbfd547b5ecde18ee01f8eaac21c75353c06aba
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-01T00:51:41-04:00
+
+    updated Readme badges
+
+8	8	README.md
+
+commit b13e870fb8ae912df7aa471bc6d219d03bbad9fd
+Author: Keber Flores <keberflores@gmail.com>
+Date:   2025-07-01T00:01:54-04:00
+
+    Initial commit
+
+86	0	.github/workflows/test.yml
+10	0	README.md
+98	0	pom.xml
+8	0	src/main/java/cl/keber/Calculadora.java
+20	0	src/test/java/cl/keber/CalculadoraServiceTest.java
+14	0	src/test/java/cl/keber/CalculadoraTest.java
