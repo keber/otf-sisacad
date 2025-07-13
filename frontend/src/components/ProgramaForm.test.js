@@ -2,6 +2,8 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ProgramaForm from './ProgramaForm';
 
+const mockOnSubmit = jest.fn();
+
 global.fetch = jest.fn(() =>
   Promise.resolve({
     json: () => Promise.resolve({ id: 1, codigo: 'PF001', nombre: 'Programa A' }),
@@ -14,7 +16,7 @@ describe('ProgramaForm', () => {
   });
 
   it('envía el formulario con los datos y muestra mensaje de éxito', async () => {
-    render(<ProgramaForm />);
+    render(<ProgramaForm onSubmit={mockOnSubmit} />);
 
     // Completar inputs
     fireEvent.change(screen.getByLabelText(/código/i), {
@@ -25,7 +27,7 @@ describe('ProgramaForm', () => {
     });
 
     // Enviar formulario
-    fireEvent.click(screen.getByRole('button', { name: /registrar/i }));
+    fireEvent.click(screen.getByRole('button', { name: /guardar/i }));
 
     // Esperar mensaje de éxito
     await waitFor(() =>
@@ -33,10 +35,13 @@ describe('ProgramaForm', () => {
     );
 
     // Asegura que se hizo fetch con POST
-    expect(fetch).toHaveBeenCalledWith('http://localhost:8080/programas', expect.objectContaining({
-      method: 'POST',
-      headers: expect.any(Object),
-      body: expect.any(String),
-    }));
+    expect(mockOnSubmit).toHaveBeenCalledWith({
+        codigo: 'PF001',
+        nombre: 'Programa A',
+        fechaInicio: '',
+        fechaFin: '',
+        estado: 'Activo',
+    });
+
   });
 });

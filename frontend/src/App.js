@@ -3,10 +3,20 @@ import ProgramaForm from './components/ProgramaForm';
 import ProgramaList from './components/ProgramaList';
 
 function App() {
+
+  const handleCrearPrograma = async (nuevoPrograma) => {
+    await fetch('http://localhost:8080/programas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(nuevoPrograma),
+    });
+
+  };
+
   return (
-    <div className="App">
+    <div style={{ padding: '2rem' }}>
       <h1>Registrar Programa</h1>
-      <ProgramaForm />
+      <ProgramaForm onSubmit={handleCrearPrograma} />
       <ProgramaList />
     </div>
   );

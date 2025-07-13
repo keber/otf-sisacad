@@ -1,47 +1,131 @@
 import React, { useState } from 'react';
 
-const ProgramaForm = () => {
-  const [codigo, setCodigo] = useState('');
-  const [nombre, setNombre] = useState('');
+const ProgramaForm = ({ onSubmit }) => {
+  const [formData, setFormData] = useState({
+    codigo: '',
+    nombre: '',
+    fechaInicio: '',
+    fechaFin: '',
+    estado: 'Activo',
+  });
+
+  const [errors, setErrors] = useState({});
   const [mensaje, setMensaje] = useState('');
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.codigo.trim()) newErrors.codigo = 'Campo obligatorio';
+    if (!formData.nombre.trim()) newErrors.nombre = 'Campo obligatorio';
+    return newErrors;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validate();
+    setErrors(validationErrors);
 
-    await fetch('http://localhost:8080/programas', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ codigo, nombre })
+    if (Object.keys(validationErrors).length === 0) {
+      onSubmit(formData);
+      setFormData({
+        codigo: '',
+        nombre: '',
+        fechaInicio: '',
+        fechaFin: '',
+        estado: 'Activo',
     });
-
     setMensaje('Programa registrado');
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="codigo">Código</label>
+    <form onSubmit={handleSubmit} style={styles.form}>
+      <div style={styles.field}>
+        <label htmlFor="codigo">Código *</label>
         <input
+          type="text"
+          name="codigo"
           id="codigo"
-          value={codigo}
-          onChange={(e) => setCodigo(e.target.value)}
+          value={formData.codigo}
+          onChange={handleChange}
         />
+        {errors.codigo && <span style={styles.error}>{errors.codigo}</span>}
       </div>
-      <div>
-        <label htmlFor="nombre">Nombre</label>
+
+      <div style={styles.field}>
+        <label htmlFor="nombre">Nombre *</label>
         <input
+          type="text"
+          name="nombre"
           id="nombre"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
+          value={formData.nombre}
+          onChange={handleChange}
+        />
+        {errors.nombre && <span style={styles.error}>{errors.nombre}</span>}
+      </div>
+
+      <div style={styles.field}>
+        <label htmlFor="fechaInicio">Fecha Inicio</label>
+        <input
+          type="date"
+          name="fechaInicio"
+          id="fechaInicio"
+          value={formData.fechaInicio}
+          onChange={handleChange}
         />
       </div>
-      <button type="submit">Registrar</button>
-      {mensaje && <p>{mensaje}</p>}
+
+      <div style={styles.field}>
+        <label htmlFor="FechaFin">Fecha Fin</label>
+        <input
+          type="date"
+          name="fechaFin"
+          id="fechaFin"
+          value={formData.fechaFin}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div style={styles.field}>
+        <label htmlFor="estado">Estado</label>
+        <select name="estado" if="estado" value={formData.estado} onChange={handleChange}>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+        </select>
+      </div>
+
+      <button type="submit">Guardar</button>
+
+      {mensaje && <p style={{ color: 'green' }}>{mensaje}</p>}
+
     </form>
   );
 };
 
+const styles = {
+  form: {
+    maxWidth: '500px',
+    padding: '1rem',
+    border: '1px solid #ccc',
+    borderRadius: '8px',
+    marginBottom: '2rem',
+    backgroundColor: '#f9f9f9',
+  },
+  field: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginBottom: '1rem',
+  },
+  error: {
+    color: 'red',
+    fontSize: '0.8rem',
+  },
+};
+
 export default ProgramaForm;
-    
