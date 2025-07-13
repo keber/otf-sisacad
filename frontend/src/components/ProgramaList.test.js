@@ -3,6 +3,11 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ProgramaList from './ProgramaList';
 
 describe('ProgramaList', () => {
+  let programas = [
+    { id: 1, codigo: 'PF001', nombre: 'Programa A', fechaInicio: '2024-01-01', fechaFin: '2024-12-31', estado: 'Activo' },
+    { id: 2, codigo: 'PF002', nombre: 'Programa B', fechaInicio: '2024-02-01', fechaFin: '2024-11-30', estado: 'Activo' }
+  ];
+
   beforeEach(() => {
     let programas = [
       { id: 1, codigo: 'PF001', nombre: 'Programa A', fechaInicio: '2024-01-01', fechaFin: '2024-12-31', estado: 'Activo' },
@@ -33,7 +38,7 @@ describe('ProgramaList', () => {
   });
 
   it('muestra la lista de programas formativos', async () => {
-    render(<ProgramaList />);
+    render(<ProgramaList programas={programas} onEditar={jest.fn()} refrescar={jest.fn()} />);
 
     // Espera que los elementos se muestren
     await waitFor(() => {
@@ -43,7 +48,7 @@ describe('ProgramaList', () => {
   });
 
   it('abre el modal de confirmación al hacer clic en Eliminar', async () => {
-    render(<ProgramaList />);
+    render(<ProgramaList programas={programas} onEditar={jest.fn()} refrescar={jest.fn()}/>);
     const botonEliminar = await screen.findAllByRole('button', { name: /eliminar/i });
     fireEvent.click(botonEliminar[0]);
 
@@ -53,7 +58,7 @@ describe('ProgramaList', () => {
   });
 
   it('realiza la petición DELETE y recarga la lista al confirmar', async () => {
-    render(<ProgramaList />);
+    render(<ProgramaList programas={programas} onEditar={jest.fn()} refrescar={jest.fn()}/>);
     const botonesEliminar = await screen.findAllByRole('button', { name: /eliminar/i });
     fireEvent.click(botonesEliminar[0]);
 

@@ -16,7 +16,7 @@ describe('ProgramaForm', () => {
   });
 
   it('envía el formulario con los datos y muestra mensaje de éxito', async () => {
-    render(<ProgramaForm onSubmit={mockOnSubmit} />);
+    render(<ProgramaForm onSubmit={mockOnSubmit} programaEnEdicion={null}/>);
 
     // Completar inputs
     fireEvent.change(screen.getByLabelText(/código/i), {
@@ -40,6 +40,7 @@ describe('ProgramaForm', () => {
         nombre: 'Programa A',
         fechaInicio: '',
         fechaFin: '',
+        id: null,
         estado: 'Activo',
     });
 
