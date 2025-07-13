@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import * as bootstrap from 'bootstrap';
+import PropTypes from 'prop-types';
 
-const ProgramaList = () => {
-  const [programas, setProgramas] = useState([]);
+const ProgramaList = ({ programas, onEditar, refrescar }) => {
   const [programaSeleccionado, setProgramaSeleccionado] = useState(null);
   const [alerta, setAlerta] = useState({ tipo: '', mensaje: '' });
 
   useEffect(() => {
     
-    cargarProgramas();
+    refrescar();
   }, []);
 
-  const cargarProgramas = async () => {
-    const res = await fetch('http://localhost:8080/programas');
-    const data = await res.json();
-    setProgramas(data);
-  };
 
   const confirmarEliminacion = (programa) => {
     setProgramaSeleccionado(programa);
@@ -34,7 +29,7 @@ const ProgramaList = () => {
       if (!res.ok) throw new Error('No se pudo eliminar el programa');
 
       setProgramaSeleccionado(null);
-      await cargarProgramas();
+      await refrescar();
 
       setAlerta({ tipo: 'success', mensaje: 'Programa eliminado' });
     } catch (error) {
@@ -89,7 +84,7 @@ const ProgramaList = () => {
                   <td>{p.fechaFin}</td>
                   <td>{p.estado}</td>
                   <td>
-                    <button className="btn btn-sm btn-warning me-2">
+                    <button className="btn btn-sm btn-warning me-2" onClick={() => onEditar(p)}>
                       Actualizar
                     </button>
                     <button className="btn btn-sm btn-danger" onClick={() => confirmarEliminacion(p)}>
@@ -123,6 +118,12 @@ const ProgramaList = () => {
       </div>
     </div>
   );
+};
+
+ProgramaList.propTypes = {
+  programas: PropTypes.array.isRequired,
+  onEditar: PropTypes.func.isRequired,
+  refrescar: PropTypes.func.isRequired
 };
 
 export default ProgramaList;

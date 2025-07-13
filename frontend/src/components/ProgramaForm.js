@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
-const ProgramaForm = ({ onSubmit }) => {
+const ProgramaForm = ({ onSubmit, programaEnEdicion  }) => {
   const [formData, setFormData] = useState({
+    id: null,
     codigo: '',
     nombre: '',
     fechaInicio: '',
@@ -11,6 +13,12 @@ const ProgramaForm = ({ onSubmit }) => {
 
   const [errors, setErrors] = useState({});
   const [mensaje, setMensaje] = useState('');
+
+  useEffect(() => {
+    if (programaEnEdicion) {
+      setFormData(programaEnEdicion);
+    }
+  }, [programaEnEdicion]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -35,6 +43,7 @@ const ProgramaForm = ({ onSubmit }) => {
     if (Object.keys(validationErrors).length === 0) {
       await onSubmit(formData);
       setFormData({
+        id: null,
         codigo: '',
         nombre: '',
         fechaInicio: '',
@@ -48,7 +57,7 @@ const ProgramaForm = ({ onSubmit }) => {
   return (
     <div className="card mt-4">
       <div className="card-body">
-        <h4 className="card-title mb-3">Registrar Programa</h4>
+        <h4 className="card-title mb-3">{formData.id ? 'Editar Programa' : 'Registrar Programa'}</h4>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="form-label" htmlFor="codigo">Código *</label>
@@ -116,6 +125,11 @@ const ProgramaForm = ({ onSubmit }) => {
     </div>
 
   );
+};
+
+ProgramaForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+  programaEnEdicion: PropTypes.object
 };
 
 export default ProgramaForm;
