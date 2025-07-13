@@ -4,29 +4,27 @@ import ProgramaList from './ProgramaList';
 
 describe('ProgramaList', () => {
   beforeEach(() => {
+    let programas = [
+      { id: 1, codigo: 'PF001', nombre: 'Programa A', fechaInicio: '2024-01-01', fechaFin: '2024-12-31', estado: 'Activo' },
+      { id: 2, codigo: 'PF002', nombre: 'Programa B', fechaInicio: '2024-02-01', fechaFin: '2024-11-30', estado: 'Activo' }
+    ];
+
     global.fetch = jest.fn((url, options) => {
       
       if (!options || options.method === 'GET') {
         return Promise.resolve({
           ok: true,
           json: () =>
-            Promise.resolve([
-              { id: 1, codigo: 'PF001', nombre: 'Programa A', fechaInicio: '2024-01-01', fechaFin: '2024-12-31', estado: 'Activo' },
-              { id: 2, codigo: 'PF002', nombre: 'Programa B', fechaInicio: '2024-02-01', fechaFin: '2024-11-30', estado: 'Activo' }
-            ])
+            Promise.resolve(programas)
         });
       }
 
-      if (options?.method === 'DELETE') {
+      if (options.method === 'DELETE') {
+        programas = programas.filter(p => p.id !== 1);
         return Promise.resolve({ ok: true });
       }
-      return Promise.resolve({
-        ok: true,
-        json: () =>
-          Promise.resolve([
-            { id: 2, codigo: 'PF002', nombre: 'Programa B', fechaInicio: '2024-02-01', fechaFin: '2024-11-30', estado: 'Activo' }
-          ])
-      });
+
+      return Promise.reject(new Error('Método no soportado'));
     });
   });
 
