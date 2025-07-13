@@ -30,9 +30,10 @@ const ProgramaForm = ({ onSubmit }) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
+    setMensaje('');
 
     if (Object.keys(validationErrors).length === 0) {
-      onSubmit(formData);
+      await onSubmit(formData);
       setFormData({
         codigo: '',
         nombre: '',
@@ -45,87 +46,76 @@ const ProgramaForm = ({ onSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={styles.form}>
-      <div style={styles.field}>
-        <label htmlFor="codigo">Código *</label>
-        <input
-          type="text"
-          name="codigo"
-          id="codigo"
-          value={formData.codigo}
-          onChange={handleChange}
-        />
-        {errors.codigo && <span style={styles.error}>{errors.codigo}</span>}
+    <div className="card mt-4">
+      <div className="card-body">
+        <h4 className="card-title mb-3">Registrar Programa</h4>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label className="form-label" htmlFor="codigo">Código *</label>
+              <input
+                type="text"
+                name="codigo"
+                id="codigo"
+                value={formData.codigo}
+                onChange={handleChange}
+                className={`form-control ${errors.codigo ? 'is-invalid' : ''}`}
+              />
+              {errors.codigo && <div className="invalid-feedback">{errors.codigo}</div>}
+            </div>
+
+          <div className="mb-3">
+            <label className="form-label" htmlFor="nombre">Nombre *</label>
+            <input
+              type="text"
+              name="nombre"
+              id="nombre"
+              value={formData.nombre}
+              onChange={handleChange}
+              className={`form-control ${errors.nombre ? 'is-invalid' : ''}`}
+            />
+            {errors.nombre && <div className="invalid-feedback">{errors.nombre}</div>}
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label" htmlFor="fechaInicio">Fecha Inicio</label>
+            <input
+              type="date"
+              name="fechaInicio"
+              id="fechaInicio"
+              value={formData.fechaInicio}
+              onChange={handleChange}
+              className="form-control"
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label" htmlFor="FechaFin">Fecha Fin</label>
+            <input
+              type="date"
+              name="fechaFin"
+              id="fechaFin"
+              value={formData.fechaFin}
+              onChange={handleChange}
+              className="form-control"
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label" htmlFor="estado">Estado</label>
+            <select name="estado" id="estado" value={formData.estado} onChange={handleChange} className="form-select">
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+            </select>
+          </div>
+
+          <button type="submit" className="btn btn-primary">Guardar</button>
+        </form>
+
+        {mensaje && <div className="alert alert-success mt-3">{mensaje}</div>}
       </div>
+    </div>
 
-      <div style={styles.field}>
-        <label htmlFor="nombre">Nombre *</label>
-        <input
-          type="text"
-          name="nombre"
-          id="nombre"
-          value={formData.nombre}
-          onChange={handleChange}
-        />
-        {errors.nombre && <span style={styles.error}>{errors.nombre}</span>}
-      </div>
-
-      <div style={styles.field}>
-        <label htmlFor="fechaInicio">Fecha Inicio</label>
-        <input
-          type="date"
-          name="fechaInicio"
-          id="fechaInicio"
-          value={formData.fechaInicio}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div style={styles.field}>
-        <label htmlFor="FechaFin">Fecha Fin</label>
-        <input
-          type="date"
-          name="fechaFin"
-          id="fechaFin"
-          value={formData.fechaFin}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div style={styles.field}>
-        <label htmlFor="estado">Estado</label>
-        <select name="estado" if="estado" value={formData.estado} onChange={handleChange}>
-            <option value="Activo">Activo</option>
-            <option value="Inactivo">Inactivo</option>
-        </select>
-      </div>
-
-      <button type="submit">Guardar</button>
-
-      {mensaje && <p style={{ color: 'green' }}>{mensaje}</p>}
-
-    </form>
   );
-};
-
-const styles = {
-  form: {
-    maxWidth: '500px',
-    padding: '1rem',
-    border: '1px solid #ccc',
-    borderRadius: '8px',
-    marginBottom: '2rem',
-    backgroundColor: '#f9f9f9',
-  },
-  field: {
-    display: 'flex',
-    flexDirection: 'column',
-    marginBottom: '1rem',
-  },
-  error: {
-    color: 'red',
-    fontSize: '0.8rem',
-  },
 };
 
 export default ProgramaForm;

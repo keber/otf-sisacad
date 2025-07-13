@@ -15,7 +15,6 @@ function App() {
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h1>Registrar Programa</h1>
       <ProgramaForm onSubmit={handleCrearPrograma} />
       <ProgramaList />
     </div>
