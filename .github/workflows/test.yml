@@ -74,7 +74,6 @@ jobs:
   frontend:
     name: Build and Test Frontend
     runs-on: ubuntu-latest
-    if: ${{ contains(join(github.event.commits.*.modified, ' '), 'frontend/') }}
 
     defaults:
       run:
