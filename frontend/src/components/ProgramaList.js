@@ -9,7 +9,7 @@ const ProgramaList = ({ programas, onEditar, refrescar }) => {
   useEffect(() => {
     
     refrescar();
-  }, []);
+  }, [refrescar]);
 
   const confirmarEliminacion = (programa) => {
     setProgramaSeleccionado(programa);
