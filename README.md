@@ -30,3 +30,72 @@ Dado que cada clase admite un máximo de 20 participantes, los alumnos de un man
 - [ Sprint 1: 44 Registrar programas formativos: 108 Crear servicio ProgramaFormativoService](docs/108.md)
 - [ Sprint 1: 44 Registrar programas formativos: 109 Crear controlador ProgramaFormativoController](docs/109.md)
 - [ Sprint 1: 44 Registrar programas formativos: 110 Crear DTO y Mapper ProgramaFormativo](docs/110.md)
+- [ Sprint 1: 44 Registrar programas formativos: 112 Crear Frontend para ProgramaFormativo](docs/112.md)
+- [ Sprint 1: 44 Registrar programas formativos: 111 Deuda Técnica](docs/111.md)
+
+## Instrucciones de Configuración del Proyecto
+
+### Pre requirements
+
+- [x] Operating System: Windows or Linux (WSL included)
+- [x] Java JDK 17 o 21 + Maven installed
+  * Linux Installation (Ubuntu, WSL)
+  ```bash
+  sudo apt update
+  sudo apt install openjdk-17-jdk maven
+  ```
+- [x] Clone the project
+  ```bash
+  git clone https://github.com/keber/otf-sisacad.git
+  ```
+
+### Configuration
+
+* Create .env file in project root folder and load the following vars with actual values for your postgresql database:
+  ```bash
+  DB_HOST=
+  DB_PORT=
+  DB_DATABASE=
+  DB_USERNAME=
+  DB_PASSWORD=
+  ```
+* Load the .env file
+    * in bash:
+    ```bash
+    export $(cat .env | xargs)
+    ```
+    * in Powershell: 
+    ```powershell
+    Get-Content .env | ForEach-Object {
+        if ($_ -match "^(.*?)=(.*)$") { [System.Environment]::SetEnvironmentVariable($matches[1], $matches[2]) }
+    }
+    ```
+
+#### Back-end
+* Build 
+  ```bash
+  mvn clean compile
+  ```
+* Run tests
+  ```bash
+  mvn clean verify
+  ```
+* Run app
+  ```bash
+  export $(cat .env | xargs) mvn spring-boot:run 
+  ```
+
+#### Front-end
+* Build
+  ```
+  cd frontend
+  npm install
+  ```
+* Run tests
+  ```
+  npm test
+  ```
+* Run app
+  ```
+  npm start
+  ```
