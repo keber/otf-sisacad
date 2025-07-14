@@ -31,7 +31,7 @@ Dado que cada clase admite un máximo de 20 participantes, los alumnos de un man
 - [ Sprint 1: 44 Registrar programas formativos: 109 Crear controlador ProgramaFormativoController](docs/109.md)
 - [ Sprint 1: 44 Registrar programas formativos: 110 Crear DTO y Mapper ProgramaFormativo](docs/110.md)
 - [ Sprint 1: 44 Registrar programas formativos: 112 Crear Frontend para ProgramaFormativo](docs/112.md)}
-- [ Sprint 1: 44 Registrar programas formativos: 111 Deuda Técnica](docs/111.md)}
+- [ Sprint 1: 44 Registrar programas formativos: 111 Deuda Técnica](docs/111.md)
 
 ## Instrucciones de Configuración del Proyecto
 
@@ -71,7 +71,7 @@ Dado que cada clase admite un máximo de 20 participantes, los alumnos de un man
     }
     ```
 
-###c# Back-end
+#### Back-end
 * Build 
   ```bash
   mvn clean compile
