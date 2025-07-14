@@ -26,3 +26,7 @@ Dado que cada clase admite un máximo de 20 participantes, los alumnos de un man
 - [ Diagrama ER ](docs/diag-er.md)
 - [ Sprint 0 – Registro de configuración inicial](docs/sprint-0.md)
 - [ Sprint 1: 44 Registrar programas formativos: 106 Crear clase ProgramaFormativo](docs/106.md)
+- [ Sprint 1: 44 Registrar programas formativos: 107 Crear repositorio ProgramaFormativoRepository](docs/107.md)
+- [ Sprint 1: 44 Registrar programas formativos: 108 Crear servicio ProgramaFormativoService](docs/108.md)
+- [ Sprint 1: 44 Registrar programas formativos: 109 Crear controlador ProgramaFormativoController](docs/109.md)
+- [ Sprint 1: 44 Registrar programas formativos: 110 Crear DTO y Mapper ProgramaFormativo](docs/110.md)

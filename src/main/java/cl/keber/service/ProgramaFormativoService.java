@@ -3,10 +3,13 @@ package cl.keber.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
+import cl.keber.exception.ProgramaNoEncontradoException;
 import cl.keber.model.ProgramaFormativo;
 import cl.keber.repository.ProgramaFormativoRepository;
-import cl.keber.exception.ProgramaNoEncontradoException;
 
+@Service
 public class ProgramaFormativoService {
 
     private final ProgramaFormativoRepository repository;
