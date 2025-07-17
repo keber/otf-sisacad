@@ -1,0 +1,10 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+otf-sisacad,cl.keber.service,ProgramaFormativoService,15,43,3,1,1,12,3,6,1,6
+otf-sisacad,cl.keber,OtfSisacadApplication,0,8,0,0,0,3,0,2,0,2
+otf-sisacad,cl.keber.mapper,ProgramaFormativoMapper,4,32,2,2,0,14,2,2,0,2
+otf-sisacad,cl.keber.config,WebConfig,0,8,0,0,0,2,0,2,0,2
+otf-sisacad,cl.keber.config,WebConfig.new WebMvcConfigurer() {...},0,48,0,0,0,6,0,2,0,2
+otf-sisacad,cl.keber.model,ProgramaFormativo,14,96,1,7,1,25,2,14,1,11
+otf-sisacad,cl.keber.controller,ProgramaFormativoController,0,38,0,0,0,8,0,5,0,5
+otf-sisacad,cl.keber.dto,ProgramaFormativoDTO,12,44,0,0,6,18,3,9,3,9
+otf-sisacad,cl.keber.exception,ProgramaNoEncontradoException,0,5,0,0,0,2,0,1,0,1

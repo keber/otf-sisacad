@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProgramaFormativoController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">otf-sisacad</a> &gt; <a href="index.source.html" class="el_package">cl.keber.controller</a> &gt; <span class="el_source">ProgramaFormativoController.java</span></div><h1>ProgramaFormativoController.java</h1><pre class="source lang-java linenums">package cl.keber.controller;
+
+import cl.keber.model.ProgramaFormativo;
+import cl.keber.service.ProgramaFormativoService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/programas&quot;)
+public class ProgramaFormativoController {
+
+    private final ProgramaFormativoService service;
+
+<span class="fc" id="L17">    public ProgramaFormativoController(ProgramaFormativoService service) {</span>
+<span class="fc" id="L18">        this.service = service;</span>
+<span class="fc" id="L19">    }</span>
+
+    @PostMapping
+    public ResponseEntity&lt;ProgramaFormativo&gt; crearPrograma(@RequestBody ProgramaFormativo programa) {
+<span class="fc" id="L23">        return new ResponseEntity&lt;&gt;(service.guardarPrograma(programa), HttpStatus.OK);</span>
+    }
+
+    @GetMapping
+    public List&lt;ProgramaFormativo&gt; listarProgramas() {
+<span class="fc" id="L28">        return service.listarTodos();</span>
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;ProgramaFormativo&gt; actualizarPrograma(
+            @PathVariable(&quot;id&quot;) Long id,
+            @RequestBody ProgramaFormativo programaActualizado) {
+<span class="fc" id="L35">        return new ResponseEntity&lt;&gt;(service.actualizarPrograma(id, programaActualizado), HttpStatus.OK);</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; eliminarPrograma(@PathVariable(&quot;id&quot;) Long id) {
+<span class="fc" id="L40">        service.eliminarPrograma(id);</span>
+<span class="fc" id="L41">        return new ResponseEntity&lt;&gt;(HttpStatus.NO_CONTENT);</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
