@@ -146,7 +146,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: maven-test-reports
-        path: target/site/
+        path: target/
 
     - name: Run SonarCloud analysis
       env:
@@ -162,6 +162,7 @@ jobs:
         flags: unittests
         name: codecov-coverage
         fail_ci_if_error: true
+        disable_search: true
 
     - name: Combine JaCoCo and Surefire reports
       if: success() || failure()
