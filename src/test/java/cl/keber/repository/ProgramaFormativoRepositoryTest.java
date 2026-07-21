@@ -11,7 +11,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
+@DataJpaTest(properties = {
+    "spring.flyway.default-schema=OTFSISACAD",
+    "spring.flyway.schemas=OTFSISACAD",
+    "spring.jpa.properties.hibernate.default_schema=OTFSISACAD"
+})
 class ProgramaFormativoRepositoryTest {
 
     @Autowired
