@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.annotation.Value;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,6 +18,9 @@ class DatabaseMigrationTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Value("${spring.flyway.default-schema}")
+    private String schema;
+    
     @ParameterizedTest
     @ValueSource(strings = {
         "programa_formativo",
@@ -27,11 +31,13 @@ class DatabaseMigrationTest {
     void tablaDebeExistir(String nombreTabla) {
         String sql = "SELECT EXISTS (" +
                      "  SELECT FROM information_schema.tables " +
-                     "  WHERE table_schema = 'public' " +
+                     "  WHERE table_schema = ? " +
                      "  AND table_name = ?" +
                      ")";
         String msg = String.format("La tabla '%s' debería existir.",nombreTabla);
-        Boolean existe = jdbcTemplate.queryForObject(sql, Boolean.class, nombreTabla);
+        Boolean existe = jdbcTemplate.queryForObject(
+            sql, Boolean.class, schema, nombreTabla
+        );
         assertTrue(existe, msg);
     }
 }
