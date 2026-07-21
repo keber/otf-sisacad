@@ -85,11 +85,11 @@ jobs:
           target/surefire-reports/
         if-no-files-found: error
 
-      - name: Fail job if tests failed
-        if: always() && steps.run-tests.outcome == 'failure'
-        run: |
-          echo "::error::One or more Maven tests failed."
-          exit 1
+    - name: Fail job if tests failed
+      if: always() && steps.run-tests.outcome == 'failure'
+      run: |
+        echo "::error::One or more Maven tests failed."
+        exit 1
 
   frontend:
     name: Build and Test Frontend
