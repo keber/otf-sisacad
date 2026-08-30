@@ -12,7 +12,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 | WP | Status | Branch | PR | Merged on | Notes |
 |---|---|---|---|---|---|
 | WP1 baseline | MERGED | `refactor/wp1-baseline` | – | – | Merged 2026-08-30; baseline recorded, 15 characterization tests |
-| WP2 boundaries | IN PROGRESS | `refactor/wp2-boundaries` | – | – | Wave 1, started 2026-08-30 |
+| WP2 boundaries | MERGED | `refactor/wp2-boundaries` | – | – | Merged 2026-08-30; move-only, 43/43 green |
 | WP3 domain | TODO | `refactor/wp3-domain` | – | – | |
 | WP4 repository port | TODO | `refactor/wp4-repository-port` | – | – | |
 | WP5 use cases | TODO | `refactor/wp5-use-cases` | – | – | |
