@@ -13,7 +13,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 |---|---|---|---|---|---|
 | WP1 baseline | MERGED | `refactor/wp1-baseline` | – | – | Merged 2026-08-30; baseline recorded, 15 characterization tests |
 | WP2 boundaries | MERGED | `refactor/wp2-boundaries` | – | – | Merged 2026-08-30; move-only, 43/43 green |
-| WP3 domain | TODO | `refactor/wp3-domain` | – | – | |
+| WP3 domain | IN PROGRESS | `refactor/wp3-domain` | – | – | Wave 2, started 2026-08-30; includes D7 scope extension |
 | WP4 repository port | TODO | `refactor/wp4-repository-port` | – | – | |
 | WP5 use cases | TODO | `refactor/wp5-use-cases` | – | – | |
 | WP6 persistence | TODO | `refactor/wp6-persistence` | – | – | |
@@ -186,6 +186,46 @@ controller binds and returns the JPA entity on every endpoint, and
 `TrainingProgramDto` / `TrainingProgramMapper` are dead code relative to the REST
 layer. Confirmed independently by WP1 (black-box HTTP) and WP-DOCS (source read).
 WP7 wires a DTO for the **first time** - scope it as new work, not a refinement.
+
+### D7 — WP3 absorbs the controller's DTO binding (scope extension)
+
+Approved by Keber Flores on 2026-08-30.
+
+**Problem.** `TrainingProgramController` binds and returns the domain type
+directly (`@RequestBody TrainingProgram`). WP3 makes `TrainingProgram` a final
+class with a private constructor, factories, and VO-typed fields. That breaks the
+REST layer twice over:
+
+1. Requests cannot bind - Jackson has no no-arg constructor, so every `POST` and
+   `PUT` fails.
+2. Responses change shape - VO-returning getters serialise as
+   `{"code":{"value":"PRG-1"}}` instead of `{"code":"PRG-1"}`, breaking `GET`
+   too. That is a contract break far beyond the validation change in D1/D2.
+
+WP3's declared "Files in scope" excludes `infrastructure/web/controller/`, so
+WP3 as written cannot end green. Its bridge assumes a DTO-speaking controller,
+which does not exist yet (see D6).
+
+**Decision.** Extend WP3's scope by exactly two things:
+
+- Add an `id` field to `TrainingProgramDto`. It currently has none, but WP1
+  proved `id` is on the wire in both directions and the frontend needs it to
+  address `PUT` / `DELETE`. Without this the refactor would silently drop `id`
+  from every response.
+- Switch `TrainingProgramController` to bind and return `TrainingProgramDto`,
+  mapping through `infrastructure.web.mapper.TrainingProgramMapper`.
+
+This pulls one slice of WP7 forward. It is the smallest change that keeps `dev`
+green while letting the domain go pure. The JSON contract stays byte-identical
+apart from the validation behaviour already approved in D1.
+
+**Consequences for later WPs.** WP7 no longer introduces the DTO; it adds the
+`@RestControllerAdvice` (D1) and swaps the controller's dependency from
+`TrainingProgramService` to the use-case interfaces. Re-scope WP7 accordingly.
+
+**Watch for.** Routing `PUT` through the path id instead of the request body may
+incidentally fix exposed defect 2. Verify rather than assume, and record the
+outcome.
 
 ## Exposed defects (documented, not fixed - see D2)
 
