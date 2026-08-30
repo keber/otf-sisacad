@@ -1,0 +1,5 @@
+# Keep machine/worktree-local Claude Code settings out of version control,
+# but allow the shared refactor instruction set (.claude/refactor/**) to be
+# committed so every worktree can read it.
+settings.json
+settings.local.json
