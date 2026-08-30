@@ -11,7 +11,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 
 | WP | Status | Branch | PR | Merged on | Notes |
 |---|---|---|---|---|---|
-| WP1 baseline | TODO | `refactor/wp1-baseline` | – | – | |
+| WP1 baseline | IN PROGRESS | `refactor/wp1-baseline` | – | – | Wave 0, started 2026-08-30 |
 | WP2 boundaries | TODO | `refactor/wp2-boundaries` | – | – | |
 | WP3 domain | TODO | `refactor/wp3-domain` | – | – | |
 | WP4 repository port | TODO | `refactor/wp4-repository-port` | – | – | |
@@ -19,7 +19,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 | WP6 persistence | TODO | `refactor/wp6-persistence` | – | – | |
 | WP7 web + wiring | TODO | `refactor/wp7-web` | – | – | |
 | WP8 archunit + cleanup | TODO | `refactor/wp8-archunit-cleanup` | – | – | |
-| WP-DOCS architecture | TODO | `refactor/wp-docs` | – | – | |
+| WP-DOCS architecture | IN PROGRESS | `refactor/wp-docs` | – | – | Wave 0, started 2026-08-30; stays open through Wave 6 |
 
 ## Baseline (filled by WP1)
 
@@ -85,3 +85,12 @@ _pending_
 - [ ] REST contract under `/programs` unchanged; frontend needs no changes.
 - [ ] Legacy `model` / `repository` / `service` packages removed.
 - [ ] `docs/architecture/*` published and README points to it.
+
+## Environment notes (orchestrator)
+
+- Local JDK is Microsoft OpenJDK 25.0.2, matching `pom.xml`. The CONVENTIONS
+  JDK caveat (`-Dmaven.compiler.release=21`) does **not** apply; every wave
+  verifies with a plain `mvn clean verify`.
+- Maven 3.9.10.
+- `REFACTOR-GUIDE.md` was committed to `dev` before Wave 0 (`00480a5`) so that
+  worker worktrees carry the design authority.
