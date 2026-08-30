@@ -14,7 +14,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 | WP1 baseline | MERGED | `refactor/wp1-baseline` | – | – | Merged 2026-08-30; baseline recorded, 15 characterization tests |
 | WP2 boundaries | MERGED | `refactor/wp2-boundaries` | – | – | Merged 2026-08-30; move-only, 43/43 green |
 | WP3 domain | MERGED | `refactor/wp3-domain` | – | – | Merged 2026-08-30; 4 VOs, pure entity, D7 controller DTO binding, 83/83 |
-| WP4 repository port | IN PROGRESS | `refactor/wp4-repository-port` | – | – | Wave 3, started 2026-08-30 |
+| WP4 repository port | IN REVIEW | `refactor/wp4-repository-port` | – | – | Wave 3; port + adapter, 89/89, characterization untouched |
 | WP5 use cases | TODO | `refactor/wp5-use-cases` | – | – | |
 | WP6 persistence | TODO | `refactor/wp6-persistence` | – | – | |
 | WP7 web + wiring | TODO | `refactor/wp7-web` | – | – | |
@@ -509,7 +509,78 @@ swap the controller's `TrainingProgramService` dependency for the use-case
 interfaces.
 
 ### WP4
-_pending_
+
+_2026-08-30 - branch `refactor/wp4-repository-port`, branched from `dev` @ `ff7e67e`._
+
+**Commits.**
+
+| SHA | Subject |
+|---|---|
+| `3912e4b` | `feat: add TrainingProgramRepository port in the domain` |
+| `420a0a2` | `refactor: implement the port with a JPA persistence adapter` |
+| `374c195` | `refactor: depend application on the repository port` |
+| `541c33a` | `test: cover the JPA repository adapter with DataJpaTest` |
+
+**The port.** `cl.keber.domain.repository.TrainingProgramRepository`, exactly five
+methods, domain types only, no annotations:
+
+```java
+TrainingProgram save(TrainingProgram program);
+Optional<TrainingProgram> findById(Long id);
+List<TrainingProgram> findAll();
+boolean existsById(Long id);
+void deleteById(Long id);
+```
+
+`existsById` has no caller yet; it is part of the contract the WP file specifies and
+is covered by the adapter test.
+
+**The adapter.** `cl.keber.infrastructure.persistence.adapter.JpaTrainingProgramRepositoryAdapter`,
+annotated `@Repository`, constructor-injected with `SpringDataTrainingProgramRepository`.
+It is the single implementation of the port and the single caller of
+`TrainingProgramPersistenceMapper`.
+
+**Renames.** `infrastructure.persistence.repository.TrainingProgramRepository` ->
+`SpringDataTrainingProgramRepository` (via `git mv`, history follows), and its test
+to `SpringDataTrainingProgramRepositoryTest`. The domain port now owns the plain
+`TrainingProgramRepository` name, so an unqualified reference in later WPs means the
+port.
+
+**Bridge markers.** All three WP3 `// bridge: replaced by the adapter in WP6` markers
+are gone (service body, persistence mapper Javadoc, Spring Data interface), along with
+the one in `TrainingProgramServiceTest`'s Javadoc. `grep -rn "bridge" src --include=*.java`
+returns nothing. WP6 inherits no bridge to dismantle: it inherits a finished adapter.
+
+**Application layer.** `TrainingProgramService` takes the domain port and its body is
+domain-in / domain-out with no mapping at all; the five methods are otherwise
+unchanged. `@Service` stays (WP7 removes it). `TrainingProgramServiceTest` mocks the
+port and asserts over domain entities; the JPA-row assertions it lost are covered by
+the new adapter test.
+
+**Behaviour.** No observable change. The 15 characterization tests are byte-identical
+(`git diff ff7e67e -- src/test/java/cl/keber/characterization/` is empty) and all 15
+pass. D2 was not invoked. Exposed defect 2 is confirmed **still present and untouched**:
+`update` still calls `repository.save(updated)` with whatever id the program carries, so
+a body without an id still saves a null-id program and inserts a duplicate row. WP5 owns
+it. Defects 3-5 likewise untouched.
+
+**Verification.** `mvn clean verify` -> BUILD SUCCESS, 89 tests, 0 failures / 0 errors /
+0 skipped (83 before WP4, +6 from the new adapter test). JDK 25.0.2, no extra flags.
+`grep -R "org.springframework.data\|JpaRepository\|jakarta.persistence"` over
+`src/main/java/cl/keber/application` and `src/main/java/cl/keber/domain` -> no hits.
+
+**Separation for the WP5 / WP6 parallel window.** `application/**` and
+`infrastructure/persistence/**` share **no file**. Their only relationship is that both
+compile against `domain/**`: `application` imports `cl.keber.domain.*` and nothing else;
+`infrastructure/persistence` imports `cl.keber.domain.*` and never `cl.keber.application.*`.
+WP5 and WP6 can run simultaneously without collision provided neither edits
+`domain/repository/TrainingProgramRepository.java` — a change to the port signature is
+the one file that would force them to coordinate.
+
+**New adapter test.** `src/test/java/cl/keber/infrastructure/persistence/JpaTrainingProgramRepositoryAdapterTest.java`,
+`@DataJpaTest` + `@Import(JpaTrainingProgramRepositoryAdapter.class)` on H2 with the
+`OTFSISACAD` Flyway properties copied from the existing repository test. Six tests:
+save, findById present/empty, findAll, existsById, deleteById, and save-as-update.
 
 ### WP5
 _pending_
