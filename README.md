@@ -25,12 +25,12 @@ Since each class admits a maximum of 20 participants, a client's students are sp
 - [ Class diagram ](docs/diag-class.md)
 - [ ER diagram ](docs/diag-er.md)
 - [ Sprint 0 – Initial configuration log](docs/sprint-0.md)
-- [ Sprint 1: 44 Register training programs: 106 Create the ProgramaFormativo class](docs/106.md)
-- [ Sprint 1: 44 Register training programs: 107 Create the ProgramaFormativoRepository repository](docs/107.md)
-- [ Sprint 1: 44 Register training programs: 108 Create the ProgramaFormativoService service](docs/108.md)
-- [ Sprint 1: 44 Register training programs: 109 Create the ProgramaFormativoController controller](docs/109.md)
-- [ Sprint 1: 44 Register training programs: 110 Create the ProgramaFormativo DTO and Mapper](docs/110.md)
-- [ Sprint 1: 44 Register training programs: 112 Create the frontend for ProgramaFormativo](docs/112.md)
+- [ Sprint 1: 44 Register training programs: 106 Create the TrainingProgram class](docs/106.md)
+- [ Sprint 1: 44 Register training programs: 107 Create the TrainingProgramRepository repository](docs/107.md)
+- [ Sprint 1: 44 Register training programs: 108 Create the TrainingProgramService service](docs/108.md)
+- [ Sprint 1: 44 Register training programs: 109 Create the TrainingProgramController controller](docs/109.md)
+- [ Sprint 1: 44 Register training programs: 110 Create the TrainingProgram DTO and Mapper](docs/110.md)
+- [ Sprint 1: 44 Register training programs: 112 Create the frontend for TrainingProgram](docs/112.md)
 - [ Sprint 1: 44 Register training programs: 111 Technical Debt](docs/111.md)
 
 ## Project Setup Instructions

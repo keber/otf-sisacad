@@ -12,7 +12,7 @@ class OtfSisacadApplicationTests {
     @Test
     void contextLoads() {
         // This test verifies that the Spring context starts correctly.
-        assertTrue(true, "El contexto de Spring se cargó correctamente.");
+        assertTrue(true, "The Spring context loaded correctly.");
     }
 
 }

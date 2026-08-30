@@ -2,77 +2,78 @@
 
 ```mermaid
 classDiagram
-    class ProgramaFormativo {
+    class TrainingProgram {
         +int id
-        +string nombre
-        +string descripcion
-        +int version
-        +date fecha_vigencia_desde
-        +date fecha_vigencia_hasta
-        +string estado
+        +string code
+        +string name
+        +string description
+        +int revision
+        +date validFrom
+        +date validTo
+        +string status
     }
 
-    class EdicionCurso {
+    class CourseEdition {
         +int id
-        +string codigo
-        +date fecha_inicio
-        +date fecha_termino
-        +int version_programa
+        +string code
+        +date startDate
+        +date endDate
+        +int programRevision
     }
 
-    class Mandante {
+    class Client {
         +int id
-        +string razon_social
-        +string rut
-        +string contacto
+        +string legalName
+        +string taxId
+        +string contact
     }
 
-    class Seccion {
+    class Section {
         +int id
-        +int numero
-        +string horario
-        +date plazo_acceso_materiales
+        +int number
+        +string schedule
+        +date materialsAccessDeadline
     }
 
-    class Facilitador {
+    class Facilitator {
         +int id
-        +string nombre
-        +string rut
-        +string correo
+        +string name
+        +string taxId
+        +string email
     }
 
-    class HabilitacionFacilitador {
+    class FacilitatorQualification {
         +int id
-        +date fecha_habilitacion
-        +string otorgado_por
-        +string estado  // active, expired, suspended
-        +string observaciones
+        +date qualificationDate
+        +string grantedBy
+        +string status  // active, expired, suspended
+        +string notes
     }
 
-    class Alumno {
+    class Student {
         +int id
-        +string nombre
-        +string rut
-        +string correo
-        +string empresa
+        +string name
+        +string taxId
+        +string email
+        +string company
     }
 
-    class Matricula {
-        +float asistencia
-        +float puntaje_diagnostico
-        +float puntaje_final
-        +string estado_final
+    class Enrollment {
+        +float attendance
+        +float diagnosticScore
+        +float finalScore
+        +string finalStatus
     }
 
 
     %% Relationships
-    ProgramaFormativo "1" --> "0..*" EdicionCurso
-    EdicionCurso "1" --> "1" Mandante
-    EdicionCurso "1" --> "0..*" Seccion
-    Facilitador "1" --> "0..*" Seccion
-    Seccion "1" --> "0..*" ParticipacionAlumno
-    ParticipacionAlumno "1" --> "1" Alumno
+    TrainingProgram "1" --> "0..*" CourseEdition
+    CourseEdition "1" --> "1" Client
+    CourseEdition "1" --> "0..*" Section
+    Facilitator "1" --> "0..*" Section
+    Section "1" --> "0..*" Enrollment
+    Enrollment "1" --> "1" Student
 
-    Facilitador "1" --> "0..*" HabilitacionFacilitador
-    ProgramaFormativo "1" --> "0..*" HabilitacionFacilitador
+    Facilitator "1" --> "0..*" FacilitatorQualification
+    TrainingProgram "1" --> "0..*" FacilitatorQualification
 ```

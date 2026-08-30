@@ -20,24 +20,24 @@ class DatabaseMigrationTest {
 
     @Value("${spring.flyway.default-schema}")
     private String schema;
-    
+
     @ParameterizedTest
     @ValueSource(strings = {
-        "programa_formativo",
-        "cliente",
-        "facilitador",
-        "habilitacion_facilitador"
+        "training_program",
+        "client",
+        "facilitator",
+        "facilitator_qualification"
     })
-    void tablaDebeExistir(String nombreTabla) {
+    void tableShouldExist(String tableName) {
         String sql = "SELECT EXISTS (" +
                      "  SELECT FROM information_schema.tables " +
                      "  WHERE table_schema = ? " +
                      "  AND table_name = ?" +
                      ")";
-        String msg = String.format("La tabla '%s' debería existir.",nombreTabla);
-        Boolean existe = jdbcTemplate.queryForObject(
-            sql, Boolean.class, schema, nombreTabla
+        String msg = String.format("Table '%s' should exist.", tableName);
+        Boolean exists = jdbcTemplate.queryForObject(
+            sql, Boolean.class, schema, tableName
         );
-        assertTrue(existe, msg);
+        assertTrue(exists, msg);
     }
 }
