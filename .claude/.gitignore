@@ -3,3 +3,6 @@
 # committed so every worktree can read it.
 settings.json
 settings.local.json
+
+# Agent worktrees created by the Claude Code Agent tool are local scratch.
+worktrees/
