@@ -13,7 +13,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 |---|---|---|---|---|---|
 | WP1 baseline | MERGED | `refactor/wp1-baseline` | – | – | Merged 2026-08-30; baseline recorded, 15 characterization tests |
 | WP2 boundaries | MERGED | `refactor/wp2-boundaries` | – | – | Merged 2026-08-30; move-only, 43/43 green |
-| WP3 domain | IN PROGRESS | `refactor/wp3-domain` | – | – | Wave 2, started 2026-08-30; includes D7 scope extension |
+| WP3 domain | MERGED | `refactor/wp3-domain` | – | – | Merged 2026-08-30; 4 VOs, pure entity, D7 controller DTO binding, 83/83 |
 | WP4 repository port | TODO | `refactor/wp4-repository-port` | – | – | |
 | WP5 use cases | TODO | `refactor/wp5-use-cases` | – | – | |
 | WP6 persistence | TODO | `refactor/wp6-persistence` | – | – | |
@@ -232,7 +232,7 @@ outcome.
 | # | Defect | Found by | Disposition |
 |---|---|---|---|
 | 1 | Domain validation never runs over HTTP: Jackson binds through the no-arg constructor and writes private fields, so a blank `code` or an inverted date range is accepted with `200` and persisted. | WP1 | **Fixed as a side effect** of WP3 + WP7 (VOs validate; D1 maps the failure to `400`). |
-| 2 | `PUT /programs/{id}` with no `id` in the request body INSERTS a duplicate row and leaves the addressed program untouched. No unique constraint on `code` prevents it. | WP1 | Out of scope. Log only. Re-check after WP5 - the update use case may fix it incidentally. |
+| 2 | `PUT /programs/{id}` with no `id` in the request body INSERTS a duplicate row and leaves the addressed program untouched. No unique constraint on `code` prevents it. | WP1 | Out of scope. **Verified still present after WP3** - D7's DTO binding did NOT fix it incidentally: a body without an id maps to `create(...)`, so the service still saves a null-id row. Re-check after WP5. |
 | 3 | `DELETE` on an unknown id returns `204`, so delete is unobservable and silently idempotent. | WP1 | Out of scope. Log only. |
 | 4 | `spring.jpa.hibernate.ddl-auto=update` runs on top of the Flyway schema and widens `id` / `code` / `status` column types on every startup. | WP1 | Out of scope, but **flag before production**. Not a refactor concern. |
 | 5 | The `training_program` table has four columns the entity does not map: `description`, `revision`, `valid_from`, `valid_to`. | WP1 | Out of scope. WP6 must not "helpfully" map them. |
