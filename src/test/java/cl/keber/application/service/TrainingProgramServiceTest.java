@@ -6,7 +6,7 @@ import cl.keber.domain.valueobject.TrainingProgramCode;
 import cl.keber.domain.valueobject.TrainingProgramName;
 import cl.keber.domain.valueobject.TrainingProgramStatus;
 import cl.keber.infrastructure.persistence.entity.TrainingProgramJpaEntity;
-import cl.keber.infrastructure.persistence.repository.TrainingProgramRepository;
+import cl.keber.infrastructure.persistence.repository.SpringDataTrainingProgramRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -28,12 +28,12 @@ import static org.mockito.ArgumentMatchers.any;
  */
 class TrainingProgramServiceTest {
 
-    private TrainingProgramRepository repository;
+    private SpringDataTrainingProgramRepository repository;
     private TrainingProgramService service;
 
     @BeforeEach
     void setUp() {
-        repository = Mockito.mock(TrainingProgramRepository.class);
+        repository = Mockito.mock(SpringDataTrainingProgramRepository.class);
         service = new TrainingProgramService(repository);
     }
 

@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service;
 import cl.keber.domain.exception.TrainingProgramNotFoundException;
 import cl.keber.domain.model.TrainingProgram;
 import cl.keber.infrastructure.persistence.mapper.TrainingProgramPersistenceMapper;
-import cl.keber.infrastructure.persistence.repository.TrainingProgramRepository;
+import cl.keber.infrastructure.persistence.repository.SpringDataTrainingProgramRepository;
 
 @Service
 public class TrainingProgramService {
 
-    private final TrainingProgramRepository repository;
+    private final SpringDataTrainingProgramRepository repository;
 
-    public TrainingProgramService(TrainingProgramRepository repository) {
+    public TrainingProgramService(SpringDataTrainingProgramRepository repository) {
         this.repository = repository;
     }
 
