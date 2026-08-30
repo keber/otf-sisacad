@@ -1,34 +1,39 @@
-package cl.keber.infrastructure.web.dto;
+package cl.keber.infrastructure.persistence.entity;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 /**
- * The wire format of the {@code /programs} endpoints.
+ * The JPA mapping of the {@code training_program} table.
  *
- * <p>The field declaration order below is the response field order Jackson produces:
- * {@code id, code, name, startDate, endDate, status}. It matches what the JPA entity used
- * to serialise to and is pinned by the characterization tests - do not reorder it.
+ * <p>Anemic on purpose: it carries the persistence annotations that the domain entity has
+ * shed, and no rules. The column mapping is exactly what {@code cl.keber.model
+ * .TrainingProgram} carried before this work package, so the stored shape is unchanged.
+ *
+ * <p>The table has four further columns ({@code description}, {@code revision},
+ * {@code valid_from}, {@code valid_to}) that were never mapped; they stay unmapped.
  */
-public class TrainingProgramDto {
+@Entity
+@Table(name = "training_program")
+public class TrainingProgramJpaEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String code;
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;
     private String status;
 
-    public TrainingProgramDto() {
-        // Empty constructor required by Jackson and frameworks
-    }
-
-    public TrainingProgramDto(
-            Long id, String code, String name, LocalDate startDate, LocalDate endDate, String status) {
-        this.id = id;
-        this.code = code;
-        this.name = name;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.status = status;
+    public TrainingProgramJpaEntity() {
+        // Required by JPA
     }
 
     public Long getId() {

@@ -354,7 +354,159 @@ smaller commit compiles. The move is therefore one atomic commit.
 and none of the exposed defects touched. WP2 changes no behaviour.
 
 ### WP3
-_pending_
+
+_2026-08-30 - branch `refactor/wp3-domain`, branched from `dev` @ `f6c9bce`._
+
+**Commits.** `f23bb03` feat: add TrainingProgram value objects · `2047086`
+refactor: make TrainingProgram a pure domain entity with lifecycle methods.
+Two commits, not the four the WP planned: once `TrainingProgram` loses its JPA
+annotations, the bridge, the controller binding and the test rewrites all have
+to land together or nothing compiles. Same constraint WP2 hit.
+
+**Verification.** `mvn clean verify` BUILD SUCCESS on JDK 25.0.2, no extra
+flags. 83 tests, 0 failures, 0 errors, 0 skipped (43 before). The two
+Railway-backed tests ran and passed. `grep -R
+"jakarta.persistence\|org.springframework\|com.fasterxml"
+src/main/java/cl/keber/domain` returns nothing; SLF4J is gone from the domain
+too, so `cl.keber.domain` has no third-party dependency at all.
+
+**Value object API** (`cl.keber.domain.valueobject`, all Java `record`s,
+immutable, `IllegalArgumentException` on violation):
+
+| Value object | Constructor | Accessor | Rules |
+|---|---|---|---|
+| `TrainingProgramCode` | `new TrainingProgramCode(String value)` | `String value()` | non-null, non-blank, trimmed. Message: `code must not be null or blank` |
+| `TrainingProgramName` | `new TrainingProgramName(String value)` | `String value()` | non-null, non-blank, trimmed. Message: `name must not be null or blank` |
+| `TrainingProgramStatus` | `new TrainingProgramStatus(String value)` | `String value()` | non-null, non-blank, trimmed. Message: `status must not be null or blank` |
+| `TrainingPeriod` | `new TrainingPeriod(LocalDate startDate, LocalDate endDate)` | `LocalDate startDate()`, `LocalDate endDate()` | both non-null (`startDate must not be null`, `endDate must not be null`); `endDate` strictly after `startDate`, equal dates invalid (`endDate must be after startDate`) |
+
+Records give `equals`/`hashCode`/`toString` by value.
+
+**`TrainingProgram` API** (`cl.keber.domain.model`, `final class`, private
+all-args constructor):
+
+```java
+static TrainingProgram create(TrainingProgramCode code, TrainingProgramName name,
+                              TrainingPeriod period, TrainingProgramStatus status);   // id == null
+static TrainingProgram restore(Long id, TrainingProgramCode code, TrainingProgramName name,
+                               TrainingPeriod period, TrainingProgramStatus status);
+
+void rename(TrainingProgramName newName);
+void reschedule(TrainingPeriod newPeriod);
+void changeStatus(TrainingProgramStatus newStatus);
+
+Long getId();
+TrainingProgramCode getCode();
+TrainingProgramName getName();
+TrainingPeriod getPeriod();
+TrainingProgramStatus getStatus();
+```
+
+Note for WP5/WP6: there is **no** `getStartDate()` / `getEndDate()`; the dates
+live behind `getPeriod().startDate()` / `.endDate()`. `id` and `code` are final;
+`name`, `period` and `status` are mutable through the three behaviour methods
+only, so the entity is mutable in place rather than copy-on-write. Equality is
+by non-null `id`; an unsaved program (`id == null`) is equal only to itself, and
+its `hashCode` is its identity hash. Do not put unsaved programs in a hash set
+expecting value semantics.
+
+**The temporary bridge - exactly what WP6 removes.** Four pieces, each carrying
+a `// bridge: replaced by the adapter in WP6` comment:
+
+1. `infrastructure/persistence/entity/TrainingProgramJpaEntity.java` (new).
+   Anemic `@Entity @Table(name = "training_program")` with
+   `id, code, name, startDate, endDate, status`, getters/setters, no-arg
+   constructor. Same mapping the domain entity used to carry, so the stored
+   shape is unchanged. The four orphan columns stay unmapped. **WP6 keeps and
+   owns this file** - it is the only bridge piece that survives.
+2. `infrastructure/persistence/repository/TrainingProgramRepository.java` now
+   extends `JpaRepository<TrainingProgramJpaEntity, Long>` instead of
+   `JpaRepository<TrainingProgram, Long>`. WP6 renames it to
+   `SpringDataTrainingProgramRepository` behind the adapter.
+3. `infrastructure/persistence/mapper/TrainingProgramPersistenceMapper.java`
+   (new). Static `toDomain(TrainingProgramJpaEntity)` /
+   `toJpaEntity(TrainingProgram)`, both null-safe. WP6 moves these two methods
+   into `JpaTrainingProgramRepositoryAdapter`.
+4. `application/service/TrainingProgramService.java` calls that mapper on both
+   sides of every repository call. Its five public signatures are **unchanged**
+   (domain in, domain out). WP6 deletes every
+   `TrainingProgramPersistenceMapper` call here and swaps the field for the
+   domain port; nothing else in the class needs to move.
+
+The bridge is two new files plus two small edits, well inside the "~1 file of
+glue" budget, so there was no need to pull WP6 forward.
+
+**D7, done.** `TrainingProgramDto` gained `Long id` as its **first declared
+field** plus getter/setter, and the all-args constructor is now six-arg:
+`(Long id, String code, String name, LocalDate startDate, LocalDate endDate,
+String status)`. The declaration order **is** the Jackson response order - do
+not reorder it. `TrainingProgramController` binds and returns
+`TrainingProgramDto` on every endpoint. `infrastructure.web.mapper
+.TrainingProgramMapper.toEntity` was **renamed to `toDomain`** and now returns a
+domain entity built via `restore(...)` when the DTO carries an id and
+`create(...)` when it does not; `toDto` reads the value-object accessors. That
+id-from-the-body rule is what preserves today's PUT semantics.
+
+**Characterization tests: two assertions changed, line by line.** Both marked
+`// behaviour change: approved 2026-08-30`. The other 13 tests are untouched.
+
+| Test | Was | Now | Why |
+|---|---|---|---|
+| `createWithBlankCodeIsAccepted` → renamed `createWithBlankCodeIsRejected` | `assertEquals(200, ...)`; `assertEquals("", created.get("code").asText())`; `assertNotNull(findById(...), "the invalid program is persisted and listed")` | `assertEquals(500, ...)`; `assertErrorBody(response, 500, "Internal Server Error")`; `assertNull(findByName(list(), "Blank Code"), "the invalid program is not persisted")` | Direct consequence of the domain validating: `TrainingProgramCode` rejects the blank value that Jackson used to write straight into a private field. Exposed defect 1 closed. |
+| `createWithEndDateBeforeStartDateIsAccepted` → renamed `createWithEndDateBeforeStartDateIsRejected` | `assertEquals(200, ...)`; `assertEquals("2025-07-15", startDate)`; `assertEquals("2025-07-01", endDate)`; `assertNotNull(findById(...), "the invalid program is persisted and listed")` | `assertEquals(500, ...)`; `assertErrorBody(response, 500, "Internal Server Error")`; `assertNull(findByCode(list(), "CH-INVERTED"), "the invalid program is not persisted")` | Same cause: the strict range rule now lives in `TrainingPeriod`, which the request body must pass through. Exposed defect 1 closed. |
+
+One helper was **added** (not changed): `findByName(JsonNode array, String
+name)`, needed because a blank-code program cannot be located by code. No test
+was weakened, deleted or skipped.
+
+Both now answer **500, not 400**, because `IllegalArgumentException` is still
+unhandled - the `@RestControllerAdvice` is WP7 (D1). WP7 flips these two to 400
+and updates the `assertErrorBody` calls with them.
+
+**PUT without an id in the body: unchanged, verified not assumed.** D7 flagged
+that routing PUT through the path id might incidentally fix exposed defect 2. It
+does not, because the controller still passes the body's id through:
+`TrainingProgramMapper.toDomain` maps a body without an id to
+`TrainingProgram.create(...)`, so `getId()` is null, and
+`TrainingProgramService.update` saves a row with a null id exactly as before.
+Verified by `updateWithoutIdInBodyInsertsAnotherProgram` passing **unchanged**:
+still 200, still a newly generated id in the response, the addressed program
+still untouched, still two rows with the same code. Defect 2 stands,
+deliberately - WP5's update use case is where it gets fixed. Defects 3, 4 and 5
+untouched.
+
+**Other tests updated (forced by the in-scope production changes, not by
+choice).**
+
+- `TrainingProgramTest` rewritten as pure JUnit: the four JPA-annotation
+  reflection assertions deleted, coverage added for `create`/`restore`,
+  `rename`, `reschedule` (including that an invalid reschedule cannot be
+  expressed), `changeStatus` and id-based equality. 3 tests → 13.
+- `TrainingProgramServiceTest`: the repository mock now returns
+  `TrainingProgramJpaEntity`, and the saved row is inspected with an
+  `ArgumentCaptor`. Same 5 tests, same behaviour asserted.
+- `TrainingProgramRepositoryTest`: saves a `TrainingProgramJpaEntity`.
+- `TrainingProgramControllerTest`: posts and expects DTO JSON, and now also
+  asserts `id` is on the wire. Still 4 tests.
+- `TrainingProgramDtoTest` (1 → 2) and `TrainingProgramMapperTest` (2 → 5) cover
+  the new `id` field, `toDomain`, and rejection of an invalid body.
+- New: `TrainingProgramCodeTest` (8), `TrainingProgramNameTest` (8),
+  `TrainingProgramStatusTest` (9), `TrainingPeriodTest` (6) - pure JUnit, no
+  Spring anywhere under `src/test/java/cl/keber/domain`.
+
+**Scope note for the orchestrator.** Beyond the WP file's list and D7, three
+groups of test files outside `src/test/java/cl/keber/domain/**` had to change:
+`application/service/TrainingProgramServiceTest`,
+`infrastructure/persistence/repository/TrainingProgramRepositoryTest` and the
+web tests. Each is an unavoidable consequence of a change the WP explicitly
+authorises (the repository now stores the JPA entity; the controller now binds
+the DTO). No production file outside scope was touched, and `pom.xml`, the
+Flyway migrations and `application.properties` are untouched.
+
+**What WP7 no longer has to do.** The DTO and its wiring exist. WP7 is now: add
+the `@RestControllerAdvice` (D1), flip the two 500 assertions above to 400, and
+swap the controller's `TrainingProgramService` dependency for the use-case
+interfaces.
 
 ### WP4
 _pending_
