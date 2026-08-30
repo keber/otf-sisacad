@@ -1029,7 +1029,103 @@ is 1.4.1 for Java 25 bytecode support, not the 1.3.0 quoted in the WP file.
 
 
 ### WP-DOCS
-_pending_
+
+**First full draft complete — 2026-08-30. Branch stays OPEN for reconciliation.**
+
+Branch `refactor/wp-docs`. Not merged, not pushed. Five commits:
+
+| Commit | Subject |
+|---|---|
+| `ef1fa02` | `docs: add clean architecture and package dependency documentation` |
+| `ee71dd1` | `docs: document the TrainingProgram domain model and repository port` |
+| `35cfdcb` | `docs: mark JPA-entity task docs as superseded by Milestone 3` |
+| `98372ac` | `docs: link the architecture documentation from the README` |
+| `8fa815e` | `docs: update class diagram for the domain / JPA entity split` |
+
+Created: `docs/architecture/clean-architecture.md`,
+`docs/architecture/package-dependencies.md`, `docs/architecture/domain-model.md`,
+`docs/architecture/persistence.md`.
+Changed: `README.md` (new Architecture section with the Milestone 3 note),
+`docs/106.md`–`docs/110.md` (superseded banner, content untouched),
+`docs/diag-class.md` (conceptual diagram kept; implementation slice diagram
+added). `docs/diag-er.md` deliberately unchanged.
+
+Only `docs/**`, `README.md` and this file were touched. Nothing under `src/`.
+
+**This draft is written against the target design in `REFACTOR-GUIDE.md` plus
+the WP files, not against landed code** — Wave 0, no spine WP merged yet. Every
+class name, package, method signature and ArchUnit rule in the docs is a
+prediction and must be reconciled after each of WP2–WP7 merges.
+
+Reconciliation checklist for later passes:
+
+- `package-dependencies.md` — the package tree and per-package class list, and
+  the ArchUnit rule table (must match `ArchitectureTest` as written in WP8).
+- `domain-model.md` — VO component names, exact invariant messages, entity
+  factory/lifecycle signatures, use case method signatures, command record
+  fields.
+- `persistence.md` — mapper and adapter method names.
+- `diag-class.md` — the second diagram's class names and members.
+- Confirm the `/programs` HTTP codes claim once WP7 lands (see the note on the
+  controller below).
+
+**Verification.** Docs-only WP: no code touched, so no `mvn clean verify` was
+run (per CONVENTIONS, the DB-backed tests are not run casually). Instead: all
+three mermaid blocks in `docs/diag-class.md` and `docs/diag-er.md` were parsed
+with mermaid 11 and are valid; every relative link in the new docs was resolved
+against the tree; `git diff` confirmed the `106`–`110` edits are pure insertions.
+
+**ER diagram confirmed unchanged.** `V1__programa_formativo.sql` plus
+`V5__rename_to_english.sql` yield exactly the `training_program` columns
+`docs/diag-er.md` documents: `id`, `code`, `name`, `description`, `revision`,
+`valid_from`, `valid_to`, `start_date`, `end_date`, `status`. No migration is
+needed for the domain/JPA split.
+
+#### Raised for the orchestrator's "Decisions" section
+
+Three places where `REFACTOR-GUIDE.md` is ambiguous or contradicts today's code.
+I documented the reading noted under each; none of them is mine to decide.
+
+1. **`status` is missing from the guide.** The guide never mentions it, but
+   `TrainingProgram` has a `String status` field, it is validated non-blank in
+   the constructor, it is in `TrainingProgramDto`, and it is a `training_program`
+   column. WP3 already resolves this (model it as a fourth VO,
+   `TrainingProgramStatus`, keep string values, no enum), and STATE's rubric
+   checklist agrees, so I documented it that way throughout. *Flagging only so
+   the guide/WP divergence is recorded — the WPs, not the guide, are correct.*
+
+2. **The date invariant is stricter than the guide's example.** The guide's
+   `TrainingPeriod` rejects only `endDate.isBefore(startDate)`, which **allows
+   `startDate == endDate`**. The current entity rejects
+   `!startDate.isBefore(endDate)`, so equal dates are invalid today. WP3 says to
+   preserve the current rule and message. I documented the **strict** rule
+   (`endDate` strictly after `startDate`) and called the difference out
+   explicitly in `domain-model.md`. If the guide's looser rule were adopted it
+   would be a behaviour change and would need a characterization-test update.
+
+3. **The guide overstates the current DTO decoupling.** Guide Stage 6 says the
+   project "already made the good decision when it introduced `TrainingProgramDto`
+   and a mapper to decouple the REST representation from the entity". In fact
+   `TrainingProgramController` takes and returns the **JPA entity**
+   `TrainingProgram` directly on every endpoint; `TrainingProgramDto` and
+   `TrainingProgramMapper` exist but no production code calls them. So WP7 is
+   not "take the DTO one level further" — it is wiring the DTO into the
+   controller for the first time. My docs describe the target, so they are
+   unaffected, but WP7's effort estimate may be.
+
+Two smaller observations, no decision needed:
+
+- **There is no `GET /programs/{id}` endpoint.** The controller exposes only
+  POST, GET (list), PUT `/{id}`, DELETE `/{id}` — matching the baseline recorded
+  above. But WP5 specifies a `GetTrainingProgramUseCase` and WP7 lists it among
+  the controller's dependencies. If no endpoint is added, that use case will be
+  reachable only from tests; if one *is* added, the REST contract changes and
+  the "contract unchanged" claim in the docs and README needs qualifying.
+  I documented the use case (per WP5) but did **not** document a `GET /{id}`
+  endpoint. Worth an explicit call in WP7.
+- **`TrainingProgramMapper` is currently a static utility** with a private
+  constructor. WP7 keeps the name; if it becomes an injected bean the docs need
+  no change, but WP7's handoff should say which.
 
 ## Rubric checklist (closed out in WP8)
 
