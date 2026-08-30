@@ -28,7 +28,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: '21'
+        java-version: '25'
 
     - name: Build with Maven
       run: mvn clean compile
@@ -53,7 +53,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: '21'
+        java-version: '25'
         
     - name: Run tests
       id: run-tests
@@ -139,7 +139,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: '21'
+        java-version: '25'
         
     - name: Compile for Sonar
       run: mvn compile

@@ -38,11 +38,11 @@ Dado que cada clase admite un máximo de 20 participantes, los alumnos de un man
 ### Pre requirements
 
 - [x] Operating System: Windows or Linux (WSL included)
-- [x] Java JDK 21 + Maven installed
+- [x] Java JDK 25 + Maven installed
   * Linux Installation (Ubuntu, WSL)
   ```bash
   sudo apt update
-  sudo apt install openjdk-21-jdk maven
+  sudo apt install openjdk-25-jdk maven
   ```
 - [x] Clone the project
   ```bash

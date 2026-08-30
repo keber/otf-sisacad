@@ -2,5 +2,12 @@
     "sonarlint.connectedMode.project": {
         "connectionId": "keber-sonarcloud",
         "projectKey": "keber_otf-sisacad"
-    }
+    },
+    "chat.tools.terminal.autoApprove": {
+        "/^Select-String -Path 'C:\\\\Users\\\\Usuario\\\\AppData\\\\Roaming\\\\Code\\\\copilot-terminal-output\\\\copilot-terminal-output-0c82c778-21fb-40d8-9297-dcf5b7e59b21\\.txt' -Pattern 'Caused by:\\|Failed to initialize\\|Unsupported\\|Unable to obtain\\|Flyway\\|FINAL_TEST_EXIT\\|Tests run:' \\| Select-Object -First 80 \\| ForEach-Object \\{ \"\\$\\(\\$_\\.LineNumber\\): \\$\\(\\$_\\.Line\\)\" \\}$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    },
+    "java.compile.nullAnalysis.mode": "automatic"
 }
