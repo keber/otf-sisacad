@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.flyway.schemas=OTFSISACAD",
     "spring.jpa.properties.hibernate.default_schema=OTFSISACAD"
 })
-class TrainingProgramRepositoryTest {
+class SpringDataTrainingProgramRepositoryTest {
 
     @Autowired
-    private TrainingProgramRepository repository;
+    private SpringDataTrainingProgramRepository repository;
 
     @Test
     @DisplayName("Should save and retrieve a TrainingProgram by ID")

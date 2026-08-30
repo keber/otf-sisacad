@@ -10,9 +10,9 @@ import cl.keber.infrastructure.persistence.entity.TrainingProgramJpaEntity;
 /**
  * Translates between the domain entity and its JPA row representation.
  *
- * <p>bridge: replaced by the adapter in WP6. Until the repository port and its adapter
- * exist, the application service maps here at the repository boundary so that its public
- * signatures stay domain-in / domain-out.
+ * <p>Called only by {@code JpaTrainingProgramRepositoryAdapter}, which owns the
+ * translation at the repository boundary. No layer above infrastructure sees the JPA
+ * entity.
  */
 public final class TrainingProgramPersistenceMapper {
 

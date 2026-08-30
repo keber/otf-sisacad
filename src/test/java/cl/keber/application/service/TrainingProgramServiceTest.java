@@ -1,12 +1,11 @@
 package cl.keber.application.service;
 
 import cl.keber.domain.model.TrainingProgram;
+import cl.keber.domain.repository.TrainingProgramRepository;
 import cl.keber.domain.valueobject.TrainingPeriod;
 import cl.keber.domain.valueobject.TrainingProgramCode;
 import cl.keber.domain.valueobject.TrainingProgramName;
 import cl.keber.domain.valueobject.TrainingProgramStatus;
-import cl.keber.infrastructure.persistence.entity.TrainingProgramJpaEntity;
-import cl.keber.infrastructure.persistence.repository.TrainingProgramRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -21,10 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 /**
- * The service now maps between the domain entity and the JPA entity at the repository
- * boundary (the temporary bridge removed in WP6), so the repository mock speaks
- * {@link TrainingProgramJpaEntity} while the service signatures stay domain-in /
- * domain-out.
+ * The service depends on the domain repository port, so the mock speaks domain entities
+ * end to end. Translation to the JPA row now lives in the persistence adapter and is
+ * covered by {@code JpaTrainingProgramRepositoryAdapterTest}.
  */
 class TrainingProgramServiceTest {
 
@@ -45,16 +43,14 @@ class TrainingProgramServiceTest {
             new TrainingProgramStatus(status));
     }
 
-    private static TrainingProgramJpaEntity row(
+    private static TrainingProgram stored(
             Long id, String code, String name, LocalDate start, LocalDate end, String status) {
-        TrainingProgramJpaEntity entity = new TrainingProgramJpaEntity();
-        entity.setId(id);
-        entity.setCode(code);
-        entity.setName(name);
-        entity.setStartDate(start);
-        entity.setEndDate(end);
-        entity.setStatus(status);
-        return entity;
+        return TrainingProgram.restore(
+            id,
+            new TrainingProgramCode(code),
+            new TrainingProgramName(name),
+            new TrainingPeriod(start, end),
+            new TrainingProgramStatus(status));
     }
 
     @Test
@@ -63,7 +59,7 @@ class TrainingProgramServiceTest {
             "PF001", "Occupational Health and Safety",
             LocalDate.of(2025, 1, 1), LocalDate.of(2025, 2, 1), "active");
 
-        Mockito.when(repository.save(any())).thenReturn(row(
+        Mockito.when(repository.save(any())).thenReturn(stored(
             7L, "PF001", "Occupational Health and Safety",
             LocalDate.of(2025, 1, 1), LocalDate.of(2025, 2, 1), "active"));
 
@@ -73,21 +69,20 @@ class TrainingProgramServiceTest {
         assertEquals("PF001", result.getCode().value());
         assertEquals("Occupational Health and Safety", result.getName().value());
 
-        ArgumentCaptor<TrainingProgramJpaEntity> captor =
-            ArgumentCaptor.forClass(TrainingProgramJpaEntity.class);
+        ArgumentCaptor<TrainingProgram> captor = ArgumentCaptor.forClass(TrainingProgram.class);
         Mockito.verify(repository).save(captor.capture());
         assertNull(captor.getValue().getId(), "an unsaved program is handed to the repository without an id");
-        assertEquals("PF001", captor.getValue().getCode());
-        assertEquals(LocalDate.of(2025, 1, 1), captor.getValue().getStartDate());
+        assertEquals("PF001", captor.getValue().getCode().value());
+        assertEquals(LocalDate.of(2025, 1, 1), captor.getValue().getPeriod().startDate());
     }
 
     @Test
     void shouldListAllPrograms() {
-        List<TrainingProgramJpaEntity> rows = Arrays.asList(
-            row(1L, "PF001", "Course 1", LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 3), "Activo"),
-            row(2L, "PF002", "Course 2", LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 4), "Activo"));
+        List<TrainingProgram> programs = Arrays.asList(
+            stored(1L, "PF001", "Course 1", LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 3), "Activo"),
+            stored(2L, "PF002", "Course 2", LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 4), "Activo"));
 
-        Mockito.when(repository.findAll()).thenReturn(rows);
+        Mockito.when(repository.findAll()).thenReturn(programs);
 
         List<TrainingProgram> result = service.findAll();
 
@@ -100,7 +95,7 @@ class TrainingProgramServiceTest {
     @Test
     void shouldFindProgramById() {
         Mockito.when(repository.findById(1L)).thenReturn(Optional.of(
-            row(1L, "PF003", "Course X", LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 2), "Activo")));
+            stored(1L, "PF003", "Course X", LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 2), "Activo")));
 
         Optional<TrainingProgram> result = service.findById(1L);
 
@@ -123,19 +118,16 @@ class TrainingProgramServiceTest {
     void shouldUpdateTrainingProgram() {
         Long id = 1L;
 
-        TrainingProgramJpaEntity original = row(
+        TrainingProgram original = stored(
             id, "PF001", "Original Course",
             LocalDate.of(2025, 1, 1), LocalDate.of(2025, 2, 1), "active");
 
-        TrainingProgram updated = TrainingProgram.restore(
-            id,
-            new TrainingProgramCode("PF001"),
-            new TrainingProgramName("Updated Course"),
-            new TrainingPeriod(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 2, 1)),
-            new TrainingProgramStatus("active"));
+        TrainingProgram updated = stored(
+            id, "PF001", "Updated Course",
+            LocalDate.of(2025, 1, 1), LocalDate.of(2025, 2, 1), "active");
 
         Mockito.when(repository.findById(id)).thenReturn(Optional.of(original));
-        Mockito.when(repository.save(any())).thenReturn(row(
+        Mockito.when(repository.save(any())).thenReturn(stored(
             id, "PF001", "Updated Course",
             LocalDate.of(2025, 1, 1), LocalDate.of(2025, 2, 1), "active"));
 
@@ -145,10 +137,9 @@ class TrainingProgramServiceTest {
         assertEquals(id, result.getId());
         Mockito.verify(repository).findById(id);
 
-        ArgumentCaptor<TrainingProgramJpaEntity> captor =
-            ArgumentCaptor.forClass(TrainingProgramJpaEntity.class);
+        ArgumentCaptor<TrainingProgram> captor = ArgumentCaptor.forClass(TrainingProgram.class);
         Mockito.verify(repository).save(captor.capture());
-        assertEquals(id, captor.getValue().getId(), "the row saved carries the addressed id");
-        assertEquals("Updated Course", captor.getValue().getName());
+        assertEquals(id, captor.getValue().getId(), "the program saved carries the addressed id");
+        assertEquals("Updated Course", captor.getValue().getName().value());
     }
 }
