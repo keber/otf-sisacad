@@ -1,0 +1,134 @@
+# Package structure and dependency rules
+
+Companion to [`clean-architecture.md`](clean-architecture.md). This page is the
+concrete inventory: which class lives where, and which direction each dependency
+is allowed to point.
+
+## Package tree
+
+All production code lives under `src/main/java/cl/keber`.
+
+```text
+cl.keber
+├── OtfSisacadApplication                       @SpringBootApplication (root)
+│
+├── domain                                      pure Java - no framework imports
+│   ├── model
+│   │   └── TrainingProgram                     entity with lifecycle behaviour
+│   ├── valueobject
+│   │   ├── TrainingProgramCode                 record, non-blank
+│   │   ├── TrainingProgramName                 record, non-blank
+│   │   ├── TrainingPeriod                      record, endDate after startDate
+│   │   └── TrainingProgramStatus               record, non-blank
+│   ├── repository
+│   │   └── TrainingProgramRepository           the port (plain interface)
+│   └── exception
+│       └── TrainingProgramNotFoundException
+│
+├── application                                 depends on domain only
+│   ├── usecase
+│   │   ├── CreateTrainingProgramUseCase
+│   │   ├── GetTrainingProgramUseCase
+│   │   ├── ListTrainingProgramsUseCase
+│   │   ├── UpdateTrainingProgramUseCase
+│   │   └── DeleteTrainingProgramUseCase
+│   ├── command
+│   │   ├── CreateTrainingProgramCommand        record of raw input
+│   │   └── UpdateTrainingProgramCommand        record of raw input
+│   └── service
+│       └── TrainingProgramApplicationService   implements all five use cases
+│
+└── infrastructure                              all technology lives here
+    ├── persistence
+    │   ├── entity
+    │   │   └── TrainingProgramJpaEntity        @Entity @Table("training_program")
+    │   ├── repository
+    │   │   └── SpringDataTrainingProgramRepository   extends JpaRepository
+    │   ├── adapter
+    │   │   └── JpaTrainingProgramRepositoryAdapter   implements the port
+    │   └── mapper
+    │       └── TrainingProgramPersistenceMapper      domain <-> JPA entity
+    ├── web
+    │   ├── controller
+    │   │   └── TrainingProgramController       @RestController /programs
+    │   ├── dto
+    │   │   └── TrainingProgramDto              JSON shape
+    │   └── mapper
+    │       └── TrainingProgramMapper           DTO <-> command / domain
+    └── config
+        ├── WebConfig                           CORS
+        └── TrainingProgramConfiguration        @Bean wiring for the app service
+```
+
+The test tree mirrors this layout under `src/test/java/cl/keber`, plus
+`cl.keber.architecture` for the ArchUnit rules.
+
+## Allowed dependency directions
+
+```text
+     domain   <-----   application   <-----   infrastructure
+        ^                                          |
+        +------------------------------------------+
+```
+
+| From | May depend on | Must never depend on |
+|---|---|---|
+| `domain` | the Java standard library | `application`, `infrastructure`, `org.springframework..`, `jakarta.persistence..`, Hibernate, `com.fasterxml.jackson..` |
+| `application` | `domain` | `infrastructure`, `org.springframework..`, `jakarta.persistence..`, `org.springframework.data..`, any `..web..` type |
+| `infrastructure` | `application`, `domain`, any framework | — (nothing depends on it) |
+
+Two consequences worth calling out:
+
+- **Controllers never see repositories.** `infrastructure.web.controller` may
+  not reach `infrastructure.persistence` or `domain.repository`. It talks to
+  use case interfaces only.
+- **The application service is not a Spring bean by annotation.**
+  `TrainingProgramApplicationService` is plain Java; `TrainingProgramConfiguration`
+  in `infrastructure.config` constructs it with the port. That is what keeps
+  `application` free of `org.springframework`.
+
+## How the rules are enforced
+
+Documentation drifts. These rules are executable, as ArchUnit tests in
+`src/test/java/cl/keber/architecture/ArchitectureTest.java`, annotated
+`@AnalyzeClasses(packages = "cl.keber")`. They run as part of
+`mvn clean verify`, so a violation fails the build and the CI pipeline.
+
+The rule set:
+
+| # | Rule |
+|---|---|
+| 1 | `domain` must not depend on `org.springframework..` |
+| 2 | `domain` must not depend on `jakarta.persistence..` or Hibernate |
+| 3 | `domain` must not depend on `com.fasterxml.jackson..` |
+| 4 | `application` must not depend on `..infrastructure..` |
+| 5 | `application` must not depend on `org.springframework..`, `org.springframework.data..` or `jakarta.persistence..` |
+| 6 | classes in `..web.controller..` must not depend on `..persistence..` or `..domain.repository..` |
+| 7 | `..domain..` and `..application..` must not depend on `..web..` |
+| 8 | layered check: `domain` may be accessed by `application` and `infrastructure`; `application` may be accessed by `infrastructure`; `infrastructure` may be accessed by nothing |
+
+There is no freeze store and no allowance list — the slice is expected to be
+clean. If a rule cannot pass, the correct response is to fix the code, not to
+weaken the rule.
+
+This is what makes the architecture a *verifiable property of the code* rather
+than a picture in a README. If someone writes `@Entity` on
+`domain.model.TrainingProgram` again, or injects
+`SpringDataTrainingProgramRepository` into a use case, the build goes red.
+
+## Quick manual checks
+
+```bash
+# domain must be framework-free
+grep -R "jakarta.persistence\|org.springframework\|com.fasterxml" \
+     src/main/java/cl/keber/domain
+
+# application must not know about JPA or infrastructure
+grep -R "JpaRepository\|infrastructure" src/main/java/cl/keber/application
+
+# JPA must exist only in the persistence adapter
+grep -Rl "@Entity\|JpaRepository\|jakarta.persistence" src/main/java
+```
+
+The first two should print nothing; the third should list files only under
+`cl/keber/infrastructure/persistence`.
