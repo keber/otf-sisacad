@@ -134,7 +134,68 @@ possible. Schema is `otfsisacad` (`OTFSISACAD` in the H2 tests).
 
 ## Decisions
 
-- _None yet._ Record any deviation from `REFACTOR-GUIDE.md` here: what, why, who approved.
+All approved by Keber Flores on 2026-08-30.
+
+### D1 — Error handling: add a `@RestControllerAdvice` in WP7
+
+`IllegalArgumentException` -> `400`, `TrainingProgramNotFoundException` -> `404`.
+Implemented in `infrastructure.web` in WP7. The WP1 characterization tests that
+pin today's codes are updated **in the same commit**, each with a
+`// behaviour change: approved 2026-08-30` note. Do not weaken or delete them.
+
+### D2 — "Observable behaviour preserved" is a motivation, not a hard gate
+
+The pre-refactor code is not correct, so freezing its behaviour is not the goal;
+raising product quality is. Where the refactor turns a silently-accepted invalid
+request into a failure, that is a **desired** outcome: it surfaces a real defect.
+
+Rules that follow from this:
+
+- A characterization test may change **only** when the change is a deliberate,
+  recorded consequence of the refactor. Convenience is never a reason.
+- Every such change is called out in its commit body and in the WP handoff note.
+- Defects this exposes are **documented, not fixed**, unless the defect blocks
+  the current or a later wave. Out-of-scope fixes are logged under "Exposed
+  defects" below for separate follow-up.
+
+### D3 — `TrainingPeriod` follows the code, not the guide
+
+The guide rejects only `endDate.isBefore(startDate)` (allowing equal dates); the
+current entity rejects `!startDate.isBefore(endDate)` (equal dates invalid). WP3
+keeps the **strict** rule. The guide was derived from the code and does not
+mirror it exactly; the code wins.
+
+### D4 — `status` stays a Value Object with string values
+
+`REFACTOR-GUIDE.md` omits `status`, but it is a real field, column and DTO
+property. WP3's four-VO design is correct. The guide is general; the WPs are
+specific and authoritative where they disagree.
+
+### D5 — Build `GetTrainingProgramUseCase`, do not route it
+
+Verified on 2026-08-30: a `GET /programs/{id}` mapping has never existed on any
+branch (`git log --all -S`), so it was not lost in the Spanish-to-English rename.
+`TrainingProgramService.findById` exists but no controller method calls it - the
+endpoint was planned and never wired. WP5 builds the use case; WP7 does **not**
+add the route. Adding it would be a new feature, not a refactor.
+
+### D6 — DTO decoupling does not exist yet
+
+The guide states the DTO split is "already a good decision". It is not: the
+controller binds and returns the JPA entity on every endpoint, and
+`TrainingProgramDto` / `TrainingProgramMapper` are dead code relative to the REST
+layer. Confirmed independently by WP1 (black-box HTTP) and WP-DOCS (source read).
+WP7 wires a DTO for the **first time** - scope it as new work, not a refinement.
+
+## Exposed defects (documented, not fixed - see D2)
+
+| # | Defect | Found by | Disposition |
+|---|---|---|---|
+| 1 | Domain validation never runs over HTTP: Jackson binds through the no-arg constructor and writes private fields, so a blank `code` or an inverted date range is accepted with `200` and persisted. | WP1 | **Fixed as a side effect** of WP3 + WP7 (VOs validate; D1 maps the failure to `400`). |
+| 2 | `PUT /programs/{id}` with no `id` in the request body INSERTS a duplicate row and leaves the addressed program untouched. No unique constraint on `code` prevents it. | WP1 | Out of scope. Log only. Re-check after WP5 - the update use case may fix it incidentally. |
+| 3 | `DELETE` on an unknown id returns `204`, so delete is unobservable and silently idempotent. | WP1 | Out of scope. Log only. |
+| 4 | `spring.jpa.hibernate.ddl-auto=update` runs on top of the Flyway schema and widens `id` / `code` / `status` column types on every startup. | WP1 | Out of scope, but **flag before production**. Not a refactor concern. |
+| 5 | The `training_program` table has four columns the entity does not map: `description`, `revision`, `valid_from`, `valid_to`. | WP1 | Out of scope. WP6 must not "helpfully" map them. |
 
 ## Handoff notes
 
