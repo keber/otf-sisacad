@@ -1,6 +1,6 @@
 package cl.keber.infrastructure.persistence.repository;
 
-import cl.keber.domain.model.TrainingProgram;
+import cl.keber.infrastructure.persistence.entity.TrainingProgramJpaEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,20 +25,24 @@ class TrainingProgramRepositoryTest {
     @DisplayName("Should save and retrieve a TrainingProgram by ID")
     void shouldSaveAndRetrieveTrainingProgram() {
         // Arrange
-        TrainingProgram program = new TrainingProgram(
-            "PF001", "Occupational Health and Safety",
-            LocalDate.of(2025, 7, 1),
-            LocalDate.of(2025, 7, 15),
-            "VIGENTE"
-        );
+        // The repository now stores the JPA entity: the domain entity carries no mapping.
+        TrainingProgramJpaEntity program = new TrainingProgramJpaEntity();
+        program.setCode("PF001");
+        program.setName("Occupational Health and Safety");
+        program.setStartDate(LocalDate.of(2025, 7, 1));
+        program.setEndDate(LocalDate.of(2025, 7, 15));
+        program.setStatus("VIGENTE");
 
         // Act
-        TrainingProgram saved = repository.save(program);
-        Optional<TrainingProgram> retrieved = repository.findById(saved.getId());
+        TrainingProgramJpaEntity saved = repository.save(program);
+        Optional<TrainingProgramJpaEntity> retrieved = repository.findById(saved.getId());
 
         // Assert
         assertTrue(retrieved.isPresent());
         assertEquals("PF001", retrieved.get().getCode());
         assertEquals("Occupational Health and Safety", retrieved.get().getName());
+        assertEquals(LocalDate.of(2025, 7, 1), retrieved.get().getStartDate());
+        assertEquals(LocalDate.of(2025, 7, 15), retrieved.get().getEndDate());
+        assertEquals("VIGENTE", retrieved.get().getStatus());
     }
 }

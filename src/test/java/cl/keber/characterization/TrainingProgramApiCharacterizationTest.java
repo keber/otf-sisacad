@@ -233,38 +233,37 @@ class TrainingProgramApiCharacterizationTest {
     // --- Validation is not enforced over HTTP -------------------------------
 
     @Test
-    @DisplayName("POST /programs accepts a blank code and persists it")
-    void createWithBlankCodeIsAccepted() throws Exception {
+    @DisplayName("POST /programs rejects a blank code and does not persist it")
+    void createWithBlankCodeIsRejected() throws Exception {
         ResponseEntity<String> response = post(programJson(
             "", "Blank Code", "2025-07-01", "2025-07-15", "VIGENTE"));
 
-        // characterization: pins current behaviour, not desired behaviour.
-        // TrainingProgram's validating constructor rejects a blank code, but Jackson binds the
-        // request through the no-arg constructor and writes the private fields directly, so
-        // that constructor never runs. No bean validation is configured either. The blank code
-        // is accepted and stored.
-        assertEquals(200, response.getStatusCode().value());
-        JsonNode created = parse(response);
-        assertEquals("", created.get("code").asText());
-        assertNotNull(findById(list(), created.get("id").asLong()),
-            "the invalid program is persisted and listed");
+        // behaviour change: approved 2026-08-30.
+        // Was: 200 and persisted. The validating constructor was bypassed because Jackson bound
+        // the request through the no-arg constructor and wrote the private fields directly.
+        // Now: the controller binds TrainingProgramDto and maps it through the domain, so
+        // TrainingProgramCode rejects the blank value. This is exposed defect 1 being closed.
+        // The status is 500 rather than 400 only because the @RestControllerAdvice that maps
+        // IllegalArgumentException to 400 arrives in WP7 (decision D1).
+        assertEquals(500, response.getStatusCode().value());
+        assertErrorBody(response, 500, "Internal Server Error");
+        assertNull(findByName(list(), "Blank Code"), "the invalid program is not persisted");
     }
 
     @Test
-    @DisplayName("POST /programs accepts an endDate before the startDate and persists it")
-    void createWithEndDateBeforeStartDateIsAccepted() throws Exception {
+    @DisplayName("POST /programs rejects an endDate before the startDate and does not persist it")
+    void createWithEndDateBeforeStartDateIsRejected() throws Exception {
         ResponseEntity<String> response = post(programJson(
             "CH-INVERTED", "Inverted Dates", "2025-07-15", "2025-07-01", "VIGENTE"));
 
-        // characterization: pins current behaviour, not desired behaviour.
-        // The "endDate must be after startDate" rule lives only in the constructor, which the
-        // HTTP path bypasses. The inverted range is accepted and stored.
-        assertEquals(200, response.getStatusCode().value());
-        JsonNode created = parse(response);
-        assertEquals("2025-07-15", created.get("startDate").asText());
-        assertEquals("2025-07-01", created.get("endDate").asText());
-        assertNotNull(findById(list(), created.get("id").asLong()),
-            "the invalid program is persisted and listed");
+        // behaviour change: approved 2026-08-30.
+        // Was: 200 and persisted, because the "endDate must be after startDate" rule lived only
+        // in a constructor the HTTP path never reached. Now the rule lives in the TrainingPeriod
+        // value object, which the request body must pass through. Exposed defect 1 again.
+        // 500 rather than 400 until WP7 adds the advice (decision D1).
+        assertEquals(500, response.getStatusCode().value());
+        assertErrorBody(response, 500, "Internal Server Error");
+        assertNull(findByCode(list(), "CH-INVERTED"), "the invalid program is not persisted");
     }
 
     @Test
@@ -362,6 +361,15 @@ class TrainingProgramApiCharacterizationTest {
     private static JsonNode findByCode(JsonNode array, String code) {
         for (JsonNode node : array) {
             if (code.equals(node.path("code").asText(null))) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    private static JsonNode findByName(JsonNode array, String name) {
+        for (JsonNode node : array) {
+            if (name.equals(node.path("name").asText(null))) {
                 return node;
             }
         }
