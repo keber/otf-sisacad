@@ -1032,15 +1032,18 @@ is 1.4.1 for Java 25 bytecode support, not the 1.3.0 quoted in the WP file.
 
 **First full draft complete — 2026-08-30. Branch stays OPEN for reconciliation.**
 
-Branch `refactor/wp-docs`. Not merged, not pushed. Five commits:
+Branch `refactor/wp-docs`. Not merged, not pushed. Rebased onto `dev` after WP1
+merged, so hashes shift — commits are listed by subject, in order:
 
-| Commit | Subject |
-|---|---|
-| `ef1fa02` | `docs: add clean architecture and package dependency documentation` |
-| `ee71dd1` | `docs: document the TrainingProgram domain model and repository port` |
-| `35cfdcb` | `docs: mark JPA-entity task docs as superseded by Milestone 3` |
-| `98372ac` | `docs: link the architecture documentation from the README` |
-| `8fa815e` | `docs: update class diagram for the domain / JPA entity split` |
+1. `docs: add clean architecture and package dependency documentation`
+2. `docs: document the TrainingProgram domain model and repository port`
+3. `docs: mark JPA-entity task docs as superseded by Milestone 3`
+4. `docs: link the architecture documentation from the README`
+5. `docs: update class diagram for the domain / JPA entity split`
+6. `docs: record the WP-DOCS first-draft handoff note` (this note)
+7. `docs: reconcile architecture docs with the WP1 baseline`
+
+`git log --oneline dev..refactor/wp-docs` gives the current hashes.
 
 Created: `docs/architecture/clean-architecture.md`,
 `docs/architecture/package-dependencies.md`, `docs/architecture/domain-model.md`,
