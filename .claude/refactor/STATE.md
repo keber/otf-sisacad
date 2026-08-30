@@ -1103,7 +1103,8 @@ I documented the reading noted under each; none of them is mine to decide.
    explicitly in `domain-model.md`. If the guide's looser rule were adopted it
    would be a behaviour change and would need a characterization-test update.
 
-3. **The guide overstates the current DTO decoupling.** Guide Stage 6 says the
+3. **The guide overstates the current DTO decoupling** — since confirmed
+   independently by WP1's baseline. Guide Stage 6 says the
    project "already made the good decision when it introduced `TrainingProgramDto`
    and a mapper to decouple the REST representation from the entity". In fact
    `TrainingProgramController` takes and returns the **JPA entity**
@@ -1113,15 +1114,28 @@ I documented the reading noted under each; none of them is mine to decide.
    controller for the first time. My docs describe the target, so they are
    unaffected, but WP7's effort estimate may be.
 
+4. **The refactor will start enforcing validation that is currently bypassed —
+   this is the one real contract change and it needs a decision.** WP1's
+   baseline records that Jackson binds requests through `TrainingProgram`'s
+   no-arg constructor and writes the fields directly, so the validating
+   constructor never runs over HTTP: a blank `code` or an inverted date range
+   is accepted with **200** and persisted today. Once the controller binds a
+   DTO and the use case builds Value Objects, those inputs *will* fail. That is
+   an improvement, but it breaks "observable behaviour is preserved" and it
+   will break the WP1 characterization tests that currently assert `200` for
+   those cases. Per CONVENTIONS those tests must not be weakened silently — the
+   assertions need to move deliberately, with the new status code chosen here.
+   I have flagged this in `clean-architecture.md` rather than claiming the
+   contract is untouched. **Recommend deciding this before WP7.**
+
 Two smaller observations, no decision needed:
 
-- **There is no `GET /programs/{id}` endpoint.** The controller exposes only
-  POST, GET (list), PUT `/{id}`, DELETE `/{id}` — matching the baseline recorded
-  above. But WP5 specifies a `GetTrainingProgramUseCase` and WP7 lists it among
-  the controller's dependencies. If no endpoint is added, that use case will be
-  reachable only from tests; if one *is* added, the REST contract changes and
-  the "contract unchanged" claim in the docs and README needs qualifying.
-  I documented the use case (per WP5) but did **not** document a `GET /{id}`
+- **There is no `GET /programs/{id}` endpoint** — WP1 confirms it returns
+  **405**, not 404. But WP5 specifies a `GetTrainingProgramUseCase` and WP7
+  lists it among the controller's dependencies. If no endpoint is added, that
+  use case is reachable only from tests; if one *is* added, the REST contract
+  gains a route and the "contract unchanged" claim needs qualifying. I
+  documented the use case (per WP5) but did **not** document a `GET /{id}`
   endpoint. Worth an explicit call in WP7.
 - **`TrainingProgramMapper` is currently a static utility** with a private
   constructor. WP7 keeps the name; if it becomes an injected bean the docs need

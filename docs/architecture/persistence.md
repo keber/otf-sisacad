@@ -114,11 +114,18 @@ test — means writing a different implementation of the port. Nothing in
 
 **This refactor introduced no Flyway migration.**
 
-`TrainingProgramJpaEntity` maps the same `training_program` table and the same
-columns the old entity mapped: `id`, `code`, `name`, `start_date`, `end_date`,
-`status`. The schema is still whatever migrations `V1` through `V5` produced —
-`V1__programa_formativo.sql` created the table and `V5__rename_to_english.sql`
-renamed the tables and columns to English and added `start_date` / `end_date`.
+`TrainingProgramJpaEntity` maps the same `training_program` table and exactly the
+same columns the old entity mapped: `id`, `code`, `name`, `start_date`,
+`end_date`, `status`. The schema is still whatever migrations `V1` through `V5`
+produced — `V1__programa_formativo.sql` created the table and
+`V5__rename_to_english.sql` renamed the tables and columns to English and added
+`start_date` / `end_date`.
+
+The table also carries `description`, `revision`, `valid_from` and `valid_to`,
+which belong to the conceptual model in [`../diag-class.md`](../diag-class.md)
+but are **not mapped** by the entity and never were. Moving JPA into
+infrastructure neither adopts nor drops them; they stay as they are, and
+whether to map or remove them is a separate decision from this refactor.
 
 There is no architectural reason for separating the domain from JPA to touch the
 database: the split is a Java-side concern. Keeping the schema fixed also means

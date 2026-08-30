@@ -169,9 +169,20 @@ acyclic and already verified.
 
 ## What did *not* change
 
-- The REST contract under `/programs` — same paths, same JSON, same HTTP codes.
-  The frontend needs no changes. Characterization tests written before the
-  refactor started guard this.
+- The REST contract under `/programs` — same paths, same JSON field names and
+  order, same success status codes (`POST` and `PUT` return `200`, `DELETE`
+  returns `204`). The frontend needs no changes. A suite of characterization
+  tests written *before* the refactor started guards this.
+
+  One caveat is worth stating plainly, because it is the one place where the
+  refactor can change observable behaviour. Today the domain's validating
+  constructor **never runs over HTTP**: Jackson binds requests through the
+  no-arg constructor and writes the fields directly, so a blank `code` or an
+  `endDate` before `startDate` is currently accepted with `200` and persisted.
+  Once requests are bound to a DTO and turned into Value Objects, those inputs
+  become genuine validation failures. That is a deliberate improvement rather
+  than a regression, but it *is* a change, and it needs to be signed off and
+  reflected in the characterization tests rather than slipped in.
 - The database. `TrainingProgramJpaEntity` maps the existing `training_program`
   table and columns, so **no new Flyway migration was introduced** by this
   refactor. See [`persistence.md`](persistence.md).
