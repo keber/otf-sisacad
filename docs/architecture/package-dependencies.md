@@ -63,6 +63,42 @@ cl.keber
 The test tree mirrors this layout under `src/test/java/cl/keber`, plus
 `cl.keber.architecture` for the ArchUnit rules.
 
+`OtfSisacadApplication` stays at the `cl.keber` root on purpose, so
+`@SpringBootApplication` component scanning still covers all three sub-trees.
+
+### Migration status
+
+The tree above is the finished state. The refactor lands it in waves, and the
+packages are created empty ahead of the class that fills them, so the intent is
+visible in the source layout from the start.
+
+| Package | Status |
+|---|---|
+| `domain.model`, `domain.exception` | populated |
+| `domain.valueobject` | empty — filled by the Value Object wave |
+| `domain.repository` | empty — the port arrives with the repository wave |
+| `application.service` | populated (still the legacy generic service) |
+| `application.usecase`, `application.command` | empty — filled by the use case wave |
+| `infrastructure.persistence.repository` | populated — still `TrainingProgramRepository extends JpaRepository`; renamed to `SpringDataTrainingProgramRepository` when the adapter lands |
+| `infrastructure.persistence.entity`, `.adapter`, `.mapper` | empty — filled by the persistence wave |
+| `infrastructure.web.controller`, `.dto`, `.mapper` | populated |
+| `infrastructure.config` | populated (`WebConfig`; the bean wiring arrives with the use case swap) |
+
+The legacy top-level `model`, `repository`, `service`, `controller`, `dto`,
+`mapper`, `exception` and `config` packages no longer exist.
+
+Two consequences of landing this incrementally are worth knowing while it is in
+flight:
+
+- `TrainingProgramRepository` is temporarily an **ambiguous simple name** — the
+  JPA-extending one in `infrastructure.persistence.repository` and the port in
+  `domain.repository` coexist until the former is renamed. Expected, and
+  resolved by the rename.
+- Technological contamination is left in place deliberately during the move-only
+  wave: the entity still carries `@Entity` and the service still carries
+  `@Service` until the purification waves remove them. Moving classes and
+  changing them in the same commit would make the diff unreviewable.
+
 ## Allowed dependency directions
 
 ```text

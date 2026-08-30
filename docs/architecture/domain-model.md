@@ -121,6 +121,27 @@ There is no public no-arg constructor. The JPA/Jackson no-arg constructor that
 the old class needed now belongs to `TrainingProgramJpaEntity` and
 `TrainingProgramDto` respectively, where it is harmless.
 
+That absence is what forces the domain entity off the wire, and it is worth
+being explicit about, because it is the moment the separation stops being
+cosmetic. The old controller bound and returned `TrainingProgram` directly. A
+pure domain entity cannot do that job at all:
+
+- **Requests cannot bind.** Jackson needs a no-arg constructor and settable
+  fields. A final class with a private constructor and factories has neither —
+  by design, because that is what makes an invalid instance unconstructable.
+- **Responses would change shape.** Getters returning Value Objects serialise as
+  `{"code": {"value": "PRG-1"}}` rather than `{"code": "PRG-1"}`, which would
+  break every existing client.
+
+So `TrainingProgramDto` becomes the real wire type — flat primitives, a no-arg
+constructor, setters, and an `id` field, since `id` is on the wire in both
+directions and clients need it to address `PUT` and `DELETE`. The web mapper
+translates between the DTO and the domain.
+
+This is the healthy version of the constraint: the serialisation format is a
+detail of the REST adapter, and the domain no longer has to compromise its
+design to satisfy it.
+
 ### Lifecycle: behaviour, not setters
 
 The old class exposed the whole state through getters and was mutated by
@@ -225,6 +246,12 @@ wiring is Spring's job, and it happens in
 | `ListTrainingProgramsUseCase` | — | `List<TrainingProgram>` |
 | `UpdateTrainingProgramUseCase` | `UpdateTrainingProgramCommand` | `TrainingProgram` |
 | `DeleteTrainingProgramUseCase` | `Long id` | `void` |
+
+`GetTrainingProgramUseCase` exists but is **not routed**. There has never been a
+`GET /programs/{id}` endpoint — the old service had a `findById` that no
+controller method ever called, so the operation was planned and never wired.
+Exposing it now would be a new feature rather than a refactor, so the use case is
+built and left unrouted, ready for whoever adds the endpoint.
 
 Commands are plain records carrying raw input (`String`, `LocalDate`), because
 they sit at the boundary where the caller has not yet produced Value Objects:

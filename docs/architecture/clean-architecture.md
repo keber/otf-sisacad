@@ -169,26 +169,64 @@ acyclic and already verified.
 
 ## What did *not* change
 
-- The REST contract under `/programs` — same paths, same JSON field names and
-  order, same success status codes (`POST` and `PUT` return `200`, `DELETE`
-  returns `204`). The frontend needs no changes. A suite of characterization
-  tests written *before* the refactor started guards this.
+- **The shape of the REST contract under `/programs`** — same paths, same JSON
+  field names in the same order (`id, code, name, startDate, endDate, status`),
+  same success status codes (`POST` and `PUT` return `200`, `DELETE` returns
+  `204`). The frontend needs no changes. A suite of characterization tests
+  written *before* the refactor started guards this.
 
-  One caveat is worth stating plainly, because it is the one place where the
-  refactor can change observable behaviour. Today the domain's validating
-  constructor **never runs over HTTP**: Jackson binds requests through the
-  no-arg constructor and writes the fields directly, so a blank `code` or an
-  `endDate` before `startDate` is currently accepted with `200` and persisted.
-  Once requests are bound to a DTO and turned into Value Objects, those inputs
-  become genuine validation failures. That is a deliberate improvement rather
-  than a regression, but it *is* a change, and it needs to be signed off and
-  reflected in the characterization tests rather than slipped in.
+  Two things about error handling *did* change, deliberately and with sign-off.
+  See [Behaviour that changed on purpose](#behaviour-that-changed-on-purpose).
 - The database. `TrainingProgramJpaEntity` maps the existing `training_program`
   table and columns, so **no new Flyway migration was introduced** by this
   refactor. See [`persistence.md`](persistence.md).
 - The historical per-task documentation (`docs/106.md` ... `docs/112.md`). It is
   preserved as traceability and carries a "superseded" banner where it describes
   the old design.
+
+## Behaviour that changed on purpose
+
+Preserving observable behaviour was the *motivation* for the safety net, not a
+hard gate. The pre-refactor code was not correct, and freezing incorrect
+behaviour forever is not a goal. Where the refactor turns a silently-accepted
+invalid request into an honest failure, that is the desired outcome: it surfaces
+a real defect rather than preserving it.
+
+Two changes were approved on that basis. Both are reflected in the
+characterization tests, updated in the same commit that causes them — never
+weakened or deleted to make a build pass.
+
+### Validation now actually runs
+
+Before the refactor, the validating constructor on `TrainingProgram` **never ran
+over HTTP**. Jackson bound requests through the no-arg constructor and wrote the
+private fields directly, so a blank `code` or an `endDate` before `startDate`
+was accepted with `200` and persisted. The only thing rejecting anything was the
+`NOT NULL` constraint from migration `V1` — and it did so as a `500`.
+
+Now requests bind to a DTO and the use case builds Value Objects, so those
+inputs fail in the domain, where the rule lives. This is a fix, not a
+regression.
+
+### Errors have honest status codes
+
+A `@RestControllerAdvice` in `infrastructure.web` maps domain failures onto the
+codes they always should have had:
+
+| Condition | Before | Now |
+|---|---|---|
+| Invalid input (`IllegalArgumentException`) | `500`, or `200` and persisted | **`400`** |
+| Unknown program (`TrainingProgramNotFoundException`) | `500` | **`404`** |
+
+Success paths are untouched: `POST` and `PUT` still return `200` (not `201`),
+`DELETE` still returns `204`.
+
+Several other oddities found while establishing the baseline were **deliberately
+left alone**, because fixing them would be new work rather than refactoring:
+`PUT` without an `id` in the body still inserts a duplicate row, `DELETE` on an
+unknown id still returns `204`, `POST` still returns `200` rather than `201`, and
+there is still no `GET /programs/{id}` route. They are logged as known defects
+for separate follow-up.
 
 ## Further reading
 

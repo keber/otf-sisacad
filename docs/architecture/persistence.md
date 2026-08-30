@@ -42,6 +42,23 @@ That it has no behaviour is not a smell here. It is not the domain model; it is
 a row of a table with a Java shape. All the business rules live in
 `TrainingProgram` and its Value Objects, and Hibernate never touches them.
 
+### Not to be confused with the DTO
+
+There are now **two** flat, anemic representations of a training program, and
+they are not interchangeable:
+
+| | `TrainingProgramJpaEntity` | `TrainingProgramDto` |
+|---|---|---|
+| Package | `infrastructure.persistence.entity` | `infrastructure.web.dto` |
+| Shaped by | the `training_program` table | the JSON wire format |
+| Serves | Hibernate | Jackson |
+| Changes when | the schema changes | the API contract changes |
+
+Both exist so that `TrainingProgram` has to answer to neither. Collapsing them
+into one class would re-couple the database schema to the public API — a change
+to either would force a change to the other, which is exactly the knot this
+refactor unties.
+
 ## The pieces
 
 | Class | Package | Role |
@@ -124,8 +141,16 @@ produced — `V1__programa_formativo.sql` created the table and
 The table also carries `description`, `revision`, `valid_from` and `valid_to`,
 which belong to the conceptual model in [`../diag-class.md`](../diag-class.md)
 but are **not mapped** by the entity and never were. Moving JPA into
-infrastructure neither adopts nor drops them; they stay as they are, and
-whether to map or remove them is a separate decision from this refactor.
+infrastructure neither adopts nor drops them; they stay exactly as they are.
+Mapping them would be a feature, not a refactor, so the JPA entity deliberately
+mirrors the old entity's column set and nothing more. Whether to map or remove
+them is a separate decision.
+
+> **Known issue, not introduced here.** `spring.jpa.hibernate.ddl-auto=update` is
+> active alongside Flyway, so Hibernate widens some column types on every
+> startup on top of the migrated schema. That predates this refactor and is left
+> untouched by it, but it should be resolved before production: Flyway should be
+> the only thing that writes to the schema.
 
 There is no architectural reason for separating the domain from JPA to touch the
 database: the split is a Java-side concern. Keeping the schema fixed also means
