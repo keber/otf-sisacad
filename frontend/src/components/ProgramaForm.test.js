@@ -18,7 +18,7 @@ describe('ProgramaForm', () => {
   it('envía el formulario con los datos y muestra mensaje de éxito', async () => {
     render(<ProgramaForm onSubmit={mockOnSubmit} programaEnEdicion={null}/>);
 
-    // Completar inputs
+    // Fill in inputs
     fireEvent.change(screen.getByLabelText(/código/i), {
       target: { value: 'PF001' },
     });
@@ -26,15 +26,15 @@ describe('ProgramaForm', () => {
       target: { value: 'Programa A' },
     });
 
-    // Enviar formulario
+    // Submit form
     fireEvent.click(screen.getByRole('button', { name: /guardar/i }));
 
-    // Esperar mensaje de éxito
+    // Wait for success message
     await waitFor(() =>
       expect(screen.getByText(/programa registrado/i)).toBeInTheDocument()
     );
 
-    // Asegura que se hizo fetch con POST
+    // Ensure fetch was made with POST
     expect(mockOnSubmit).toHaveBeenCalledWith({
         codigo: 'PF001',
         nombre: 'Programa A',

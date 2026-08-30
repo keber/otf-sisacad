@@ -6,7 +6,7 @@ import cl.keber.model.ProgramaFormativo;
 public class ProgramaFormativoMapper {
 
     private ProgramaFormativoMapper() {
-        // Previene la instanciación
+        // Prevents instantiation
     }
 
     public static ProgramaFormativoDTO toDTO(ProgramaFormativo entity) {

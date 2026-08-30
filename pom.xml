@@ -24,11 +24,11 @@
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
-    <!-- Fuerza el uso de versión 2.17.1 de jackson-bom 
-    Necesario por:
-    ProgramaFormativoControllerTest.debeActualizarPrograma:81 » NoSuchMethod 
+    <!-- Forces the use of jackson-bom version 2.17.1
+    Required because of:
+    ProgramaFormativoControllerTest.debeActualizarPrograma:81 » NoSuchMethod
     'void com.fasterxml.jackson.core.util.BufferRecycler.releaseToPool()'
-    -->  
+    -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -117,7 +117,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- H2 solo para test -->
+        <!-- H2 for tests only -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -128,7 +128,7 @@
 
     <build>
         <plugins>
-            <!-- Plugin Spring Boot -->
+            <!-- Spring Boot plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -138,14 +138,14 @@
                 </configuration>
             </plugin>
             
-            <!-- Plugin Surefire para JUnit -->
+            <!-- Surefire plugin for JUnit -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
             </plugin>
 
-            <!-- Plugin JaCoCo -->
+            <!-- JaCoCo plugin -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -199,7 +199,7 @@
             </plugin>
 
             <!--
-                Se añade compilación con parámetro
+                Adds compilation with the parameter flag.
                 Ensure that the compiler uses the '-parameters' flag.
             -->
             <plugin>

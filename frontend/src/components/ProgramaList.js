@@ -96,7 +96,7 @@ const ProgramaList = ({ programas, onEditar, refrescar }) => {
           </tbody>
         </table>
 
-        {/* Modal de Confirmación */}
+        {/* Confirmation Modal */}
         <div className="modal fade" id="confirmarModal" tabIndex="-1" aria-labelledby="confirmarModalLabel" aria-hidden="true">
           <div className="modal-dialog">
             <div className="modal-content">

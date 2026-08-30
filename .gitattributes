@@ -1,4 +1,4 @@
-# Fuerza line endings a LF para todos los archivos relevantes
+# Force LF line endings for all relevant files
 *.java text eol=lf
 *.yml text eol=lf
 *.yaml text eol=lf

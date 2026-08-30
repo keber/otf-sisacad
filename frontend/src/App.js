@@ -28,7 +28,7 @@ function App() {
       body: JSON.stringify(programaActualizado),
     });
     await cargarProgramas();
-    setProgramaEnEdicion(null); // Limpiar el formulario después de actualizar
+    setProgramaEnEdicion(null); // Clear the form after updating
   };
 
   return (

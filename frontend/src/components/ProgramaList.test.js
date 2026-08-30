@@ -40,7 +40,7 @@ describe('ProgramaList', () => {
   it('muestra la lista de programas formativos', async () => {
     render(<ProgramaList programas={programas} onEditar={jest.fn()} refrescar={jest.fn()} />);
 
-    // Espera que los elementos se muestren
+    // Wait for the elements to be displayed
     await waitFor(() => {
       expect(screen.getByText('Programa A')).toBeInTheDocument();
       expect(screen.getByText('Programa B')).toBeInTheDocument();

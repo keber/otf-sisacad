@@ -10,7 +10,7 @@ public class ProgramaFormativoDTO {
     private String estado;
 
     public ProgramaFormativoDTO() {
-        // Constructor vacío necesario para Jackson y frameworks
+        // Empty constructor required by Jackson and frameworks
     }
 
     public ProgramaFormativoDTO(String codigo, String nombre, LocalDate fechaInicio, LocalDate fechaFin, String estado) {
