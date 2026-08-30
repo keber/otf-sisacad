@@ -1,4 +1,4 @@
-## Diagrama de Clases
+## Class Diagram
 
 ```mermaid
 classDiagram
@@ -45,7 +45,7 @@ classDiagram
         +int id
         +date fecha_habilitacion
         +string otorgado_por
-        +string estado  // vigente, caducada, suspendida
+        +string estado  // active, expired, suspended
         +string observaciones
     }
 
@@ -65,7 +65,7 @@ classDiagram
     }
 
 
-    %% Relaciones
+    %% Relationships
     ProgramaFormativo "1" --> "0..*" EdicionCurso
     EdicionCurso "1" --> "1" Mandante
     EdicionCurso "1" --> "0..*" Seccion

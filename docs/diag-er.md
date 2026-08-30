@@ -1,9 +1,9 @@
-## Diagrama ER
+## ER Diagram
 
 ```mermaid
 erDiagram
 
-%% =================== ENTIDADES ===================
+%% =================== ENTITIES ===================
 
 ProgramaFormativo {
     int id PK
@@ -77,17 +77,17 @@ Matricula {
     string estado_final
 }
 
-%% =================== RELACIONES ===================
+%% =================== RELATIONSHIPS ===================
 
-ProgramaFormativo ||--o{ EdicionCurso : ofrece
-EdicionCurso }o--|| Mandante : contratado_por
-Alumno ||--o{ Matricula : se_matricula
-EdicionCurso ||--o{ Matricula : corresponde_a
-Seccion ||--o{ Matricula : asignado_a
-EdicionCurso ||--o{ Seccion : incluye
-Facilitador ||--o{ Seccion : imparte
-Facilitador ||--o{ HabilitacionFacilitador : habilitado_para
-ProgramaFormativo ||--o{ HabilitacionFacilitador : asociado_a
+ProgramaFormativo ||--o{ EdicionCurso : offers
+EdicionCurso }o--|| Mandante : contracted_by
+Alumno ||--o{ Matricula : enrolls
+EdicionCurso ||--o{ Matricula : corresponds_to
+Seccion ||--o{ Matricula : assigned_to
+EdicionCurso ||--o{ Seccion : includes
+Facilitador ||--o{ Seccion : teaches
+Facilitador ||--o{ HabilitacionFacilitador : qualified_for
+ProgramaFormativo ||--o{ HabilitacionFacilitador : associated_with
 
 
 ```

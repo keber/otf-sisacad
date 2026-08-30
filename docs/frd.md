@@ -1,81 +1,81 @@
-# Documento de Visión Funcional – Sistema Académico OTEC TuFuturo
+# Functional Vision Document – OTEC TuFuturo Academic System
 
-## 1. Nombre del proyecto
+## 1. Project name
 
-**Sistema Académico para Gestión de Capacitación – OTEC TuFuturo**
-
-
-## 2. Descripción general
-
-**OTEC TuFuturo** es un organismo técnico de capacitación recientemente creado, cuyo objetivo es ofrecer formación virtual a trabajadores en materias de salud y seguridad ocupacional en operaciones mineras.
-
-Con este sistema se busca apoyar la gestión académica de los procesos de capacitación, facilitando la administración de programas formativos, cursos impartidos, facilitadores, alumnos y empresas clientes, así como el registro de la participación, evaluación y resultados de los alumnos.
+**Academic System for Training Management – OTEC TuFuturo**
 
 
-## 3. Objetivo del sistema
+## 2. General description
 
-Desarrollar una plataforma web interna para registrar, organizar y consultar información asociada a los cursos impartidos por el OTEC, incluyendo:
+**OTEC TuFuturo** is a recently created technical training body whose goal is to offer virtual training to workers in occupational health and safety in mining operations.
 
-* Definición de programas formativos y sus versiones.
-* Creación de ediciones de curso específicas para empresas clientes.
-* División de cursos en secciones según el número de alumnos.
-* Asignación de facilitadores habilitados a las secciones.
-* Registro de matrícula de alumnos por sección.
-* Registro de asistencia, evaluaciones y resultados de los alumnos.
+This system aims to support the academic management of training processes, making it easier to administer training programs, delivered courses, facilitators, students and client companies, as well as to record student participation, assessment and results.
 
 
-## 4. Actores y usuarios esperados
+## 3. System objective
 
-| Rol                         | Descripción                                                                                                                     |
+Develop an internal web platform to record, organize and query information related to the courses delivered by the OTEC, including:
+
+* Definition of training programs and their versions.
+* Creation of course editions specific to client companies.
+* Splitting courses into sections according to the number of students.
+* Assignment of qualified facilitators to sections.
+* Recording student enrollment per section.
+* Recording student attendance, assessments and results.
+
+
+## 4. Expected actors and users
+
+| Role                        | Description                                                                                                                     |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| **Administrador Académico** | Usuario interno responsable de gestionar programas, cursos, secciones, facilitadores y alumnos. Accede a toda la funcionalidad. |
-| **Facilitador**             | Encargado de impartir secciones. Registra asistencia y notas. Puede ver solo sus cursos asignados.                              |
-| **Empresa Cliente**         | Entidad que solicita la capacitación. No interactúa directamente con el sistema en esta etapa.                                  |
-| **Alumno**                  | Persona capacitada. Su información es administrada por el sistema, pero no tiene acceso directo en esta versión.                |
+| **Academic Administrator**  | Internal user responsible for managing programs, courses, sections, facilitators and students. Has access to all functionality. |
+| **Facilitator**             | Responsible for delivering sections. Records attendance and grades. Can only see their assigned courses.                        |
+| **Client Company**          | Entity that requests the training. Does not interact directly with the system at this stage.                                    |
+| **Student**                 | Person being trained. Their information is managed by the system, but they have no direct access in this version.               |
 
 
-## 5. Funcionalidades incluidas en el MVP
+## 5. Features included in the MVP
 
-* Gestión de **programas formativos** y sus versiones.
-* Gestión de **facilitadores** y su habilitación para programas específicos.
-* Gestión de **empresas clientes**.
-* Creación de **ediciones de curso** (instancias anuales/por cliente).
-* División de ediciones en **secciones** según número de alumnos.
-* Asignación de **facilitadores a secciones**.
-* Registro de **alumnos** por parte del administrador.
-* **Matrícula** de alumnos en ediciones y asignación automática a secciones.
-* Registro de **asistencia y evaluaciones ** por parte del facilitador.
-* Cálculo del **estado final del alumno** (aprobado/reprobado).
-
-
-## 6. Funcionalidades excluidas (fuera de alcance MVP)
-
-* Portal de autoservicio para alumnos o empresas clientes.
-* Notificaciones por correo o mensajería.
-* Reportes avanzados o descargables.
-* Control de versiones legales automatizado.
-* Integración con SENCE u otras plataformas externas.
-* Gestión de usuarios, autenticación y roles con privilegios diferenciados (se asumirá acceso pleno por ahora).
+* Management of **training programs** and their versions.
+* Management of **facilitators** and their qualification for specific programs.
+* Management of **client companies**.
+* Creation of **course editions** (yearly / per-client instances).
+* Splitting editions into **sections** according to the number of students.
+* Assignment of **facilitators to sections**.
+* Registration of **students** by the administrator.
+* **Enrollment** of students in editions and automatic assignment to sections.
+* Recording of **attendance and assessments** by the facilitator.
+* Calculation of the **student's final status** (passed/failed).
 
 
-## 7. Restricciones técnicas
+## 6. Features excluded (out of MVP scope)
 
-* Se priorizará una solución web funcional, sin dependencias externas complejas.
-* El sistema puede operar en modo local o desplegarse en un servidor básico (VPS o nube).
-* No se contempla por ahora el uso de frameworks pesados o arquitecturas distribuidas.
-
-
-## 8. Valor para la organización
-
-* Centralización y trazabilidad de los cursos impartidos.
-* Mejora en la asignación de recursos humanos (facilitadores).
-* Facilita el cumplimiento normativo en capacitación de trabajadores.
-* Permite escalar las operaciones y responder a múltiples clientes con control interno.
+* Self-service portal for students or client companies.
+* Email or messaging notifications.
+* Advanced or downloadable reports.
+* Automated tracking of legal versions.
+* Integration with SENCE or other external platforms.
+* User management, authentication and roles with differentiated privileges (full access is assumed for now).
 
 
-## 9. Indicadores de éxito del MVP
+## 7. Technical constraints
 
-* Se puede crear un programa formativo, una edición, secciones y matrículas sin intervención técnica.
-* Se pueden registrar y consultar evaluaciones de los alumnos.
-* El sistema permite distinguir qué facilitadores están habilitados para cada programa.
-* El equipo interno puede operar el sistema con mínima capacitación.
+* A functional web solution will be prioritized, with no complex external dependencies.
+* The system can run locally or be deployed on a basic server (VPS or cloud).
+* The use of heavyweight frameworks or distributed architectures is not considered for now.
+
+
+## 8. Value for the organization
+
+* Centralization and traceability of the courses delivered.
+* Improved allocation of human resources (facilitators).
+* Facilitates regulatory compliance in worker training.
+* Enables scaling operations and serving multiple clients with internal control.
+
+
+## 9. MVP success indicators
+
+* A training program, an edition, sections and enrollments can be created without technical intervention.
+* Student assessments can be recorded and queried.
+* The system can distinguish which facilitators are qualified for each program.
+* The internal team can operate the system with minimal training.
