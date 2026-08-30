@@ -77,7 +77,7 @@ Translation happens in exactly one place, so the rest of the system only ever
 sees one of the two representations:
 
 ```java
-public TrainingProgram toDomain(TrainingProgramJpaEntity entity) {
+public static TrainingProgram toDomain(TrainingProgramJpaEntity entity) {
     return TrainingProgram.restore(
         entity.getId(),
         new TrainingProgramCode(entity.getCode()),
@@ -87,9 +87,18 @@ public TrainingProgram toDomain(TrainingProgramJpaEntity entity) {
 }
 ```
 
-`toDomain` is the only caller of `TrainingProgram.restore` — rehydration is a
-persistence concern. `toJpaEntity` goes the other way, reading the Value
-Objects' `value()` accessors back out into plain columns.
+`toDomain` rehydrates through `TrainingProgram.restore`, which is exactly what
+rehydration means: this program already exists and keeps its identity.
+`toJpaEntity` goes the other way, reading the Value Objects' `value()`,
+`startDate()` and `endDate()` accessors back out into plain columns.
+
+Both methods are `static` on a `final` class — the mapper holds no state, so
+there is nothing to inject.
+
+Note this is *not* the only caller of `restore`. The web mapper also calls it,
+for a request body that carries an `id`. What the two have in common is that
+both are reconstructing a program that already exists; `create` is reserved for
+one that does not.
 
 ## The adapter
 
@@ -101,14 +110,17 @@ port, and it is the only class in the system that knows both worlds:
 public class JpaTrainingProgramRepositoryAdapter implements TrainingProgramRepository {
 
     private final SpringDataTrainingProgramRepository repository;
-    private final TrainingProgramPersistenceMapper mapper;
 
     @Override
     public Optional<TrainingProgram> findById(Long id) {
-        return repository.findById(id).map(mapper::toDomain);
+        return repository.findById(id)
+                         .map(TrainingProgramPersistenceMapper::toDomain);
     }
 }
 ```
+
+`@Repository` is the one framework annotation in the chain, and it sits on the
+outermost class — the one whose whole job is to be replaceable.
 
 ```text
        TrainingProgramRepository            (domain port)

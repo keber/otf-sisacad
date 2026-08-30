@@ -178,6 +178,18 @@ classDiagram
 
     class TrainingProgramDto {
         <<DTO>>
+        -Long id
+        -String code
+        -String name
+        -LocalDate startDate
+        -LocalDate endDate
+        -String status
+    }
+
+    class TrainingProgramMapper {
+        <<web mapper>>
+        +toDto(TrainingProgram) TrainingProgramDto$
+        +toDomain(TrainingProgramDto) TrainingProgram$
     }
 
     %% domain composition
@@ -199,7 +211,10 @@ classDiagram
 
     %% REST adapter
     TrainingProgramController ..> TrainingProgramApplicationService : via use case interfaces
-    TrainingProgramController ..> TrainingProgramDto
+    TrainingProgramController ..> TrainingProgramDto : binds and returns
+    TrainingProgramController ..> TrainingProgramMapper
+    TrainingProgramMapper ..> TrainingProgramDto
+    TrainingProgramMapper ..> TrainingProgram
 ```
 
 Reading the diagram:
@@ -213,6 +228,13 @@ Reading the diagram:
   Spring and JPA.
 - The controller depends on the use case interfaces the application service
   implements; it never reaches a repository.
+- `TrainingProgramDto` and `TrainingProgramJpaEntity` look alike — both are flat
+  and anemic — but they answer to different masters: the DTO to the JSON
+  contract, the JPA entity to the table. Its field order is the response field
+  order, so it is not arbitrary.
+- Note what `TrainingProgram` does *not* expose: there is no `startDate` or
+  `endDate` accessor. The dates are reachable only through `getPeriod()`, which
+  is what stops anyone setting one without the other.
 
 The **ER diagram** in [`diag-er.md`](diag-er.md) is unchanged: the domain / JPA
 split is a Java-side concern and the `training_program` table and columns are

@@ -1030,9 +1030,9 @@ is 1.4.1 for Java 25 bytecode support, not the 1.3.0 quoted in the WP file.
 
 ### WP-DOCS
 
-**Draft complete and reconciled through WP2 — 2026-08-30. Branch stays OPEN.**
+**Draft complete and reconciled through WP3 — 2026-08-30. Branch stays OPEN.**
 
-Branch `refactor/wp-docs`, rebased onto `dev` @ `f6c9bce` (post-WP2). Not merged,
+Branch `refactor/wp-docs`, rebased onto `dev` @ `ff7e67e` (post-WP3). Not merged,
 not pushed. Commits are listed by subject because the branch is rebased after
 every spine merge and hashes shift; `git log --oneline dev..refactor/wp-docs`
 gives the current ones.
@@ -1045,6 +1045,7 @@ gives the current ones.
 6. `docs: record the WP-DOCS first-draft handoff note` (this note)
 7. `docs: reconcile architecture docs with the WP1 baseline`
 8. `docs: reconcile architecture docs with WP2 and decisions D1-D7`
+9. `docs: reconcile domain docs with the WP3 value objects and entity`
 
 **Files.** Created `docs/architecture/clean-architecture.md`,
 `package-dependencies.md`, `domain-model.md`, `persistence.md`. Changed
@@ -1058,58 +1059,88 @@ Only `docs/**`, `README.md` and this section were touched. Nothing under `src/`.
 said the REST contract was unchanged. Documented that validation never ran over
 HTTP, and that the orphan columns exist.
 
-**Reconciliation pass 2 — WP2 + D1-D7 (this pass).**
+**Reconciliation pass 2 — WP2 + D1-D7.** Verified the landed package tree
+directly; it matched the documented target. Added the Migration status table.
+D1/D2 replaced the open validation question with the approved 400/404 end state;
+D5 and D7 documented; D3/D4/D6 already matched.
 
-- Verified the landed package tree against `dev` directly, not from report. It
-  matches the target tree the docs already predicted, so no correction was
-  needed — only the addition of a **Migration status** table in
-  `package-dependencies.md` recording what is populated vs. empty-and-pending,
-  plus the temporary `TrainingProgramRepository` simple-name ambiguity and the
-  deliberately-retained `@Entity` / `@Service` contamination.
-- **D1 + D2** — `clean-architecture.md` no longer frames the validation change
-  as an open question. New section **"Behaviour that changed on purpose"** states
-  the approved position: behaviour preservation is a motivation, not a gate; the
-  400/404 advice is the documented end state; success codes are untouched; and
-  the defects left deliberately alone (duplicate-inserting `PUT`, `204` on
-  unknown delete, `200` not `201`, no `GET /{id}`) are named as known and
-  out of scope.
-- **D3 / D4** — already documented the way the decisions went (strict period
-  rule, four VOs with string values). No change needed; the hedging is gone.
-- **D5** — `domain-model.md` now says `GetTrainingProgramUseCase` is built but
-  deliberately not routed, and why.
-- **D6** — no doc change: the docs describe the target, and never claimed the
-  DTO split already existed.
-- **D7** — `domain-model.md` gains the reasoning for why a pure domain entity
-  cannot be the wire type (no no-arg constructor to bind; VO getters would
-  serialise as `{"code":{"value":"..."}}`), and states the DTO carries `id`.
-  `persistence.md` gains a table distinguishing `TrainingProgramJpaEntity` from
-  `TrainingProgramDto`, since there are now two flat anemic representations and
-  conflating them would re-couple schema to API.
-- `persistence.md` also notes `ddl-auto=update` as a known pre-existing issue to
-  resolve before production (exposed defect 4), and states explicitly that the
-  JPA entity must not "helpfully" map the four orphan columns (exposed defect 5).
+**Reconciliation pass 3 — WP3 (this pass).** Rebased onto `dev` @ `ff7e67e`, no
+conflicts. Read the merged domain source directly rather than transcribing the
+ping, and every signature checked out. Changes:
 
-**Still to reconcile.** WP3 is in flight; the VO and entity signatures in
-`domain-model.md` and the second diagram in `diag-class.md` are documented as
-designed, not as landed. Outstanding for later passes:
+- **Exact VO contract.** The table in `domain-model.md` now carries the record
+  accessor (`value()`, `startDate()`, `endDate()`) and the verbatim exception
+  message for each of the six checks. Corrected one real error: the draft had
+  invented a single combined `"period dates must not be null"`, where
+  `TrainingPeriod` actually throws separate `"startDate must not be null"` and
+  `"endDate must not be null"`.
+- **Entity mutability.** New table showing `id` and `code` are `final` while
+  `name`, `period` and `status` change through the lifecycle methods, and an
+  explicit statement that the entity mutates **in place** rather than
+  copy-on-write.
+- **No `getStartDate()` / `getEndDate()`.** Called out in `domain-model.md` and
+  in the diagram notes, with the reason: the invariant relates the two dates, so
+  independent accessors would reopen the hole the VO closes.
+- **Equality.** New "Identity and equality" subsection: equality is by non-null
+  `id`, an unsaved program is equal only to itself, `hashCode` falls back to
+  identity. Plus a consequence I derived from the source rather than the ping,
+  worth flagging: **`id` is `final`, so a `create`d instance never acquires an
+  id.** Persisting cannot mutate it in place, so the repository must return a
+  new `restore`d instance and callers must use the return value. If WP4's
+  adapter returns the argument rather than the saved result, ids will silently
+  be lost — worth a targeted check when WP4 lands.
+- **D7 as built.** `TrainingProgramDto` gained `Long id` as its first declared
+  field; documented with an explicit warning that declaration order *is* the
+  Jackson response order and is pinned by the characterization tests. Recorded
+  the `toEntity` -> `toDomain` rename and the `restore`-when-id / `create`-when-
+  not rule.
+- **Diagram.** The DTO node now shows its six fields in declaration order, and
+  the web mapper is drawn with its two methods and its edges.
+- **Static mappers.** Both `TrainingProgramPersistenceMapper` and
+  `TrainingProgramMapper` are static utilities on final classes. `persistence.md`
+  had shown the mapper as an injected field on the adapter (from the guide);
+  corrected to a static method reference.
+- **Migration status** updated: `domain.valueobject`,
+  `infrastructure.persistence.entity` and `.mapper` are now populated;
+  `domain.repository` and `.adapter` remain empty. The note about retained
+  contamination now says the domain is pure and it is `TrainingProgramService`
+  that still carries `@Service` and still maps inline.
 
-- VO component names and exact invariant messages; entity factory and lifecycle
-  signatures; `equals`/`hashCode` choice (WP3).
-- Port method names (WP4); use case signatures and command record fields (WP5);
-  mapper and adapter method names (WP6).
-- The final `infrastructure.config` class name for the bean wiring (WP7).
-- The ArchUnit rule table in `package-dependencies.md` must be matched against
+**Exposed defect 2 — checked, no correction needed.** The docs never recorded the
+speculation that D7 might fix the duplicate-inserting `PUT`.
+`clean-architecture.md` has said "**still** inserts a duplicate row" since pass 2,
+which matches what WP3 verified. Left as is.
+
+**Deliberately NOT documented as final.** The WP3 bridge —
+`TrainingProgramJpaEntity` and `TrainingProgramPersistenceMapper` existing while
+`TrainingProgramService` maps inline at the repository boundary — is described in
+`package-dependencies.md` as scaffolding being replaced, not as the design. The
+docs continue to describe the target port/adapter.
+
+**Still to reconcile.** WP4 is in flight. Outstanding for later passes:
+
+- Port method names on `domain.repository.TrainingProgramRepository`, the
+  `SpringDataTrainingProgramRepository` rename, and
+  `JpaTrainingProgramRepositoryAdapter`'s actual shape — including whether
+  `save` returns a rehydrated instance (see the `final id` point above) (WP4).
+- Use case signatures and command record fields (WP5).
+- Whether `TrainingProgramService` survives as
+  `TrainingProgramApplicationService`; the docs currently use the latter name
+  (WP5).
+- The `infrastructure.config` bean-wiring class name — the docs say
+  `TrainingProgramConfiguration`, from the guide, still unratified (WP7).
+- The ArchUnit rule table in `package-dependencies.md` against
   `ArchitectureTest` as actually written (WP8).
-- Strip the **Migration status** table from `package-dependencies.md` in the
-  final pass — once everything has landed it is noise, and the tree above it is
-  then simply true.
+- Strip the Migration status table in the final pass; once everything has landed
+  it is noise.
 
 **Verification.** Docs-only: no code touched, so no `mvn clean verify` was run
 (CONVENTIONS discourages running the DB-backed tests casually, and this WP cannot
-affect them). Instead, each pass re-runs: all three mermaid blocks in
-`docs/diag-class.md` and `docs/diag-er.md` parsed with mermaid 11; every relative
-markdown link resolved against the tree; `git diff` confirming the `106`-`110`
-edits are pure insertions and that nothing outside scope is touched.
+affect them). Each pass re-runs: all three mermaid blocks in `docs/diag-class.md`
+and `docs/diag-er.md` parsed with mermaid 11; every relative markdown link
+resolved against the tree; `git diff` confirming the `106`-`110` edits are pure
+insertions and that nothing outside scope is touched. This pass additionally
+diffed every documented signature against the merged source.
 
 **Nothing currently looks inconsistent** between the docs and `dev`.
 

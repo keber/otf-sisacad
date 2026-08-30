@@ -75,12 +75,13 @@ visible in the source layout from the start.
 | Package | Status |
 |---|---|
 | `domain.model`, `domain.exception` | populated |
-| `domain.valueobject` | empty — filled by the Value Object wave |
+| `domain.valueobject` | populated — all four Value Objects |
 | `domain.repository` | empty — the port arrives with the repository wave |
 | `application.service` | populated (still the legacy generic service) |
 | `application.usecase`, `application.command` | empty — filled by the use case wave |
+| `infrastructure.persistence.entity`, `.mapper` | populated |
 | `infrastructure.persistence.repository` | populated — still `TrainingProgramRepository extends JpaRepository`; renamed to `SpringDataTrainingProgramRepository` when the adapter lands |
-| `infrastructure.persistence.entity`, `.adapter`, `.mapper` | empty — filled by the persistence wave |
+| `infrastructure.persistence.adapter` | empty — the adapter arrives with the repository wave |
 | `infrastructure.web.controller`, `.dto`, `.mapper` | populated |
 | `infrastructure.config` | populated (`WebConfig`; the bean wiring arrives with the use case swap) |
 
@@ -94,10 +95,16 @@ flight:
   JPA-extending one in `infrastructure.persistence.repository` and the port in
   `domain.repository` coexist until the former is renamed. Expected, and
   resolved by the rename.
-- Technological contamination is left in place deliberately during the move-only
-  wave: the entity still carries `@Entity` and the service still carries
-  `@Service` until the purification waves remove them. Moving classes and
-  changing them in the same commit would make the diff unreviewable.
+- Technological contamination is removed in stages. The domain is already pure —
+  `TrainingProgram` carries no `@Entity` and the JPA mapping has moved to
+  `TrainingProgramJpaEntity` — but `TrainingProgramService` still carries
+  `@Service` and still maps domain to JPA entity inline, because the port and
+  adapter that will take that job over have not landed yet. Purifying and moving
+  in one commit would make the diff unreviewable.
+- Until the adapter exists, `TrainingProgramService` maps at the repository
+  boundary itself. That inline mapping is scaffolding, not the design: it moves
+  into `JpaTrainingProgramRepositoryAdapter`, and the service loses its
+  `@Service` annotation in favour of explicit bean wiring.
 
 ## Allowed dependency directions
 

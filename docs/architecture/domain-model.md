@@ -31,12 +31,17 @@ The distinction that drives the design:
 All four are Java `record`s in `cl.keber.domain.valueobject`, validating in the
 compact constructor. All throw `IllegalArgumentException` on invalid input.
 
-| Value Object | Components | Invariant |
-|---|---|---|
-| `TrainingProgramCode` | `String value` | not null, not blank; trimmed |
-| `TrainingProgramName` | `String value` | not null, not blank; trimmed |
-| `TrainingPeriod` | `LocalDate startDate`, `LocalDate endDate` | both non-null; `endDate` strictly after `startDate` |
-| `TrainingProgramStatus` | `String value` | not null, not blank; trimmed |
+| Value Object | Component (accessor) | Invariant | Message |
+|---|---|---|---|
+| `TrainingProgramCode` | `String value` (`value()`) | not null, not blank; trimmed | `code must not be null or blank` |
+| `TrainingProgramName` | `String value` (`value()`) | not null, not blank; trimmed | `name must not be null or blank` |
+| `TrainingProgramStatus` | `String value` (`value()`) | not null, not blank; trimmed | `status must not be null or blank` |
+| `TrainingPeriod` | `LocalDate startDate` (`startDate()`), `LocalDate endDate` (`endDate()`) | both non-null; `endDate` **strictly** after `startDate` | `startDate must not be null`, `endDate must not be null`, `endDate must be after startDate` |
+
+Being `record`s, the accessors are `value()`, `startDate()` and `endDate()` —
+not `getValue()`. That reads a little unusually at the call site
+(`program.getCode().value()`), and it is the seam where a Value Object is
+unwrapped back into a primitive for the wire or for a database column.
 
 Shape:
 
@@ -59,8 +64,11 @@ and had to be remembered anywhere a program was built:
 public record TrainingPeriod(LocalDate startDate, LocalDate endDate) {
 
     public TrainingPeriod {
-        if (startDate == null || endDate == null) {
-            throw new IllegalArgumentException("period dates must not be null");
+        if (startDate == null) {
+            throw new IllegalArgumentException("startDate must not be null");
+        }
+        if (endDate == null) {
+            throw new IllegalArgumentException("endDate must not be null");
         }
         if (!startDate.isBefore(endDate)) {
             throw new IllegalArgumentException("endDate must be after startDate");
@@ -93,6 +101,25 @@ Each Value Object is therefore:
 
 `cl.keber.domain.model.TrainingProgram` is a `final class` whose fields are the
 Value Objects above plus a `Long id`.
+
+Which fields are `final` says what may change over a program's life:
+
+| Field | Mutability |
+|---|---|
+| `Long id` | `final` — identity never changes |
+| `TrainingProgramCode code` | `final` — the business identifier is not editable |
+| `TrainingProgramName name` | changes via `rename` |
+| `TrainingPeriod period` | changes via `reschedule` |
+| `TrainingProgramStatus status` | changes via `changeStatus` |
+
+Accessors are `getId()`, `getCode()`, `getName()`, `getPeriod()` and
+`getStatus()`, each returning the Value Object rather than a primitive.
+
+> **There is no `getStartDate()` or `getEndDate()`.** The dates live inside the
+> period, so callers write `program.getPeriod().startDate()`. The two dates are
+> meaningless apart from each other — the invariant relates them — and splitting
+> them back into independent accessors would invite exactly the code that used
+> to violate the rule.
 
 ### Construction: two factories, no public constructor
 
@@ -134,9 +161,29 @@ pure domain entity cannot do that job at all:
   break every existing client.
 
 So `TrainingProgramDto` becomes the real wire type — flat primitives, a no-arg
-constructor, setters, and an `id` field, since `id` is on the wire in both
-directions and clients need it to address `PUT` and `DELETE`. The web mapper
-translates between the DTO and the domain.
+constructor and setters. It gained a `Long id`, declared **first**, because `id`
+is on the wire in both directions and clients need it to address `PUT` and
+`DELETE`.
+
+> **Field declaration order in the DTO is load-bearing.** Jackson serialises in
+> declaration order, so `id, code, name, startDate, endDate, status` *is* the
+> response field order. It reproduces what the JPA entity used to emit and is
+> pinned by the characterization tests. Do not reorder these fields.
+
+`infrastructure.web.mapper.TrainingProgramMapper` translates between the two:
+
+- `toDto(TrainingProgram)` — reads the Value Objects back out to primitives
+  (`program.getCode().value()`, `program.getPeriod().startDate()`, and so on).
+- `toDomain(TrainingProgramDto)` — builds the Value Objects, then calls
+  `restore(...)` when the body carries an `id` and `create(...)` when it does
+  not. (It was called `toEntity` while the domain type *was* the JPA entity; the
+  name changed with the meaning.)
+
+That `restore`-or-`create` rule preserves today's `PUT` semantics, where the id
+travels in the request body rather than being taken from the path. It also means
+building the domain object is where an invalid request body now fails — which is
+the validation change described in
+[`clean-architecture.md`](clean-architecture.md#behaviour-that-changed-on-purpose).
 
 This is the healthy version of the constraint: the serialisation format is a
 detail of the REST adapter, and the domain no longer has to compromise its
@@ -165,8 +212,28 @@ program.reschedule(new TrainingPeriod(end, start));   // throws in the VO -
 That is the shape the rubric asks for: **an entity with a lifecycle composed of
 immutable Value Objects that protect the business rules.**
 
-Identity follows the id: two `TrainingProgram` instances are equal when they
-carry the same non-null `id`.
+The entity **mutates in place**; it is not copy-on-write. `rename`, `reschedule`
+and `changeStatus` return `void` and change the receiver. The *Value Objects* are
+immutable — a period is never edited, it is replaced — but the entity that holds
+them is not.
+
+### Identity and equality
+
+Equality is by non-null `id`: two instances are the same program when they carry
+the same id, whatever their current attribute values. Two consequences are worth
+knowing before putting these in a `Set` or using one as a `Map` key:
+
+- **An unsaved program is equal only to itself.** `create` leaves `id == null`,
+  and a null id has no identity to compare, so two separately-created programs
+  with identical code, name, period and status are *not* equal. `hashCode` falls
+  back to identity for them.
+- **`id` is `final`, so `create` never acquires an id.** Persisting does not
+  mutate the instance you passed in; the repository returns a *new* instance,
+  rehydrated through `restore` with the generated id. Always use the returned
+  value rather than assuming the argument was updated in place.
+
+This is the standard entity contract, and it deliberately differs from the Value
+Objects, which compare by value.
 
 ## The repository port
 
