@@ -244,7 +244,74 @@ orphan columns (`description`, `revision`, `valid_from`, `valid_to`) are all lef
 found.
 
 ### WP2
-_pending_
+
+_2026-08-30 - branch `refactor/wp2-boundaries`, branched from `dev` @ `669db04`._
+
+**What changed.** Move-only. Every class was relocated from technical-layer
+packages into architectural packages. Nothing else: no logic, annotation,
+signature or class name changed, and no file outside `src/**` was touched.
+`pom.xml`, the Flyway migrations and `application.properties` are untouched.
+
+**Final package of every class** (later WPs must target these exactly):
+
+| Class | Package before | Package now |
+|---|---|---|
+| `TrainingProgram` | `cl.keber.model` | `cl.keber.domain.model` |
+| `TrainingProgramNotFoundException` | `cl.keber.exception` | `cl.keber.domain.exception` |
+| `TrainingProgramService` | `cl.keber.service` | `cl.keber.application.service` |
+| `TrainingProgramRepository` | `cl.keber.repository` | `cl.keber.infrastructure.persistence.repository` |
+| `TrainingProgramController` | `cl.keber.controller` | `cl.keber.infrastructure.web.controller` |
+| `TrainingProgramDto` | `cl.keber.dto` | `cl.keber.infrastructure.web.dto` |
+| `TrainingProgramMapper` | `cl.keber.mapper` | `cl.keber.infrastructure.web.mapper` |
+| `WebConfig` | `cl.keber.config` | `cl.keber.infrastructure.config` |
+| `OtfSisacadApplication` | `cl.keber` | `cl.keber` (unmoved, on purpose) |
+
+Test classes moved to the mirror package of the class they cover:
+`TrainingProgramTest`, `TrainingProgramNotFoundExceptionTest`,
+`TrainingProgramServiceTest`, `TrainingProgramRepositoryTest`,
+`TrainingProgramControllerTest`, `TrainingProgramDtoTest`,
+`TrainingProgramMapperTest`, `WebConfigTest`.
+`DatabaseMigrationTest`, `OtfSisacadApplicationTests` and the
+characterization test stayed where they were.
+
+**Empty packages created for later waves.** Each carries a `.gitkeep` so git
+tracks the directory: `domain.valueobject` (WP3), `domain.repository` (WP4),
+`application.usecase` and `application.command` (WP5), and
+`infrastructure.persistence.entity` / `.adapter` / `.mapper` (WP6).
+
+**Verification.** `mvn clean verify` green on JDK 25.0.2 with no extra flags.
+43 tests, 0 failures, 0 errors, 0 skipped. All 15 characterization tests pass
+**byte-identical** - `git diff dev...HEAD -- src/test/java/cl/keber/characterization/`
+is empty, because that test drives the REST API over HTTP and imports no
+`cl.keber` type. Excluding renames, the whole branch diff is nothing but
+`package` and `import` lines.
+
+**Single commit, deliberately.** The WP suggests one commit per architectural
+package, but CONVENTIONS also requires every commit to compile. Moving
+`TrainingProgram` invalidates the imports of every class referencing it, so no
+smaller commit compiles. The move is therefore one atomic commit.
+
+**What later WPs must know.**
+
+- Class names are unchanged. In particular `TrainingProgramRepository` is still
+  called that and still extends `JpaRepository`, now in
+  `infrastructure.persistence.repository`. WP4 adds the port in the empty
+  `domain.repository`; the simple-name collision that creates is expected and is
+  resolved when WP4/WP6 rename this one to `SpringDataTrainingProgramRepository`.
+- Technological contamination was left in place on purpose: `TrainingProgram`
+  still carries `@Entity`, `TrainingProgramService` still carries `@Service`.
+  WP3 and WP6 purify.
+- `TrainingProgramService.findById`, `TrainingProgramDto` and
+  `TrainingProgramMapper` are still unused by the controller (D5, D6). They were
+  moved, not deleted and not wired.
+- Component scanning is unaffected: `OtfSisacadApplication` stays at the
+  `cl.keber` root, so `@SpringBootApplication` still covers `domain`,
+  `application` and `infrastructure`. Verified by the Spring-context tests.
+- The legacy `model` / `repository` / `service` package directories are gone, so
+  the WP8 rubric line about removing them is already satisfied.
+
+**Not done here.** No renames, no port/adapter, no DTO wiring, no ArchUnit rules,
+and none of the exposed defects touched. WP2 changes no behaviour.
 
 ### WP3
 _pending_
