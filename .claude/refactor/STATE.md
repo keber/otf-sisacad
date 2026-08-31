@@ -16,7 +16,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 | WP3 domain | MERGED | `refactor/wp3-domain` | – | – | Merged 2026-08-30; 4 VOs, pure entity, D7 controller DTO binding, 83/83 |
 | WP4 repository port | MERGED | `refactor/wp4-repository-port` | – | – | Merged 2026-08-30; port + adapter, 89/89, WP5/WP6 window verified safe |
 | WP5 use cases | IN PROGRESS | `refactor/wp5-use-cases` | – | – | Wave 4, started 2026-08-30; D8 delegate |
-| WP6 persistence | IN PROGRESS | `refactor/wp6-persistence` | – | – | Wave 4, started 2026-08-30; D9 verify-and-finish |
+| WP6 persistence | MERGED | `refactor/wp6-persistence` | – | – | Merged 2026-08-30; explicit @Column mapping, mapper test, 96/96 |
 | WP7 web + wiring | TODO | `refactor/wp7-web` | – | – | |
 | WP8 archunit + cleanup | TODO | `refactor/wp8-archunit-cleanup` | – | – | |
 | WP-DOCS architecture | IN PROGRESS | `refactor/wp-docs` | – | – | First draft done 2026-08-30; open for reconciliation, merges in Wave 6 |
