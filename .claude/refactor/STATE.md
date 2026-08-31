@@ -17,7 +17,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 | WP4 repository port | MERGED | `refactor/wp4-repository-port` | – | – | Merged 2026-08-30; port + adapter, 89/89, WP5/WP6 window verified safe |
 | WP5 use cases | MERGED | `refactor/wp5-use-cases` | – | – | Merged 2026-08-30; 5 use cases, D8 delegate, 110/110 |
 | WP6 persistence | MERGED | `refactor/wp6-persistence` | – | – | Merged 2026-08-30; explicit @Column mapping, mapper test, 96/96 |
-| WP7 web + wiring | TODO | `refactor/wp7-web` | – | – | |
+| WP7 web + wiring | IN PROGRESS | `refactor/wp7-web` | – | – | Wave 5, started 2026-08-31 |
 | WP8 archunit + cleanup | TODO | `refactor/wp8-archunit-cleanup` | – | – | |
 | WP-DOCS architecture | IN PROGRESS | `refactor/wp-docs` | – | – | First draft done 2026-08-30; open for reconciliation, merges in Wave 6 |
 
@@ -264,6 +264,54 @@ round-trip test, and migrating then deleting the legacy
 WP6 must verify what already exists against its brief and report anything
 already satisfied, rather than rewriting working code to match the brief's
 assumption that it starts from a bridge.
+
+### D10 — Ratified class names for the wiring layer
+
+Recorded by the orchestrator on 2026-08-31.
+
+Two names came from `REFACTOR-GUIDE.md` and had been carried by the docs without
+ever being ratified. WP7 is what makes them real, so they are settled here:
+
+- `cl.keber.application.service.TrainingProgramApplicationService` — the
+  framework-free implementation of all five use cases. **Already exists** as of
+  WP5; the name is confirmed, not proposed.
+- `cl.keber.infrastructure.config.TrainingProgramConfiguration` — the
+  `@Configuration` class holding the bean wiring. WP7 creates it. It sits beside
+  the existing `WebConfig`, which is left alone.
+
+### D11 — Error-contract changes expected in WP7
+
+Recorded by the orchestrator on 2026-08-31. Follows from D1.
+
+Adding the `@RestControllerAdvice` changes more characterization assertions than
+the two WP3 already touched. Every one below is an approved consequence of D1,
+must carry a `// behaviour change: approved 2026-08-31` note, and must be
+justified individually - a blanket edit is not acceptable.
+
+Expected to move from `500` to `400` (`IllegalArgumentException` from a value
+object or the id-mismatch guard):
+
+- `POST /programs` with a blank `code`
+- `POST /programs` with `endDate` before `startDate`
+- `POST /programs` with a null `code`
+- `POST /programs` with an empty body `{}`
+- `PUT /programs/{id}` where the body id contradicts the path id
+
+Expected to move from `500` to `404` (`TrainingProgramNotFoundException`):
+
+- `PUT /programs/{id}` on an unknown id
+
+Must NOT change:
+
+- every success path (`POST` 200, `GET` 200, `PUT` 200, `DELETE` 204) and the
+  exact response JSON field set and order
+- `POST` with malformed JSON stays `400` (Jackson parse failure, never reaches
+  the advice)
+- `DELETE` on an unknown id stays `204` (exposed defect 3, not being fixed)
+- `GET /programs/{id}` stays `405` (D5 - the use case exists but is not routed)
+
+If an assertion moves that is not on this list, WP7 must stop and report rather
+than edit it.
 
 ## Exposed defects (documented, not fixed - see D2)
 
