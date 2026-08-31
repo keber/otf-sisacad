@@ -19,6 +19,7 @@
         <surefire.version>3.5.6</surefire.version>
         <jacoco.version>0.8.15</jacoco.version>
         <postgresql.version>42.7.13</postgresql.version>
+        <archunit.version>1.4.1</archunit.version>
 		<sonar.projectKey>keber_otf-sisacad</sonar.projectKey>
 		<sonar.organization>keber</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -114,6 +115,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring-boot.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ArchUnit: executable architecture rules (test scope only) -->
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <version>${archunit.version}</version>
             <scope>test</scope>
         </dependency>
 

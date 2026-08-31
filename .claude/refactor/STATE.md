@@ -18,7 +18,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 | WP5 use cases | MERGED | `refactor/wp5-use-cases` | – | – | Merged 2026-08-30; 5 use cases, D8 delegate, 110/110 |
 | WP6 persistence | MERGED | `refactor/wp6-persistence` | – | – | Merged 2026-08-30; explicit @Column mapping, mapper test, 96/96 |
 | WP7 web + wiring | MERGED | `refactor/wp7-web` | – | – | Merged 2026-08-31; use-case wiring, 400/404 advice, 108/108 |
-| WP8 archunit + cleanup | IN PROGRESS | `refactor/wp8-archunit-cleanup` | – | – | Wave 6, started 2026-08-31 |
+| WP8 archunit + cleanup | IN REVIEW | `refactor/wp8-archunit-cleanup` | – | – | Wave 6, 2026-08-31; 9 ArchUnit rules, deleted nothing (D13), 117/117 |
 | WP-DOCS architecture | IN PROGRESS | `refactor/wp-docs` | – | – | First draft done 2026-08-30; open for reconciliation, merges in Wave 6 |
 
 ## Baseline (filled by WP1)
@@ -921,29 +921,187 @@ tests were added).
 place mapping domain exceptions to status codes.
 
 ### WP8
-_pending_
+
+Branch `refactor/wp8-archunit-cleanup`, branched from `dev` @ `c5be84d`. Wave 6,
+2026-08-31. Two commits: `001217a` "test: add ArchUnit rules enforcing the layer
+boundaries" and this note.
+
+**What changed.** Two paths only: `pom.xml` (the ArchUnit dependency, nothing
+else) and the new `src/test/java/cl/keber/architecture/ArchitectureTest.java`.
+No production file and no existing test was modified - `git diff` against `dev`
+for `src/main/**` and for `src/test/java/cl/keber/characterization/` is empty.
+
+**ArchUnit version.** `com.tngtech.archunit:archunit-junit5:1.4.1`, test scope,
+via a new `${archunit.version}` property. **Not** the 1.3.0 the WP file pinned:
+1.3.0 bundles an ASM that cannot read this project's Java 25 bytecode and logs
+`java.lang.IllegalArgumentException: Unsupported class file major version 69`
+for every class, importing nothing. That surfaces as nine failures rather than a
+false pass, because ArchUnit's default `archRule.failOnEmptyShould` treats a
+rule that matched no class as a failure and the layered rule reports an empty
+layer as a violation. 1.4.1 is the nearest working 1.x. `java.version`, the
+compiler release and every other dependency are untouched.
+
+**The nine rules, all passing unweakened.** No `freeze`, no allowance list, no
+`@ArchIgnore`, no ignored violation, no relaxed rule. `@AnalyzeClasses(packages
+= "cl.keber", importOptions = ImportOption.DoNotIncludeTests.class)`.
+
+| Rule | Constraint |
+|---|---|
+| `domainMustNotDependOnSpring` | no `..domain..` class depends on `org.springframework..` |
+| `domainMustNotDependOnJpaOrHibernate` | no `..domain..` class depends on `jakarta.persistence..` / `jakarta.persistence.*` / `org.hibernate..` |
+| `domainMustNotDependOnJackson` | no `..domain..` class depends on `com.fasterxml.jackson..` |
+| `applicationMustNotDependOnInfrastructure` | no `..application..` class depends on `..infrastructure..` |
+| `applicationMustNotDependOnSpring` | no `..application..` class depends on `org.springframework..` |
+| `applicationMustNotDependOnJpaOrSpringData` | no `..application..` class depends on `jakarta.persistence..` / `jakarta.persistence.*` / `org.springframework.data..` |
+| `controllersMustNotDependOnPersistenceOrTheRepositoryPort` | no `..web.controller..` class depends on `..persistence..` or `..domain.repository..` |
+| `domainAndApplicationMustNotDependOnWeb` | no `..domain..` or `..application..` class depends on `..web..` |
+| `layersAreRespected` | `layeredArchitecture().consideringAllDependencies()`: Infrastructure may not be accessed by any layer; Application only by Infrastructure; Domain only by Application and Infrastructure |
+
+Only production classes are analysed. Test classes cross layers by design - the
+`@WebMvcTest` mocks use cases, the `@DataJpaTest` drives the JPA adapter, and
+the characterization suite boots the whole application - so importing them would
+assert something other than the production dependency graph. This narrows what
+is scanned, not what is required of production code.
+
+`cl.keber.OtfSisacadApplication` carries `@SpringBootApplication` and sits at the
+root, outside all three layers. It imports only `org.springframework.boot..` and
+depends on no layer, so `layersAreRespected` passes without any exception for it.
+
+**Task 3 (legacy removal): nothing deleted, per D13 - confirmed by grep.**
+
+- `find src -type d \( -path "*cl/keber/model*" -o -path "*cl/keber/repository*"
+  -o -path "*cl/keber/service*" \)` - no output. The legacy packages are gone
+  (WP2, Wave 1).
+- `grep -rn "cl\.keber\.\(model\|repository\|service\)\b" src --include=*.java` -
+  one hit, and it is prose: a Javadoc line in `TrainingProgramJpaEntity` reading
+  "The column mapping is exactly what `cl.keber.model`...". No code reference.
+- `grep -rni "bridge" src --include=*.java` - no output. Every WP3-WP7 bridge
+  class was removed by its own WP.
+- `grep -rln "jakarta.persistence\|@Entity\|JpaRepository" src --include=*.java` -
+  exactly two files, both under `infrastructure.persistence`:
+  `entity/TrainingProgramJpaEntity.java` and
+  `repository/SpringDataTrainingProgramRepository.java`.
+
+No genuinely dead code was found to report. `GetTrainingProgramUseCase` is built
+but unrouted by D5 and `TrainingProgramMapper` is live again after D7; both are
+deliberately retained, not dead.
+
+**Task 5 (docs): skipped by D12.** `docs/**` and `README.md` are WP-DOCS's, on
+its own branch, merging after this one. Nothing under `docs/` was touched.
+
+**Verification.** Plain `mvn clean verify`, local Microsoft OpenJDK 25.0.2:
+BUILD SUCCESS, **117 tests, 0 failures, 0 errors, 0 skipped** (108 from WP7 plus
+the 9 new architecture rules). The 15 characterization tests pass unchanged.
+
+**For WP-DOCS.** The nine rule names above are final as written; reconcile
+`package-dependencies.md` against that table. Two things the docs should say:
+the analysed scope is production classes only, and the pinned ArchUnit version
+is 1.4.1 for Java 25 bytecode support, not the 1.3.0 quoted in the WP file.
+
 
 ### WP-DOCS
 _pending_
 
 ## Rubric checklist (closed out in WP8)
 
-- [ ] **Layer separation 4/4** — `domain` / `application` / `infrastructure`
+Closed out on 2026-08-31 on `refactor/wp8-archunit-cleanup` @ `001217a`. Every
+box below is evidenced from that tree; nothing is ticked on assertion alone.
+
+- [x] **Layer separation 4/4** — `domain` / `application` / `infrastructure`
       packages exist; ArchUnit proves domain has no Spring/JPA, application has
       no JPA and no infrastructure import, controllers do not touch repositories.
-- [ ] **Tactical patterns 4/4** — immutable self-validating Value Objects
+
+  The three packages exist under `src/main/java/cl/keber/`, plus
+  `OtfSisacadApplication` at the root, outside all three. Eight boundary rules
+  and one whole-layering rule in
+  `src/test/java/cl/keber/architecture/ArchitectureTest.java`, all green:
+  `domainMustNotDependOnSpring`, `domainMustNotDependOnJpaOrHibernate`,
+  `domainMustNotDependOnJackson`, `applicationMustNotDependOnInfrastructure`,
+  `applicationMustNotDependOnSpring`,
+  `applicationMustNotDependOnJpaOrSpringData`,
+  `controllersMustNotDependOnPersistenceOrTheRepositoryPort`,
+  `domainAndApplicationMustNotDependOnWeb`, `layersAreRespected`.
+  No `freeze`, no allowance list, no `@ArchIgnore`. Independently confirmed by
+  grep: `grep -rn "org\.springframework\|jakarta\.persistence\|JpaRepository\|new
+  Jpa" src/main/java/cl/keber/application src/main/java/cl/keber/domain` returns
+  no output at all.
+
+- [x] **Tactical patterns 4/4** — immutable self-validating Value Objects
       (`TrainingProgramCode`, `TrainingProgramName`, `TrainingPeriod`,
       `TrainingProgramStatus`); entity `TrainingProgram` with lifecycle
       behaviour (`rename`, `reschedule`, …) and no blanket setters; invalid
       states unconstructable; pure-Java domain tests.
-- [ ] **Repository + contracts 4/4** — `domain` port `TrainingProgramRepository`;
+
+  All four VOs are `record`s in `cl.keber.domain.valueobject`, each validating
+  in its compact constructor: `public record TrainingProgramCode(String value)`,
+  `TrainingProgramName(String value)`, `TrainingProgramStatus(String value)`,
+  `TrainingPeriod(LocalDate startDate, LocalDate endDate)`.
+  `public final class TrainingProgram` exposes `create(...)` / `restore(...)`
+  factories, the lifecycle methods `rename(TrainingProgramName)`,
+  `reschedule(TrainingPeriod)`, `changeStatus(TrainingProgramStatus)`, and
+  VO-typed getters — no setter of any kind. Invalid states are unconstructable:
+  the constructor is private and every field is a validated VO.
+  Domain tests are plain JUnit, no Spring context: `TrainingProgramTest` (13),
+  `TrainingPeriodTest` (6), `TrainingProgramCodeTest` (8),
+  `TrainingProgramNameTest` (8), `TrainingProgramStatusTest` (9),
+  `TrainingProgramNotFoundExceptionTest` (1) — 45 tests.
+
+- [x] **Repository + contracts 4/4** — `domain` port `TrainingProgramRepository`;
       `infrastructure` `JpaTrainingProgramRepositoryAdapter implements` it over
       `SpringDataTrainingProgramRepository`; use cases receive the port via
       constructor; no `new Jpa…` and no `JpaRepository` reference in application.
-- [ ] `mvn clean verify` green on `dev`.
-- [ ] REST contract under `/programs` unchanged; frontend needs no changes.
-- [ ] Legacy `model` / `repository` / `service` packages removed.
+
+  `cl.keber.domain.repository.TrainingProgramRepository:16: public interface
+  TrainingProgramRepository`.
+  `cl.keber.infrastructure.persistence.adapter.JpaTrainingProgramRepositoryAdapter:22:
+  public class JpaTrainingProgramRepositoryAdapter implements
+  TrainingProgramRepository`, delegating to `SpringDataTrainingProgramRepository`.
+  `TrainingProgramApplicationService:42: public TrainingProgramApplicationService(TrainingProgramRepository
+  repository)` — the port by constructor, wired in
+  `infrastructure.config.TrainingProgramConfiguration`.
+  The `new Jpa` / `JpaRepository` grep over `application/` and `domain/` (above)
+  is empty, and `applicationMustNotDependOnInfrastructure` plus
+  `applicationMustNotDependOnJpaOrSpringData` enforce it from now on.
+
+- [x] `mvn clean verify` green on `dev`.
+
+  Plain `mvn clean verify`, Microsoft OpenJDK 25.0.2, no extra flags:
+  `Tests run: 117, Failures: 0, Errors: 0, Skipped: 0` / `BUILD SUCCESS`.
+  117 = WP7's 108 plus the 9 new architecture rules. Measured on
+  `refactor/wp8-archunit-cleanup` @ `001217a`, whose only delta from `dev` is
+  the ArchUnit dependency and the new test.
+
+- [x] REST contract under `/programs` unchanged; frontend needs no changes.
+
+  All 15 WP1 characterization tests pass unchanged:
+  `Tests run: 15, Failures: 0, Errors: 0, Skipped: 0 -- in
+  cl.keber.characterization.TrainingProgramApiCharacterizationTest`, and
+  `git diff dev -- src/test/java/cl/keber/characterization/` is empty. WP8 adds
+  no production code, so the contract cannot have moved in this WP. The
+  deliberate error-code changes remain the six approved under D1/D11 and are
+  recorded in the WP7 note.
+
+- [x] Legacy `model` / `repository` / `service` packages removed.
+
+  Already satisfied by **WP2 in Wave 1**; WP8 deleted nothing (D13) and
+  confirmed by grep on this branch:
+  `find src -type d \( -path "*cl/keber/model*" -o -path "*cl/keber/repository*"
+  -o -path "*cl/keber/service*" \)` — no output.
+  `grep -rn "cl\.keber\.\(model\|repository\|service\)\b" src --include=*.java` —
+  a single hit, and it is prose: the Javadoc line in `TrainingProgramJpaEntity`
+  reading "The column mapping is exactly what `cl.keber.model`…".
+  `grep -rni "bridge" src --include=*.java` — no output.
+  `grep -rln "jakarta.persistence\|@Entity\|JpaRepository" src --include=*.java` —
+  exactly `infrastructure/persistence/entity/TrainingProgramJpaEntity.java` and
+  `infrastructure/persistence/repository/SpringDataTrainingProgramRepository.java`,
+  which is the WP8 definition-of-done condition met.
+
 - [ ] `docs/architecture/*` published and README points to it.
+
+  **Pending on WP-DOCS**, not done. Per D12 the documentation is a separate
+  branch (`refactor/wp-docs`) that merges *after* WP8, so WP8 touched neither
+  `docs/**` nor `README.md`. WP-DOCS ticks this box once it reconciles
+  `package-dependencies.md` against the nine rule names now fixed by `001217a`.
 
 ## Environment notes (orchestrator)
 
