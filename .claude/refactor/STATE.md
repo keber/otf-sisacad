@@ -15,8 +15,8 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 | WP2 boundaries | MERGED | `refactor/wp2-boundaries` | – | – | Merged 2026-08-30; move-only, 43/43 green |
 | WP3 domain | MERGED | `refactor/wp3-domain` | – | – | Merged 2026-08-30; 4 VOs, pure entity, D7 controller DTO binding, 83/83 |
 | WP4 repository port | MERGED | `refactor/wp4-repository-port` | – | – | Merged 2026-08-30; port + adapter, 89/89, WP5/WP6 window verified safe |
-| WP5 use cases | TODO | `refactor/wp5-use-cases` | – | – | |
-| WP6 persistence | TODO | `refactor/wp6-persistence` | – | – | |
+| WP5 use cases | IN PROGRESS | `refactor/wp5-use-cases` | – | – | Wave 4, started 2026-08-30; D8 delegate |
+| WP6 persistence | IN PROGRESS | `refactor/wp6-persistence` | – | – | Wave 4, started 2026-08-30; D9 verify-and-finish |
 | WP7 web + wiring | TODO | `refactor/wp7-web` | – | – | |
 | WP8 archunit + cleanup | TODO | `refactor/wp8-archunit-cleanup` | – | – | |
 | WP-DOCS architecture | IN PROGRESS | `refactor/wp-docs` | – | – | First draft done 2026-08-30; open for reconciliation, merges in Wave 6 |
@@ -226,6 +226,44 @@ apart from the validation behaviour already approved in D1.
 **Watch for.** Routing `PUT` through the path id instead of the request body may
 incidentally fix exposed defect 2. Verify rather than assume, and record the
 outcome.
+
+### D8 — WP5 keeps `TrainingProgramService` as a temporary delegate
+
+Approved by Keber Flores on 2026-08-30.
+
+**Problem.** WP5's commit plan removes the legacy generic
+`TrainingProgramService`, but its "Files in scope" forbids touching
+`infrastructure/**`. `TrainingProgramController` and
+`TrainingProgramControllerTest` both depend on that service, so deleting it
+breaks the web layer and WP5 is not allowed to repair it. Same shape as D7.
+
+**Decision.** WP5 does NOT delete `TrainingProgramService`. It reduces it to a
+thin delegate that forwards to the new `TrainingProgramApplicationService`,
+marked `// temporary delegate: removed in WP7`. The controller is untouched and
+WP5 stays inside `application/**`, which preserves the WP5 / WP6 parallel window.
+
+**WP7 then owns**, in one reviewable change: swapping the controller onto the
+use-case interfaces, deleting this delegate, adding the `@RestControllerAdvice`
+(D1), and adding the `@Configuration` wiring.
+
+Rejected alternative: letting WP5 update the controller. It would not have
+collided with WP6, but it would gut WP7 and leave the riskiest wiring change
+merged without a wave of its own.
+
+### D9 — WP6 is a verify-and-finish package, not a rebuild
+
+Recorded by the orchestrator on 2026-08-30.
+
+WP4 already delivered `JpaTrainingProgramRepositoryAdapter`,
+`SpringDataTrainingProgramRepository`, `TrainingProgramPersistenceMapper` and an
+adapter `@DataJpaTest` - that is most of WP6 tasks 2 to 4. WP6's remaining real
+work is finalising `TrainingProgramJpaEntity`, adding a plain-JUnit mapper
+round-trip test, and migrating then deleting the legacy
+`SpringDataTrainingProgramRepositoryTest`.
+
+WP6 must verify what already exists against its brief and report anything
+already satisfied, rather than rewriting working code to match the brief's
+assumption that it starts from a bridge.
 
 ## Exposed defects (documented, not fixed - see D2)
 
