@@ -17,7 +17,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 | WP4 repository port | MERGED | `refactor/wp4-repository-port` | – | – | Merged 2026-08-30; port + adapter, 89/89, WP5/WP6 window verified safe |
 | WP5 use cases | MERGED | `refactor/wp5-use-cases` | – | – | Merged 2026-08-30; 5 use cases, D8 delegate, 110/110 |
 | WP6 persistence | MERGED | `refactor/wp6-persistence` | – | – | Merged 2026-08-30; explicit @Column mapping, mapper test, 96/96 |
-| WP7 web + wiring | IN REVIEW | `refactor/wp7-web` | – | – | Wave 5; controller on use cases, D8 delegate deleted, advice + config added, 108/108, 6 D11 assertions moved |
+| WP7 web + wiring | MERGED | `refactor/wp7-web` | – | – | Merged 2026-08-31; use-case wiring, 400/404 advice, 108/108 |
 | WP8 archunit + cleanup | TODO | `refactor/wp8-archunit-cleanup` | – | – | |
 | WP-DOCS architecture | IN PROGRESS | `refactor/wp-docs` | – | – | First draft done 2026-08-30; open for reconciliation, merges in Wave 6 |
 
@@ -318,7 +318,7 @@ than edit it.
 | # | Defect | Found by | Disposition |
 |---|---|---|---|
 | 1 | Domain validation never runs over HTTP: Jackson binds through the no-arg constructor and writes private fields, so a blank `code` or an inverted date range is accepted with `200` and persisted. | WP1 | **Fixed as a side effect** of WP3 + WP7 (VOs validate; D1 maps the failure to `400`). |
-| 2 | `PUT /programs/{id}` with no `id` in the request body INSERTS a duplicate row and leaves the addressed program untouched. No unique constraint on `code` prevents it. | WP1 | Out of scope. **Verified still present after WP3** - D7's DTO binding did NOT fix it incidentally: a body without an id maps to `create(...)`, so the service still saves a null-id row. Re-verified still present after WP5 (test passes unchanged). Re-check after WP7. |
+| 2 | `PUT /programs/{id}` with no `id` in the request body INSERTS a duplicate row and leaves the addressed program untouched. No unique constraint on `code` prevents it. | WP1 | Out of scope. **Verified still present after WP3** - D7's DTO binding did NOT fix it incidentally: a body without an id maps to `create(...)`, so the service still saves a null-id row. Verified still present after WP3, WP4, WP5 and WP7 - the test passes unchanged at every stage. The refactor does NOT fix it: path id and body id stay distinct arguments and the path id is never copied into the command. Remains open for separate follow-up. |
 | 3 | `DELETE` on an unknown id returns `204`, so delete is unobservable and silently idempotent. | WP1 | Out of scope. Log only. |
 | 4 | `spring.jpa.hibernate.ddl-auto=update` runs on top of the Flyway schema and widens `id` / `code` / `status` column types on every startup. | WP1 | Out of scope, but **flag before production**. Not a refactor concern. |
 | 5 | The `training_program` table has four columns the entity does not map: `description`, `revision`, `valid_from`, `valid_to`. | WP1 | Out of scope. WP6 must not "helpfully" map them. |
