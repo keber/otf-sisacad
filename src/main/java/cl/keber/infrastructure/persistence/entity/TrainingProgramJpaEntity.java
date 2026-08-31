@@ -2,6 +2,7 @@ package cl.keber.infrastructure.persistence.entity;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,12 +25,22 @@ public class TrainingProgramJpaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "code")
     private String code;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "start_date")
     private LocalDate startDate;
+
+    @Column(name = "end_date")
     private LocalDate endDate;
+
+    @Column(name = "status")
     private String status;
 
     public TrainingProgramJpaEntity() {
