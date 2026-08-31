@@ -210,23 +210,41 @@ regression.
 
 ### Errors have honest status codes
 
-A `@RestControllerAdvice` in `infrastructure.web` maps domain failures onto the
-codes they always should have had:
+`cl.keber.infrastructure.web.RestExceptionHandler`, a `@RestControllerAdvice`,
+maps domain failures onto the codes they always should have had. Six
+characterization assertions moved as a result:
 
-| Condition | Before | Now |
+| Request | Before | Now |
 |---|---|---|
-| Invalid input (`IllegalArgumentException`) | `500`, or `200` and persisted | **`400`** |
-| Unknown program (`TrainingProgramNotFoundException`) | `500` | **`404`** |
+| `POST` with a blank `code` | `200`, persisted | **`400`** |
+| `POST` with `endDate` before `startDate` | `200`, persisted | **`400`** |
+| `POST` with a null `code` | `500` | **`400`** |
+| `POST` with an empty body `{}` | `500` | **`400`** |
+| `PUT /{id}` where the body id contradicts the path id | `500` | **`400`** |
+| `PUT /{id}` on an unknown id | `500` | **`404`** |
 
-Success paths are untouched: `POST` and `PUT` still return `200` (not `201`),
-`DELETE` still returns `204`.
+The response body keeps Spring Boot's default error shape — `timestamp`,
+`status`, `error`, `message`, `path` — so clients that already parsed the old
+`500` bodies see the same fields, just with an honest code and a real message.
 
-Several other oddities found while establishing the baseline were **deliberately
-left alone**, because fixing them would be new work rather than refactoring:
-`PUT` without an `id` in the body still inserts a duplicate row, `DELETE` on an
-unknown id still returns `204`, `POST` still returns `200` rather than `201`, and
-there is still no `GET /programs/{id}` route. They are logged as known defects
-for separate follow-up.
+Everything else held still, and was checked rather than assumed: every success
+path (`POST` `200`, `GET` `200`, `PUT` `200`, `DELETE` `204`), the exact response
+JSON field set and order, malformed JSON staying `400` (Jackson fails before the
+advice is reached), `DELETE` on an unknown id staying `204`, and
+`GET /programs/{id}` staying `405`.
+
+Those last three are among the oddities **deliberately left alone**, because
+fixing them would be new work rather than refactoring: `PUT` without an `id` in
+the body still inserts a duplicate row, `DELETE` on an unknown id is still
+silently idempotent, `POST` still returns `200` rather than `201`, and there is
+still no `GET /programs/{id}` route. They are logged as known defects for
+separate follow-up.
+
+> The duplicate-inserting `PUT` in particular was **re-verified at every stage**
+> of the refactor and is genuinely unchanged. It was plausible that routing the
+> update through the path id would fix it incidentally; it does not, because the
+> path id and the body id remain distinct arguments and the path id is never
+> copied into the command. A controller test now pins that separation.
 
 ## Further reading
 

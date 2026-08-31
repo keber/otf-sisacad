@@ -306,19 +306,37 @@ wiring is Spring's job, and it happens in
 
 `cl.keber.application` turns the entity into operations the system offers:
 
-| Use case | Input | Output |
+| Use case | `execute(...)` | Returns |
 |---|---|---|
 | `CreateTrainingProgramUseCase` | `CreateTrainingProgramCommand` | `TrainingProgram` |
-| `GetTrainingProgramUseCase` | `Long id` | `Optional<TrainingProgram>` |
+| `GetTrainingProgramUseCase` | `GetTrainingProgramQuery` | `Optional<TrainingProgram>` |
 | `ListTrainingProgramsUseCase` | — | `List<TrainingProgram>` |
-| `UpdateTrainingProgramUseCase` | `UpdateTrainingProgramCommand` | `TrainingProgram` |
+| `UpdateTrainingProgramUseCase` | `Long id, UpdateTrainingProgramCommand` | `TrainingProgram` |
 | `DeleteTrainingProgramUseCase` | `Long id` | `void` |
 
-`GetTrainingProgramUseCase` exists but is **not routed**. There has never been a
-`GET /programs/{id}` endpoint — the old service had a `findById` that no
-controller method ever called, so the operation was planned and never wired.
-Exposing it now would be a new feature rather than a refactor, so the use case is
-built and left unrouted, ready for whoever adds the endpoint.
+Two signatures deserve a note, because both look like avoidable inconsistency and
+neither is.
+
+**`UpdateTrainingProgramUseCase.execute` takes two arguments**, the addressed id
+and the payload. Folding the id into the command would blur two genuinely
+different things: *which* program the caller addressed (from the URL path) and
+*what* they sent (the body, which carries its own `id` field). Keeping them
+distinct is what lets the use case detect a body whose id contradicts the path
+and reject it.
+
+**`GetTrainingProgramUseCase.execute` takes a `GetTrainingProgramQuery` record**
+rather than a bare `Long`. One class implements all five interfaces, and
+`DeleteTrainingProgramUseCase` already declares `execute(Long)`; two `execute(Long)`
+methods differing only in return type will not compile. The query record — a
+one-field wrapper in `cl.keber.application.query` — resolves the clash, and reads
+as the CQRS-ish distinction between a query and a command besides.
+
+`GetTrainingProgramUseCase` is also **built but not routed**, and is the one use
+case the controller does not inject. There has never been a `GET /programs/{id}`
+endpoint: the old service had a `findById` no controller ever called, so the
+operation was planned and never wired. Exposing it now would be a new feature
+rather than a refactor, so it is left ready for whoever adds the endpoint. The
+path still answers `405`.
 
 Commands are plain records carrying raw input (`String`, `LocalDate`), because
 they sit at the boundary where the caller has not yet produced Value Objects:
@@ -326,7 +344,13 @@ they sit at the boundary where the caller has not yet produced Value Objects:
 ```java
 public record CreateTrainingProgramCommand(
     String code, String name, LocalDate startDate, LocalDate endDate, String status) {}
+
+public record UpdateTrainingProgramCommand(
+    Long id, String code, String name, LocalDate startDate, LocalDate endDate, String status) {}
 ```
+
+`UpdateTrainingProgramCommand` carries an `id` of its own — the one from the
+request body — which is what the use case compares against the addressed path id.
 
 The use case is what turns raw input into Value Objects — which is exactly where
 validation should happen:
@@ -345,9 +369,27 @@ public TrainingProgram execute(CreateTrainingProgramCommand command) {
 ```
 
 All five interfaces are implemented by the single class
-`TrainingProgramApplicationService`. Five separate implementation classes would
-add ceremony without adding separation; the *interfaces* are what give the
-controller a narrow dependency.
+`cl.keber.application.service.TrainingProgramApplicationService`. Five separate
+implementation classes would add ceremony without adding separation; the
+*interfaces* are what give each caller a narrow dependency. The controller
+injects four of them — every operation it actually routes — and never sees the
+class that implements them.
+
+That class carries **no Spring annotation**. It is plain Java, constructed by
+`cl.keber.infrastructure.config.TrainingProgramConfiguration`:
+
+```java
+@Bean
+public TrainingProgramApplicationService trainingProgramApplicationService(
+        TrainingProgramRepository repository) {
+    return new TrainingProgramApplicationService(repository);
+}
+```
+
+Because the declared return type is the concrete class and that class implements
+all five interfaces, this single bean satisfies every use-case injection point by
+type. `WebConfig` is a separate, untouched `@Configuration` holding the CORS
+setup.
 
 ## Testing
 

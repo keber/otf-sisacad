@@ -35,6 +35,8 @@ cl.keber
 │   ├── command
 │   │   ├── CreateTrainingProgramCommand        record of raw input
 │   │   └── UpdateTrainingProgramCommand        record of raw input
+│   ├── query
+│   │   └── GetTrainingProgramQuery             record wrapping the id
 │   └── service
 │       └── TrainingProgramApplicationService   implements all five use cases
 │
@@ -49,12 +51,13 @@ cl.keber
     │   └── mapper
     │       └── TrainingProgramPersistenceMapper      domain <-> JPA entity
     ├── web
+    │   ├── RestExceptionHandler                @RestControllerAdvice 400 / 404
     │   ├── controller
     │   │   └── TrainingProgramController       @RestController /programs
     │   ├── dto
     │   │   └── TrainingProgramDto              JSON shape
     │   └── mapper
-    │       └── TrainingProgramMapper           DTO <-> command / domain
+    │       └── TrainingProgramMapper           DTO <-> domain
     └── config
         ├── WebConfig                           CORS
         └── TrainingProgramConfiguration        @Bean wiring for the app service
@@ -65,46 +68,6 @@ The test tree mirrors this layout under `src/test/java/cl/keber`, plus
 
 `OtfSisacadApplication` stays at the `cl.keber` root on purpose, so
 `@SpringBootApplication` component scanning still covers all three sub-trees.
-
-### Migration status
-
-The tree above is the finished state. The refactor lands it in waves, and the
-packages are created empty ahead of the class that fills them, so the intent is
-visible in the source layout from the start.
-
-| Package | Status |
-|---|---|
-| `domain.model`, `domain.exception` | populated |
-| `domain.valueobject` | populated — all four Value Objects |
-| `domain.repository` | empty — the port arrives with the repository wave |
-| `application.service` | populated (still the legacy generic service) |
-| `application.usecase`, `application.command` | empty — filled by the use case wave |
-| `infrastructure.persistence.entity`, `.mapper` | populated |
-| `infrastructure.persistence.repository` | populated — still `TrainingProgramRepository extends JpaRepository`; renamed to `SpringDataTrainingProgramRepository` when the adapter lands |
-| `infrastructure.persistence.adapter` | empty — the adapter arrives with the repository wave |
-| `infrastructure.web.controller`, `.dto`, `.mapper` | populated |
-| `infrastructure.config` | populated (`WebConfig`; the bean wiring arrives with the use case swap) |
-
-The legacy top-level `model`, `repository`, `service`, `controller`, `dto`,
-`mapper`, `exception` and `config` packages no longer exist.
-
-Two consequences of landing this incrementally are worth knowing while it is in
-flight:
-
-- `TrainingProgramRepository` is temporarily an **ambiguous simple name** — the
-  JPA-extending one in `infrastructure.persistence.repository` and the port in
-  `domain.repository` coexist until the former is renamed. Expected, and
-  resolved by the rename.
-- Technological contamination is removed in stages. The domain is already pure —
-  `TrainingProgram` carries no `@Entity` and the JPA mapping has moved to
-  `TrainingProgramJpaEntity` — but `TrainingProgramService` still carries
-  `@Service` and still maps domain to JPA entity inline, because the port and
-  adapter that will take that job over have not landed yet. Purifying and moving
-  in one commit would make the diff unreviewable.
-- Until the adapter exists, `TrainingProgramService` maps at the repository
-  boundary itself. That inline mapping is scaffolding, not the design: it moves
-  into `JpaTrainingProgramRepositoryAdapter`, and the service loses its
-  `@Service` annotation in favour of explicit bean wiring.
 
 ## Allowed dependency directions
 
@@ -132,31 +95,58 @@ Two consequences worth calling out:
 
 ## How the rules are enforced
 
-Documentation drifts. These rules are executable, as ArchUnit tests in
-`src/test/java/cl/keber/architecture/ArchitectureTest.java`, annotated
-`@AnalyzeClasses(packages = "cl.keber")`. They run as part of
-`mvn clean verify`, so a violation fails the build and the CI pipeline.
+Documentation drifts; tests do not. Every rule above is executable, as ArchUnit
+tests in `src/test/java/cl/keber/architecture/ArchitectureTest.java`:
 
-The rule set:
+```java
+@AnalyzeClasses(packages = "cl.keber",
+                importOptions = ImportOption.DoNotIncludeTests.class)
+```
 
-| # | Rule |
+They run as part of `mvn clean verify`, so a violation fails the build and the
+CI pipeline.
+
+Nine rules, named as they appear in the source:
+
+| Rule | Constraint |
 |---|---|
-| 1 | `domain` must not depend on `org.springframework..` |
-| 2 | `domain` must not depend on `jakarta.persistence..` or Hibernate |
-| 3 | `domain` must not depend on `com.fasterxml.jackson..` |
-| 4 | `application` must not depend on `..infrastructure..` |
-| 5 | `application` must not depend on `org.springframework..`, `org.springframework.data..` or `jakarta.persistence..` |
-| 6 | classes in `..web.controller..` must not depend on `..persistence..` or `..domain.repository..` |
-| 7 | `..domain..` and `..application..` must not depend on `..web..` |
-| 8 | layered check: `domain` may be accessed by `application` and `infrastructure`; `application` may be accessed by `infrastructure`; `infrastructure` may be accessed by nothing |
+| `domainMustNotDependOnSpring` | no `..domain..` -> `org.springframework..` |
+| `domainMustNotDependOnJpaOrHibernate` | no `..domain..` -> `jakarta.persistence..` / `org.hibernate..` |
+| `domainMustNotDependOnJackson` | no `..domain..` -> `com.fasterxml.jackson..` |
+| `applicationMustNotDependOnInfrastructure` | no `..application..` -> `..infrastructure..` |
+| `applicationMustNotDependOnSpring` | no `..application..` -> `org.springframework..` |
+| `applicationMustNotDependOnJpaOrSpringData` | no `..application..` -> `jakarta.persistence..` / `org.springframework.data..` |
+| `controllersMustNotDependOnPersistenceOrTheRepositoryPort` | no `..web.controller..` -> `..persistence..` / `..domain.repository..` |
+| `domainAndApplicationMustNotDependOnWeb` | no `..domain..` / `..application..` -> `..web..` |
+| `layersAreRespected` | `layeredArchitecture().consideringAllDependencies()` — infrastructure accessed by nobody, application only by infrastructure, domain only by application and infrastructure |
 
-There is no freeze store and no allowance list — the slice is expected to be
-clean. If a rule cannot pass, the correct response is to fix the code, not to
-weaken the rule.
+There is no freeze store and no allowance list. If a rule cannot pass, the fix is
+to change the code, not to weaken the rule.
+
+### Two details that matter more than they look
+
+**Only production classes are analysed** (`ImportOption.DoNotIncludeTests`).
+Test classes cross layers by design — `@WebMvcTest` mocks use cases,
+`@DataJpaTest` drives the adapter — so including them would force per-test
+exceptions into the rules and blunt them.
+
+**ArchUnit is pinned at 1.4.1, and the version is not incidental.** Earlier 1.x
+releases bundle an ASM that cannot read Java 25 bytecode: they report
+`Unsupported class file major version 69`, import **zero** classes, and every
+rule then fails as "failed to check any classes". That is the dangerous failure
+mode for a rule suite — one that scans nothing can look green forever — so it is
+worth knowing that a sudden mass failure of all nine rules after a JDK bump
+usually means the analyser cannot read the bytecode, not that the architecture
+broke.
+
+The rules were verified adversarially rather than assumed: adding a real
+`@Component` annotation to `TrainingProgram` failed `domainMustNotDependOnSpring`
+and turned the build red. (Adding only an unused `import` did *not* fail it, and
+should not — ArchUnit reads bytecode, and an unused import leaves no reference.)
 
 This is what makes the architecture a *verifiable property of the code* rather
-than a picture in a README. If someone writes `@Entity` on
-`domain.model.TrainingProgram` again, or injects
+than a picture in a README. If someone puts `@Entity` back on
+`domain.model.TrainingProgram`, or injects
 `SpringDataTrainingProgramRepository` into a use case, the build goes red.
 
 ## Quick manual checks

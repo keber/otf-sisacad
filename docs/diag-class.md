@@ -143,6 +143,19 @@ classDiagram
         +deleteById(Long)
     }
 
+    class CreateTrainingProgramUseCase {
+        <<interface>>
+    }
+    class ListTrainingProgramsUseCase {
+        <<interface>>
+    }
+    class UpdateTrainingProgramUseCase {
+        <<interface>>
+    }
+    class DeleteTrainingProgramUseCase {
+        <<interface>>
+    }
+
     class TrainingProgramApplicationService {
         <<application>>
         -TrainingProgramRepository repository
@@ -210,7 +223,14 @@ classDiagram
     TrainingProgramPersistenceMapper ..> TrainingProgram
 
     %% REST adapter
-    TrainingProgramController ..> TrainingProgramApplicationService : via use case interfaces
+    TrainingProgramController ..> CreateTrainingProgramUseCase
+    TrainingProgramController ..> ListTrainingProgramsUseCase
+    TrainingProgramController ..> UpdateTrainingProgramUseCase
+    TrainingProgramController ..> DeleteTrainingProgramUseCase
+    TrainingProgramApplicationService ..|> CreateTrainingProgramUseCase
+    TrainingProgramApplicationService ..|> ListTrainingProgramsUseCase
+    TrainingProgramApplicationService ..|> UpdateTrainingProgramUseCase
+    TrainingProgramApplicationService ..|> DeleteTrainingProgramUseCase
     TrainingProgramController ..> TrainingProgramDto : binds and returns
     TrainingProgramController ..> TrainingProgramMapper
     TrainingProgramMapper ..> TrainingProgramDto
@@ -226,8 +246,10 @@ Reading the diagram:
 - `TrainingProgramRepository` is declared in `domain` and implemented in
   `infrastructure`. That single inverted arrow is what keeps the domain free of
   Spring and JPA.
-- The controller depends on the use case interfaces the application service
-  implements; it never reaches a repository.
+- The controller depends on the four use case interfaces it routes, never on
+  the class implementing them and never on a repository. A fifth interface,
+  `GetTrainingProgramUseCase`, exists but is deliberately not injected — no
+  `GET /programs/{id}` route has ever existed — so it is omitted here.
 - `TrainingProgramDto` and `TrainingProgramJpaEntity` look alike — both are flat
   and anemic — but they answer to different masters: the DTO to the JSON
   contract, the JPA entity to the table. Its field order is the response field

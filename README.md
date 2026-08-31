@@ -37,11 +37,19 @@ Since each class admits a maximum of 20 participants, a client's students are sp
 
 From Milestone 3, the domain model is separated from the JPA representation.
 `TrainingProgram` is no longer a persistence entity; JPA lives in
-`infrastructure.persistence`. The REST contract under `/programs` is unchanged.
+`infrastructure.persistence`. The REST contract under `/programs` is unchanged:
+same paths, same JSON fields in the same order, same success status codes, so
+the frontend needs no changes.
+
+Error responses did change, deliberately. Invalid input now answers `400` and an
+unknown program `404`, where both previously surfaced as `500` — or, for a blank
+code or an inverted date range, were silently accepted and stored. See
+[Behaviour that changed on purpose](docs/architecture/clean-architecture.md#behaviour-that-changed-on-purpose).
 
 The code is organised by architectural responsibility — `domain`, `application`
-and `infrastructure` — with dependencies pointing inward, and the boundary is
-enforced by ArchUnit tests rather than convention alone.
+and `infrastructure` — with dependencies pointing inward. The boundary is
+enforced by nine ArchUnit rules that run in `mvn clean verify`, not by convention
+alone.
 
 - [ Clean Architecture: layering and the dependency rule ](docs/architecture/clean-architecture.md)
 - [ Package structure and dependency rules ](docs/architecture/package-dependencies.md)
