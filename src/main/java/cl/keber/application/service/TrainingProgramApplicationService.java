@@ -25,9 +25,8 @@ import cl.keber.domain.valueobject.TrainingProgramStatus;
  *
  * <p>Plain Java: it carries no framework import and no annotation, and it depends on the
  * domain repository port only, never on a storage technology. Wiring is somebody else's
- * job - today the temporary {@link TrainingProgramService} delegate constructs it, and in
- * WP7 a {@code @Configuration} class in the infrastructure layer will declare it as a
- * bean.
+ * job - {@code cl.keber.infrastructure.config.TrainingProgramConfiguration} declares this
+ * class as a single bean that satisfies all five use case interfaces.
  */
 public class TrainingProgramApplicationService
     implements CreateTrainingProgramUseCase,
