@@ -18,7 +18,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 | WP5 use cases | MERGED | `refactor/wp5-use-cases` | – | – | Merged 2026-08-30; 5 use cases, D8 delegate, 110/110 |
 | WP6 persistence | MERGED | `refactor/wp6-persistence` | – | – | Merged 2026-08-30; explicit @Column mapping, mapper test, 96/96 |
 | WP7 web + wiring | MERGED | `refactor/wp7-web` | – | – | Merged 2026-08-31; use-case wiring, 400/404 advice, 108/108 |
-| WP8 archunit + cleanup | IN REVIEW | `refactor/wp8-archunit-cleanup` | – | – | Wave 6, 2026-08-31; 9 ArchUnit rules, deleted nothing (D13), 117/117 |
+| WP8 archunit + cleanup | MERGED | `refactor/wp8-archunit-cleanup` | – | – | Merged 2026-08-31; 9 ArchUnit rules, 117/117 |
 | WP-DOCS architecture | IN PROGRESS | `refactor/wp-docs` | – | – | First draft done 2026-08-30; open for reconciliation, merges in Wave 6 |
 
 ## Baseline (filled by WP1)
@@ -341,6 +341,35 @@ If it believes it has found genuinely dead code, it must report rather than
 delete: at this point every remaining class is either live or deliberately
 retained (for example `GetTrainingProgramUseCase`, built but unrouted per D5,
 and `TrainingProgramMapper`, now live again after D7).
+
+### D14 — ArchUnit pinned at 1.4.1, not the 1.3.0 in the WP8 brief
+
+Recorded by the orchestrator on 2026-08-31.
+
+WP8's brief pins `archunit-junit5:1.3.0`. That version bundles an ASM that cannot
+read Java 25 bytecode: it reports `Unsupported class file major version 69` for
+every class, imports nothing, and every rule then fails as "failed to check any
+classes". 1.4.1 is the nearest working 1.x. Only the dependency block changed;
+`java.version` and `maven.compiler.release` were not touched.
+
+**Orchestrator verification that the rules are not vacuous.** A version that
+imports zero classes is the dangerous failure mode here, because a rule suite
+that scans nothing can look green forever. I tested this adversarially rather
+than trusting the report:
+
+1. Adding an unused `import org.springframework.stereotype.Component` to
+   `TrainingProgram` did **not** fail the build - correctly, since an unused
+   import leaves no bytecode reference and ArchUnit analyses bytecode.
+2. Adding an actual `@Component` annotation to the class **did** fail
+   `domainMustNotDependOnSpring` with an explicit Architecture Violation, and
+   the build went red.
+
+The planted violation was reverted and the branch re-verified green before
+merging. The rules genuinely constrain the code.
+
+Analysis scope is `ImportOption.DoNotIncludeTests` - production classes only.
+Test classes cross layers by design (`@WebMvcTest` mocks use cases, `@DataJpaTest`
+drives the adapter), so including them would force exceptions into the rules.
 
 ## Exposed defects (documented, not fixed - see D2)
 
