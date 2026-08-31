@@ -33,6 +33,32 @@ Since each class admits a maximum of 20 participants, a client's students are sp
 - [ Sprint 1: 44 Register training programs: 112 Create the frontend for TrainingProgram](docs/112.md)
 - [ Sprint 1: 44 Register training programs: 111 Technical Debt](docs/111.md)
 
+## Architecture
+
+From Milestone 3, the domain model is separated from the JPA representation.
+`TrainingProgram` is no longer a persistence entity; JPA lives in
+`infrastructure.persistence`. The REST contract under `/programs` is unchanged:
+same paths, same JSON fields in the same order, same success status codes, so
+the frontend needs no changes.
+
+Error responses did change, deliberately. Invalid input now answers `400` and an
+unknown program `404`, where both previously surfaced as `500` — or, for a blank
+code or an inverted date range, were silently accepted and stored. See
+[Behaviour that changed on purpose](docs/architecture/clean-architecture.md#behaviour-that-changed-on-purpose).
+
+The code is organised by architectural responsibility — `domain`, `application`
+and `infrastructure` — with dependencies pointing inward. The boundary is
+enforced by nine ArchUnit rules that run in `mvn clean verify`, not by convention
+alone.
+
+- [ Clean Architecture: layering and the dependency rule ](docs/architecture/clean-architecture.md)
+- [ Package structure and dependency rules ](docs/architecture/package-dependencies.md)
+- [ The TrainingProgram domain model ](docs/architecture/domain-model.md)
+- [ Persistence: domain entity, JPA entity and the adapter ](docs/architecture/persistence.md)
+
+The per-task documents above (AB#106 to AB#110) remain as historical
+traceability and are annotated where they describe the previous design.
+
 ## Project Setup Instructions
 
 ### Pre requirements

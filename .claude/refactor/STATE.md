@@ -1029,7 +1029,114 @@ is 1.4.1 for Java 25 bytecode support, not the 1.3.0 quoted in the WP file.
 
 
 ### WP-DOCS
-_pending_
+
+**FINAL - reconciled through WP8. Ready to merge. 2026-08-31.**
+
+Branch `refactor/wp-docs`, rebased onto `dev` @ `40d83d3` (post-WP8), no
+conflicts. Not merged, not pushed - the orchestrator merges. Eleven commits,
+listed by subject since rebasing shifts hashes
+(`git log --oneline dev..refactor/wp-docs`):
+
+1. `docs: add clean architecture and package dependency documentation`
+2. `docs: document the TrainingProgram domain model and repository port`
+3. `docs: mark JPA-entity task docs as superseded by Milestone 3`
+4. `docs: link the architecture documentation from the README`
+5. `docs: update class diagram for the domain / JPA entity split`
+6. `docs: record the WP-DOCS first-draft handoff note`
+7. `docs: reconcile architecture docs with the WP1 baseline`
+8. `docs: reconcile architecture docs with WP2 and decisions D1-D7`
+9. `docs: reconcile domain docs with the WP3 value objects and entity`
+10. `docs: list WP-DOCS commits by subject rather than hash`
+11. `docs: finalise architecture docs against the completed refactor`
+
+**Deliverables.** `docs/architecture/` holds the four required documents:
+`clean-architecture.md` (layering, dependency rule, packages-not-modules,
+behaviour changes), `package-dependencies.md` (tree, class list, directions, the
+nine ArchUnit rules), `domain-model.md` (entity, VOs, port, use cases),
+`persistence.md` (domain vs JPA entity, mapper, adapter, schema untouched).
+`README.md` carries the Milestone 3 note and links all four. `docs/106.md` -
+`docs/110.md` carry the superseded banner with their content intact.
+`docs/diag-class.md` keeps the conceptual diagram and adds the implementation
+slice. `docs/diag-er.md` is unchanged - re-derived from `V1` + `V5`, matches
+column for column.
+
+Only `docs/**`, `README.md` and this section were ever touched. Nothing under
+`src/`, `pom.xml` or the frontend.
+
+**Final pass (WP8) - what changed.**
+
+- **Nine ArchUnit rules cited by their real method names**, replacing the
+  abstract numbered list. Added `ImportOption.DoNotIncludeTests` and why test
+  classes are excluded (they cross layers by design).
+- **ArchUnit 1.4.1, not 1.3.0** (D14). Documented *why* the version matters:
+  earlier 1.x bundles an ASM that cannot read Java 25 bytecode, imports zero
+  classes and fails every rule as "failed to check any classes". Recorded that
+  a mass failure of all nine rules after a JDK bump means the analyser cannot
+  read bytecode, not that the architecture broke, and noted the adversarial
+  `@Component` verification.
+- **Error contract documented as shipped, not planned.** All six moved
+  assertions are now in a table with before/after codes, plus the Spring-default
+  error body shape, plus the explicit list of what deliberately did not move.
+- **`application.query` package added to the tree** - `GetTrainingProgramQuery`.
+  I had predicted the query would live in `command`; it does not. Also added
+  `infrastructure.web.RestExceptionHandler`, which sits at the `web` root rather
+  than in a sub-package.
+- **Corrected two use-case signatures I had wrong.** `UpdateTrainingProgramUseCase.execute`
+  takes `(Long id, UpdateTrainingProgramCommand)`, not one argument;
+  `GetTrainingProgramUseCase.execute` takes a `GetTrainingProgramQuery`, not a
+  `Long`. Documented the reason for each rather than just the shape - the second
+  exists because one class cannot declare two `execute(Long)` methods differing
+  only in return type.
+- **Controller injects four use cases, not five.** Corrected in the prose and in
+  the diagram, which now draws the four interfaces and their realisations.
+- **Bean wiring documented as built**: `TrainingProgramConfiguration`, one
+  `@Bean` returning the concrete `TrainingProgramApplicationService`, which
+  satisfies all five interface injection points by type. `WebConfig` separate.
+- **Migration status table deleted** from `package-dependencies.md`, as flagged
+  during the WP2 pass. Everything has landed, so it was noise.
+- **README milestone note qualified.** The required sentence says the REST
+  contract is unchanged; that is true of paths, JSON and success codes but not
+  of error codes, which moved to 400/404. Kept the required wording and added
+  the error-contract sentence beside it with a link, rather than leaving a
+  statement the characterization diffs contradict.
+
+**Defect 2 - no doc implied it was fixed.** `clean-architecture.md` has said
+"still inserts a duplicate row" since the WP2 pass. Strengthened rather than
+corrected: it now records that this was re-verified at every stage, that the
+incidental-fix hypothesis was tested and disproved, and why (path id and body id
+stay distinct arguments; the path id is never copied into the command).
+
+**The `final id` trap I flagged after WP3 was avoided.**
+`JpaTrainingProgramRepositoryAdapter.save` maps the *saved* entity back through
+`toDomain`, so generated ids are returned rather than silently dropped. Verified
+in source, not assumed.
+
+**Verification.**
+
+- **Identifier verification script: 43 documented identifiers checked against
+  `src/main/java`, `src/test/java` and `pom.xml` - 0 mismatches.** Plus negative
+  assertions: the entity exposes neither `getStartDate()` nor `getEndDate()`;
+  `domain` + `application` contain no `org.springframework`,
+  `jakarta.persistence`, `com.fasterxml.jackson` or `org.hibernate`; and the
+  legacy `model` / `repository` / `service` packages and `TrainingProgramService`
+  are gone. This pass it caught the two wrong use-case signatures and the missing
+  `query` package.
+- `mvn test -Dtest=ArchitectureTest`: **9 tests, 0 failures, 0 errors.** Run
+  because the docs assert these rules pass; per D14 a vacuous import fails rather
+  than passes, so a green run also confirms the rules actually scanned classes.
+- All three mermaid blocks in `docs/diag-class.md` and `docs/diag-er.md` parse
+  under mermaid 11.
+- All relative markdown links resolve; in-page anchors match their heading slugs.
+- `git diff` confirms `106`-`110` remain pure insertions and nothing outside
+  `docs/**`, `README.md` and this section is touched.
+
+No full `mvn clean verify` was run: this WP changes no code, and CONVENTIONS
+discourages casually running the two tests that reach the shared Railway
+database. The ArchUnit run above was scoped deliberately.
+
+**Nothing is left inconsistent between the docs and `dev`.** Both names I had
+carried unratified are now real in code (D10). Nothing remains to reconcile;
+this branch is final and ready to merge.
 
 ## Rubric checklist (closed out in WP8)
 
