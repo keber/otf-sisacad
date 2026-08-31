@@ -6,6 +6,8 @@ import cl.keber.domain.valueobject.TrainingProgramCode;
 import cl.keber.domain.valueobject.TrainingProgramName;
 import cl.keber.domain.valueobject.TrainingProgramStatus;
 import cl.keber.infrastructure.persistence.adapter.JpaTrainingProgramRepositoryAdapter;
+import cl.keber.infrastructure.persistence.entity.TrainingProgramJpaEntity;
+import cl.keber.infrastructure.persistence.repository.SpringDataTrainingProgramRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,9 @@ class JpaTrainingProgramRepositoryAdapterTest {
 
     @Autowired
     private JpaTrainingProgramRepositoryAdapter adapter;
+
+    @Autowired
+    private SpringDataTrainingProgramRepository springDataRepository;
 
     private static TrainingProgram newProgram(String code, String name) {
         return TrainingProgram.create(
@@ -102,6 +107,31 @@ class JpaTrainingProgramRepositoryAdapterTest {
 
         assertFalse(adapter.existsById(saved.getId()));
         assertTrue(adapter.findById(saved.getId()).isEmpty());
+    }
+
+    @Test
+    @DisplayName("the JPA entity round trips every mapped column through the real schema")
+    void shouldPersistEveryMappedColumn() {
+        // Migrated from SpringDataTrainingProgramRepositoryTest: this is the check that
+        // the entity's column mapping matches the Flyway schema, one level below the
+        // adapter. It is the only test that touches the JPA entity directly.
+        TrainingProgramJpaEntity entity = new TrainingProgramJpaEntity();
+        entity.setCode("PF001");
+        entity.setName("Occupational Health and Safety");
+        entity.setStartDate(LocalDate.of(2025, 7, 1));
+        entity.setEndDate(LocalDate.of(2025, 7, 15));
+        entity.setStatus("VIGENTE");
+
+        TrainingProgramJpaEntity saved = springDataRepository.save(entity);
+        Optional<TrainingProgramJpaEntity> retrieved = springDataRepository.findById(saved.getId());
+
+        assertTrue(retrieved.isPresent());
+        assertNotNull(retrieved.get().getId());
+        assertEquals("PF001", retrieved.get().getCode());
+        assertEquals("Occupational Health and Safety", retrieved.get().getName());
+        assertEquals(LocalDate.of(2025, 7, 1), retrieved.get().getStartDate());
+        assertEquals(LocalDate.of(2025, 7, 15), retrieved.get().getEndDate());
+        assertEquals("VIGENTE", retrieved.get().getStatus());
     }
 
     @Test
