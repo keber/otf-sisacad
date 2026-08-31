@@ -624,7 +624,82 @@ save, findById present/empty, findAll, existsById, deleteById, and save-as-updat
 _pending_
 
 ### WP6
-_pending_
+
+_2026-08-30 - branch `refactor/wp6-persistence`, branched from `dev` @ `57404a6`._
+
+**Shape of the package.** Per D9 this was verify-and-finish, not a rebuild. WP4
+had already delivered four of the five tasks; only the entity, the mapper unit
+test and the legacy test deletion were outstanding. Nothing working was
+rewritten.
+
+| WP6 task | Outcome |
+|---|---|
+| 1 `TrainingProgramJpaEntity` | **Changed.** Already `@Entity @Table(name = "training_program")` with `@Id @GeneratedValue(IDENTITY)`, a public no-arg constructor and plain getters/setters. Added explicit `@Column(name = ...)` on all six mapped fields; the mapping had been relying on the implicit naming strategy. |
+| 2 `SpringDataTrainingProgramRepository` | **Already satisfied by WP4.** Extends `JpaRepository<TrainingProgramJpaEntity, Long>`, no derived queries. Unchanged. |
+| 3 `TrainingProgramPersistenceMapper` | **Already satisfied by WP4.** Static, final, private constructor, null-safe both ways, restores through `TrainingProgram.restore(...)`. Unchanged. |
+| 4 `JpaTrainingProgramRepositoryAdapter` | **Already satisfied by WP4.** `@Repository`, implements the domain port, constructor-injected, maps at every boundary. Unchanged. |
+| 5 Delete bridge glue | **Already satisfied by WP4.** `grep -rn "bridge" src --include=*.java` returns nothing. Nothing to remove. |
+
+**Final column mapping of `TrainingProgramJpaEntity`** (table `training_program`,
+schema at `V5`):
+
+| Field | Column | Notes |
+|---|---|---|
+| `Long id` | `id` | `@Id @GeneratedValue(strategy = IDENTITY)` |
+| `String code` | `code` | |
+| `String name` | `name` | |
+| `LocalDate startDate` | `start_date` | added by `V5` |
+| `LocalDate endDate` | `end_date` | added by `V5` |
+| `String status` | `status` | |
+
+`description`, `revision`, `valid_from` and `valid_to` remain **unmapped** per
+exposed defect 5. `TrainingProgramPersistenceMapperTest` now pins this with a
+reflection check on the declared fields, so a future WP cannot map them by
+accident.
+
+No `length` or `nullable` attributes were declared. Adding them would change what
+`ddl-auto=update` does to the shared schema, which is exposed defect 4 and out of
+scope here.
+
+**Tests.** `src/test/java/cl/keber/infrastructure/persistence/`:
+
+- `JpaTrainingProgramRepositoryAdapterTest` - `@DataJpaTest` on H2 with the
+  `OTFSISACAD` Flyway properties, never the shared database. Now 7 tests: the
+  six from WP4 plus `shouldPersistEveryMappedColumn`.
+- `mapper/TrainingProgramPersistenceMapperTest` - **new**, 7 tests, plain JUnit
+  with no Spring context: both directions field by field, both round trips,
+  null-safety, unsaved-program null id, and the unmapped-column guard.
+- `repository/SpringDataTrainingProgramRepositoryTest` - **deleted**. Its
+  save-and-retrieve assertions were already covered by the adapter test at the
+  domain level; what was unique - exercising the JPA entity directly against the
+  Flyway schema - moved into `shouldPersistEveryMappedColumn`. Noted in the
+  commit body.
+
+Persistence is now the single place that verifies JPA mapping, replacing the
+annotation reflection checks removed from the domain test in WP3.
+
+**Verification.** `mvn clean verify` BUILD SUCCESS, 96 tests, 0 failures / 0
+errors / 0 skipped (89 before WP6: +7 mapper tests, +1 migrated adapter test, -1
+deleted legacy test). All 15 characterization tests pass **unchanged** -
+`git diff` for `src/test/java/cl/keber/characterization/` is empty. `DatabaseMigrationTest`
+4/4 green and unaffected.
+
+**No Flyway file was added or changed.** The schema stays at `V5`.
+
+**What WP7 and WP8 must know.**
+
+- The only path to the database is port -> `JpaTrainingProgramRepositoryAdapter`
+  -> `SpringDataTrainingProgramRepository` -> `TrainingProgramJpaEntity`. The
+  bridge is fully gone.
+- `TrainingProgramJpaEntity` never leaves `infrastructure.persistence`. WP8's
+  ArchUnit rules can assert that, and that `@Entity` / `@Repository` /
+  `JpaRepository` appear only under `infrastructure.persistence`.
+- The adapter is a `@Repository`, so component scanning already wires it; WP7's
+  `@Configuration` needs no bean definition for it.
+- Files touched: only `src/main/java/cl/keber/infrastructure/persistence/**`,
+  `src/test/java/cl/keber/infrastructure/persistence/**` and this note. The
+  WP5 parallel window was respected: nothing under `application/**`,
+  `domain/**`, `infrastructure/web/**` or `db/migration/**` was touched.
 
 ### WP7
 _pending_
