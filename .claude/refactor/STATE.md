@@ -18,7 +18,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 | WP5 use cases | MERGED | `refactor/wp5-use-cases` | – | – | Merged 2026-08-30; 5 use cases, D8 delegate, 110/110 |
 | WP6 persistence | MERGED | `refactor/wp6-persistence` | – | – | Merged 2026-08-30; explicit @Column mapping, mapper test, 96/96 |
 | WP7 web + wiring | MERGED | `refactor/wp7-web` | – | – | Merged 2026-08-31; use-case wiring, 400/404 advice, 108/108 |
-| WP8 archunit + cleanup | TODO | `refactor/wp8-archunit-cleanup` | – | – | |
+| WP8 archunit + cleanup | IN PROGRESS | `refactor/wp8-archunit-cleanup` | – | – | Wave 6, started 2026-08-31 |
 | WP-DOCS architecture | IN PROGRESS | `refactor/wp-docs` | – | – | First draft done 2026-08-30; open for reconciliation, merges in Wave 6 |
 
 ## Baseline (filled by WP1)
@@ -312,6 +312,35 @@ Must NOT change:
 
 If an assertion moves that is not on this list, WP7 must stop and report rather
 than edit it.
+
+### D12 — WP-DOCS merges separately, after WP8
+
+Recorded by the orchestrator on 2026-08-31.
+
+WP8 offers to fold the documentation PR into itself. It is kept **separate**:
+the branches are disjoint (`pom.xml` + `src/test/architecture/**` versus
+`docs/**` + `README.md`), and a 10-commit documentation history is easier to
+review on its own than buried inside the ArchUnit change.
+
+Sequencing: WP8 merges first, then WP-DOCS receives a final ping carrying the
+**actual** ArchUnit rule names as written, reconciles `package-dependencies.md`
+against them, and merges last. The docs reference those rules, so they cannot be
+finalised until the rules exist.
+
+### D13 — WP8 deletes nothing; task 3 is a confirmation
+
+Recorded by the orchestrator on 2026-08-31.
+
+WP8 task 3 says to remove legacy `cl.keber.model` / `repository` / `service`
+packages. Verified on `dev` at `e5a4ab1`: **they are already gone**, removed by
+WP2 in Wave 1, and the WP3-WP7 bridge classes were removed by their own WPs.
+`grep -rn "bridge" src --include=*.java` returns nothing.
+
+WP8 must therefore treat task 3 as a grep-and-confirm step and delete nothing.
+If it believes it has found genuinely dead code, it must report rather than
+delete: at this point every remaining class is either live or deliberately
+retained (for example `GetTrainingProgramUseCase`, built but unrouted per D5,
+and `TrainingProgramMapper`, now live again after D7).
 
 ## Exposed defects (documented, not fixed - see D2)
 
