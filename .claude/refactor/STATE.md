@@ -17,7 +17,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 | WP4 repository port | MERGED | `refactor/wp4-repository-port` | – | – | Merged 2026-08-30; port + adapter, 89/89, WP5/WP6 window verified safe |
 | WP5 use cases | MERGED | `refactor/wp5-use-cases` | – | – | Merged 2026-08-30; 5 use cases, D8 delegate, 110/110 |
 | WP6 persistence | MERGED | `refactor/wp6-persistence` | – | – | Merged 2026-08-30; explicit @Column mapping, mapper test, 96/96 |
-| WP7 web + wiring | IN PROGRESS | `refactor/wp7-web` | – | – | Wave 5, started 2026-08-31 |
+| WP7 web + wiring | IN REVIEW | `refactor/wp7-web` | – | – | Wave 5; controller on use cases, D8 delegate deleted, advice + config added, 108/108, 6 D11 assertions moved |
 | WP8 archunit + cleanup | TODO | `refactor/wp8-archunit-cleanup` | – | – | |
 | WP-DOCS architecture | IN PROGRESS | `refactor/wp-docs` | – | – | First draft done 2026-08-30; open for reconciliation, merges in Wave 6 |
 
@@ -834,7 +834,62 @@ deleted legacy test). All 15 characterization tests pass **unchanged** -
   `domain/**`, `infrastructure/web/**` or `db/migration/**` was touched.
 
 ### WP7
-_pending_
+
+Branch `refactor/wp7-web`, branched from `dev` @ `400df17`. One commit: `8746a9f`
+"refactor: wire the web layer onto the use cases (WP7)". Wave 5, 2026-08-31.
+
+**What changed.**
+
+- `TrainingProgramController` now takes the four use case interfaces it actually
+  calls by constructor: `CreateTrainingProgramUseCase`,
+  `ListTrainingProgramsUseCase`, `UpdateTrainingProgramUseCase`,
+  `DeleteTrainingProgramUseCase`. No service class, no repository, no JPA type.
+  Each endpoint builds its command from the bound DTO; responses still map
+  through `TrainingProgramMapper`. D7's DTO binding and field order untouched.
+- `GetTrainingProgramUseCase` is deliberately not injected and
+  `GET /programs/{id}` is still unrouted (D5). It stays `405`.
+- `cl.keber.application.service.TrainingProgramService` (the D8 delegate) and
+  `TrainingProgramServiceTest` deleted together. That was the last Spring import
+  in `application/**`.
+- New `cl.keber.infrastructure.web.RestExceptionHandler`, a
+  `@RestControllerAdvice`: `IllegalArgumentException` -> `400`,
+  `TrainingProgramNotFoundException` -> `404` (D1). Its body keeps the shape of
+  Spring Boot's default error body, so `assertErrorBody` still applies. It does
+  not handle deserialization failures, so malformed JSON keeps Jackson's `400`.
+- New `cl.keber.infrastructure.config.TrainingProgramConfiguration` (D10). One
+  `@Bean` returns `new TrainingProgramApplicationService(repository)` with the
+  concrete class as the declared return type, so the single bean satisfies all
+  five use case interfaces by type. `WebConfig` untouched.
+- `TrainingProgramControllerTest` is a `@WebMvcTest` mocking the four use cases;
+  existing JSON assertions kept, four tests added (command construction, path id
+  vs body id, and the two advice mappings).
+
+**Error contract (D11).** Exactly the six listed assertions moved, and no
+others - confirmed empirically: the first build after the controller swap failed
+on precisely those six. Five `500` -> `400` (blank code, inverted dates, null
+code, empty body, PUT id mismatch) and one `500` -> `404` (PUT on an unknown
+id). Each carries a `// behaviour change: approved 2026-08-31` note and an
+individual justification in the commit body. Every success path, its JSON field
+set and order, malformed JSON `400`, DELETE-unknown `204` and
+`GET /programs/{id}` `405` are unchanged.
+
+**Exposed defect 2 still open.**
+`updateWithoutIdInBodyInsertsAnotherProgram` was re-run on its own after the
+rewrite and passes unchanged: a PUT with no body id still inserts a duplicate.
+The rewrite did not incidentally fix it, because the body id is still what the
+command carries and the path id is never copied into it.
+
+**Verification.** `grep -R "org.springframework" src/main/java/cl/keber/application
+src/main/java/cl/keber/domain` returns nothing. `mvn clean verify` is BUILD
+SUCCESS with 108 tests, 0 failures, 0 errors, 0 skipped (up from 110 in WP5
+because the 174-line `TrainingProgramServiceTest` was deleted and 4 controller
+tests were added).
+
+**For WP8.** The layering is now clean enough for ArchUnit to assert it:
+`application/**` and `domain/**` have no `org.springframework` import, and
+`infrastructure.web.controller` references only `application.usecase`,
+`application.command` and its own DTO/mapper. `RestExceptionHandler` is the only
+place mapping domain exceptions to status codes.
 
 ### WP8
 _pending_

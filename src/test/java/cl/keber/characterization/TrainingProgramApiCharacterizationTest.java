@@ -156,7 +156,7 @@ class TrainingProgramApiCharacterizationTest {
         assertEquals(200, response.getStatusCode().value());
 
         // characterization: pins current behaviour, not desired behaviour.
-        // TrainingProgramService.update() verifies that {id} exists, then calls
+        // UpdateTrainingProgramUseCase verifies that {id} exists, then calls
         // repository.save(updated) with the *request body* entity. When the body carries no
         // id, JPA treats it as a new row, so the PUT silently INSERTS a duplicate and leaves
         // the addressed program untouched. The frontend must send the id in the body today.
@@ -174,21 +174,26 @@ class TrainingProgramApiCharacterizationTest {
     }
 
     @Test
-    @DisplayName("PUT /programs/{id} for an unknown id returns 500")
-    void updateOnMissingIdReturnsServerError() {
+    @DisplayName("PUT /programs/{id} for an unknown id returns 404")
+    void updateOnMissingIdReturnsNotFound() {
         ResponseEntity<String> response = exchange(HttpMethod.PUT, PROGRAMS + "/999999",
             programJson("CH-MISSING", "Nobody", "2025-07-01", "2025-07-15", "VIGENTE"));
 
-        // characterization: pins current behaviour, not desired behaviour.
-        // TrainingProgramNotFoundException carries no @ResponseStatus and there is no
-        // @ControllerAdvice, so it escapes as a 500 Internal Server Error rather than a 404.
-        assertEquals(500, response.getStatusCode().value());
-        assertErrorBody(response, 500, "Internal Server Error");
+        // behaviour change: approved 2026-08-31.
+        // Was: 500. TrainingProgramNotFoundException carried no @ResponseStatus and no
+        // @ControllerAdvice existed, so it escaped the dispatcher unhandled. Now
+        // RestExceptionHandler maps it to 404, which is the honest answer for a PUT that
+        // addresses an id nothing is stored under (decisions D1 and D11). The exception is
+        // thrown from the same place as before - the existence check at the top of
+        // TrainingProgramApplicationService.execute(Long, UpdateTrainingProgramCommand) -
+        // so only the status code changed, not when the failure happens.
+        assertEquals(404, response.getStatusCode().value());
+        assertErrorBody(response, 404, "Not Found");
     }
 
     @Test
-    @DisplayName("PUT /programs/{id} with a different id in the body returns 500")
-    void updateWithMismatchedIdReturnsServerError() throws Exception {
+    @DisplayName("PUT /programs/{id} with a different id in the body returns 400")
+    void updateWithMismatchedIdReturnsBadRequest() throws Exception {
         long id = parse(post(programJson(
             "CH-MISMATCH", "Mismatch", "2025-08-01", "2025-09-01", "VIGENTE"))).get("id").asLong();
 
@@ -196,11 +201,14 @@ class TrainingProgramApiCharacterizationTest {
             "{\"id\":" + (id + 100000) + ",\"code\":\"CH-MISMATCH\",\"name\":\"X\","
                 + "\"startDate\":\"2025-08-01\",\"endDate\":\"2025-09-01\",\"status\":\"VIGENTE\"}");
 
-        // characterization: pins current behaviour, not desired behaviour.
-        // The service throws IllegalArgumentException, which is unhandled and surfaces as 500
-        // rather than the 400 Bad Request this input deserves.
-        assertEquals(500, response.getStatusCode().value());
-        assertErrorBody(response, 500, "Internal Server Error");
+        // behaviour change: approved 2026-08-31.
+        // Was: 500. The id-mismatch guard has always thrown IllegalArgumentException, but
+        // nothing handled it. RestExceptionHandler now maps it to 400, which is correct: a
+        // body id contradicting the path id is a malformed request, not a server fault
+        // (decisions D1 and D11). The guard itself is untouched - the path id and the body id
+        // remain separate arguments to the update use case.
+        assertEquals(400, response.getStatusCode().value());
+        assertErrorBody(response, 400, "Bad Request");
     }
 
     // --- DELETE /programs/{id} ----------------------------------------------
@@ -243,10 +251,14 @@ class TrainingProgramApiCharacterizationTest {
         // the request through the no-arg constructor and wrote the private fields directly.
         // Now: the controller binds TrainingProgramDto and maps it through the domain, so
         // TrainingProgramCode rejects the blank value. This is exposed defect 1 being closed.
-        // The status is 500 rather than 400 only because the @RestControllerAdvice that maps
-        // IllegalArgumentException to 400 arrives in WP7 (decision D1).
-        assertEquals(500, response.getStatusCode().value());
-        assertErrorBody(response, 500, "Internal Server Error");
+        //
+        // behaviour change: approved 2026-08-31.
+        // Was: the 500 WP3 left behind, only because no advice existed yet. WP7 adds it, so the
+        // IllegalArgumentException TrainingProgramCode raises now surfaces as the 400 this
+        // request always deserved (decisions D1 and D11). The rejection itself is unchanged -
+        // only its status code is - and the program is still not persisted.
+        assertEquals(400, response.getStatusCode().value());
+        assertErrorBody(response, 400, "Bad Request");
         assertNull(findByName(list(), "Blank Code"), "the invalid program is not persisted");
     }
 
@@ -260,34 +272,44 @@ class TrainingProgramApiCharacterizationTest {
         // Was: 200 and persisted, because the "endDate must be after startDate" rule lived only
         // in a constructor the HTTP path never reached. Now the rule lives in the TrainingPeriod
         // value object, which the request body must pass through. Exposed defect 1 again.
-        // 500 rather than 400 until WP7 adds the advice (decision D1).
-        assertEquals(500, response.getStatusCode().value());
-        assertErrorBody(response, 500, "Internal Server Error");
+        //
+        // behaviour change: approved 2026-08-31.
+        // Was: the placeholder 500 WP3 recorded pending the advice. TrainingPeriod's
+        // IllegalArgumentException now maps to 400 (decisions D1 and D11). An inverted date
+        // range is caller error, so 400 is the correct code; the validation and the
+        // not-persisted guarantee below are unchanged.
+        assertEquals(400, response.getStatusCode().value());
+        assertErrorBody(response, 400, "Bad Request");
         assertNull(findByCode(list(), "CH-INVERTED"), "the invalid program is not persisted");
     }
 
     @Test
-    @DisplayName("POST /programs with a null code returns 500 from the database constraint")
-    void createWithNullCodeReturnsServerError() {
+    @DisplayName("POST /programs with a null code returns 400")
+    void createWithNullCodeReturnsBadRequest() {
         ResponseEntity<String> response = post(programJson(
             null, "Null Code", "2025-07-01", "2025-07-15", "VIGENTE"));
 
-        // characterization: pins current behaviour, not desired behaviour.
-        // The only thing rejecting a null code is the NOT NULL constraint on
-        // training_program.code from migration V1. The resulting DataIntegrityViolationException
-        // is unhandled, so the caller sees 500 rather than 400.
-        assertEquals(500, response.getStatusCode().value());
-        assertErrorBody(response, 500, "Internal Server Error");
+        // behaviour change: approved 2026-08-31.
+        // Was: 500. Originally the only thing rejecting a null code was the NOT NULL constraint
+        // on training_program.code, whose DataIntegrityViolationException went unhandled. Since
+        // WP3 the request is rejected earlier, by TrainingProgramCode, and WP7's advice maps
+        // that IllegalArgumentException to 400 (decisions D1 and D11). The request is still
+        // rejected and still never reaches the database - it now says so honestly.
+        assertEquals(400, response.getStatusCode().value());
+        assertErrorBody(response, 400, "Bad Request");
     }
 
     @Test
-    @DisplayName("POST /programs with an empty JSON object returns 500 from the database constraint")
-    void createWithEmptyBodyReturnsServerError() {
+    @DisplayName("POST /programs with an empty JSON object returns 400")
+    void createWithEmptyBodyReturnsBadRequest() {
         ResponseEntity<String> response = post("{}");
 
-        // characterization: pins current behaviour, not desired behaviour. See above.
-        assertEquals(500, response.getStatusCode().value());
-        assertErrorBody(response, 500, "Internal Server Error");
+        // behaviour change: approved 2026-08-31.
+        // Was: 500 from the database constraint. Same cause and same justification as the null
+        // code above - every field is missing, so TrainingProgramCode rejects the body first and
+        // the advice turns that IllegalArgumentException into 400 (decisions D1 and D11).
+        assertEquals(400, response.getStatusCode().value());
+        assertErrorBody(response, 400, "Bad Request");
     }
 
     @Test
@@ -307,7 +329,8 @@ class TrainingProgramApiCharacterizationTest {
         ResponseEntity<String> response = rest.getForEntity(PROGRAMS + "/1", String.class);
 
         // characterization: pins current behaviour, not desired behaviour.
-        // TrainingProgramService.findById exists but no controller method exposes it. The path
+        // GetTrainingProgramUseCase exists but no controller method exposes it, and WP7 did not
+        // add one: routing it would be a new feature, not a refactor (decision D5). The path
         // /programs/{id} is mapped for PUT and DELETE only, so a GET is rejected as 405 Method
         // Not Allowed rather than 404 Not Found.
         assertEquals(405, response.getStatusCode().value());
