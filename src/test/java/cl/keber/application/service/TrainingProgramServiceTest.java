@@ -20,8 +20,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 /**
- * The service depends on the domain repository port, so the mock speaks domain entities
- * end to end. Translation to the JPA row now lives in the persistence adapter and is
+ * Covers the temporary delegate (decision D8), not application logic: that moved to
+ * {@link TrainingProgramApplicationService} and is covered by the use case tests in
+ * {@code cl.keber.application.usecase}. What is left to prove here is that the delegate
+ * still translates the controller's domain-entity calls into commands faithfully, since
+ * the controller keeps calling it until WP7.
+ *
+ * <p>These tests are unchanged from before the use case split, which is the point: the
+ * delegate's observable behaviour did not move. The mock speaks the domain repository
+ * port end to end; translation to the JPA row lives in the persistence adapter and is
  * covered by {@code JpaTrainingProgramRepositoryAdapterTest}.
  */
 class TrainingProgramServiceTest {
@@ -141,5 +148,27 @@ class TrainingProgramServiceTest {
         Mockito.verify(repository).save(captor.capture());
         assertEquals(id, captor.getValue().getId(), "the program saved carries the addressed id");
         assertEquals("Updated Course", captor.getValue().getName().value());
+    }
+
+    @Test
+    void shouldSaveANewProgramWhenTheUpdatedProgramCarriesNoId() {
+        Long id = 1L;
+
+        Mockito.when(repository.findById(id)).thenReturn(Optional.of(stored(
+            id, "PF001", "Original Course",
+            LocalDate.of(2025, 1, 1), LocalDate.of(2025, 2, 1), "active")));
+        Mockito.when(repository.save(any())).thenAnswer(call -> call.getArgument(0));
+
+        service.update(id, program(
+            "PF001", "Attempted Update",
+            LocalDate.of(2025, 1, 1), LocalDate.of(2025, 2, 1), "active"));
+
+        // Exposed defect 2, pinned through the delegate: the request body carries no id, so
+        // what reaches the store has none either and is inserted as a duplicate instead of
+        // updating the addressed program. Preserved by WP5 on purpose, not introduced by it.
+        ArgumentCaptor<TrainingProgram> captor = ArgumentCaptor.forClass(TrainingProgram.class);
+        Mockito.verify(repository).save(captor.capture());
+        assertNull(captor.getValue().getId(), "an id-less body still reaches the store id-less");
+        assertEquals("Attempted Update", captor.getValue().getName().value());
     }
 }

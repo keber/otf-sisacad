@@ -621,7 +621,91 @@ the one file that would force them to coordinate.
 save, findById present/empty, findAll, existsById, deleteById, and save-as-update.
 
 ### WP5
-_pending_
+
+_2026-08-30 - branch `refactor/wp5-use-cases`, branched from `dev` @ `57404a6`._
+
+**What changed.** Five use case interfaces, two command records, one query record and
+one framework-free implementation, all under `application/**`. Nothing outside
+`src/main/java/cl/keber/application/**` and `src/test/java/cl/keber/application/**`
+was touched, so the WP5 / WP6 parallel window held.
+
+**Signatures WP7 codes against.**
+
+| Type | Signature |
+|---|---|
+| `application.usecase.CreateTrainingProgramUseCase` | `TrainingProgram execute(CreateTrainingProgramCommand command)` |
+| `application.usecase.GetTrainingProgramUseCase` | `Optional<TrainingProgram> execute(GetTrainingProgramQuery query)` |
+| `application.usecase.ListTrainingProgramsUseCase` | `List<TrainingProgram> execute()` |
+| `application.usecase.UpdateTrainingProgramUseCase` | `TrainingProgram execute(Long id, UpdateTrainingProgramCommand command)` |
+| `application.usecase.DeleteTrainingProgramUseCase` | `void execute(Long id)` |
+| `application.command.CreateTrainingProgramCommand` | `(String code, String name, LocalDate startDate, LocalDate endDate, String status)` |
+| `application.command.UpdateTrainingProgramCommand` | `(Long id, String code, String name, LocalDate startDate, LocalDate endDate, String status)` |
+| `application.query.GetTrainingProgramQuery` | `(Long id)` |
+
+Two deviations from the WP text, both forced rather than preferred:
+
+- **Get takes a query record, not a `Long`.** Delete already takes `execute(Long)`.
+  One class implements both, and two `execute(Long)` methods differing only in
+  return type do not compile. The WP allowed the query record as a style option;
+  here it is the only option.
+- **Update takes two arguments.** The addressed id (from the path) and the id the
+  caller put in the payload are different things today: an absent payload id
+  inserts a duplicate (exposed defect 2) while a contradicting one is rejected. A
+  single id field cannot express both, and collapsing them would have silently
+  changed observable behaviour. `UpdateTrainingProgramCommand.id()` is the
+  **payload** id and is nullable.
+
+**Implementation.** `application.service.TrainingProgramApplicationService` implements
+all five, takes `cl.keber.domain.repository.TrainingProgramRepository` in its
+constructor, and has **zero framework imports and zero annotations**. Update keeps the
+legacy order exactly: existence check first (`TrainingProgramNotFoundException`), then
+the mismatch guard with the unchanged message `program ID does not match the provided
+ID`, then `create`/`restore` + `save`. Delete is a bare `deleteById`.
+
+**`TrainingProgramService` is now a thin delegate** (decision D8), marked
+`// temporary delegate: removed in WP7`. Its five public methods keep their exact
+signatures (`save`, `findAll`, `findById`, `deleteById`, `update`), so
+`TrainingProgramController` and `TrainingProgramControllerTest` compile untouched. Its
+constructor still takes the repository port; it builds the application service itself
+with `new TrainingProgramApplicationService(repository)`.
+
+**Spring annotations remaining in `application/**` - what WP7 strips.** Exactly one:
+`@Service` on `TrainingProgramService`, plus its `org.springframework.stereotype.Service`
+import. That is the whole of `grep -R "org.springframework" src/main/java/cl/keber/application`.
+Keeping the wiring on the doomed delegate rather than on the new service is deliberate:
+the application service stays annotation-free today, so WP7 only has to delete the
+delegate and declare a `@Configuration` `@Bean`, never to strip anything from code that
+survives.
+
+**Exposed defect 2 - verified empirically, not assumed.** Ran
+`TrainingProgramApiCharacterizationTest#updateWithoutIdInBodyInsertsAnotherProgram` on
+its own after the rewrite: **passes, unchanged**. `PUT /programs/{id}` with no id in the
+body still answers 200 with a newly generated id, still leaves the addressed program
+untouched, and still leaves two rows with that code. The defect is unchanged by WP5.
+Update the disposition to "still present after WP5"; it is now WP7's to re-check when
+the controller moves onto the use case interfaces.
+
+**One knowingly accepted divergence, on a path no test covers.** `POST /programs` with
+an `id` in the body used to reach `repository.save` carrying that id (a merge); the
+create use case now always inserts. No characterization test exercises it, and WP7's
+controller would behave the same way once it calls the create use case directly.
+
+**Tests.** 13 new plain-JUnit tests in `cl.keber.application.usecase` over a mocked
+domain port, no Spring context: `CreateTrainingProgramUseCaseTest` (3),
+`UpdateTrainingProgramUseCaseTest` (5), `ReadTrainingProgramUseCasesTest` (3),
+`DeleteTrainingProgramUseCaseTest` (2), plus a shared `UseCaseFixtures`.
+
+`TrainingProgramServiceTest` was **kept**, against the WP's commit plan, because D8 kept
+the class it covers: the delegate is still production code on the live request path and
+its entity-to-command translation is not covered by the use case tests. Its five
+existing tests are unchanged - that is the evidence the delegate's behaviour did not
+move - and one test was added for the id-less update path. **WP7 deletes the delegate
+and this test together.**
+
+**Verification.** `mvn clean verify` (plain, JDK 25.0.2) - BUILD SUCCESS,
+**103 tests, 0 failures, 0 errors, 0 skipped** (89 before WP5). All 15 characterization
+tests pass and `git diff dev..HEAD -- src/test/java/cl/keber/characterization/` is
+**empty**.
 
 ### WP6
 
