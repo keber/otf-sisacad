@@ -19,7 +19,7 @@ WP row when they finish. Convert relative dates to absolute (`YYYY-MM-DD`).
 | WP6 persistence | MERGED | `refactor/wp6-persistence` | – | – | Merged 2026-08-30; explicit @Column mapping, mapper test, 96/96 |
 | WP7 web + wiring | MERGED | `refactor/wp7-web` | – | – | Merged 2026-08-31; use-case wiring, 400/404 advice, 108/108 |
 | WP8 archunit + cleanup | MERGED | `refactor/wp8-archunit-cleanup` | – | – | Merged 2026-08-31; 9 ArchUnit rules, 117/117 |
-| WP-DOCS architecture | IN PROGRESS | `refactor/wp-docs` | – | – | First draft done 2026-08-30; open for reconciliation, merges in Wave 6 |
+| WP-DOCS architecture | MERGED | `refactor/wp-docs` | – | – | Merged 2026-08-31; 11 commits, 43/43 identifiers verified |
 
 ## Baseline (filled by WP1)
 
@@ -1207,7 +1207,7 @@ box below is evidenced from that tree; nothing is ticked on assertion alone.
   `refactor/wp8-archunit-cleanup` @ `001217a`, whose only delta from `dev` is
   the ArchUnit dependency and the new test.
 
-- [x] REST contract under `/programs` unchanged; frontend needs no changes.
+- [x] REST contract under `/programs` unchanged **on every success path**; frontend needs no changes. Error codes changed deliberately - see the qualification below.
 
   All 15 WP1 characterization tests pass unchanged:
   `Tests run: 15, Failures: 0, Errors: 0, Skipped: 0 -- in
@@ -1216,6 +1216,15 @@ box below is evidenced from that tree; nothing is ticked on assertion alone.
   no production code, so the contract cannot have moved in this WP. The
   deliberate error-code changes remain the six approved under D1/D11 and are
   recorded in the WP7 note.
+
+  **Stated precisely, because "unchanged" alone would overstate it:** paths, JSON
+  field set and order, and every success status code (`POST` 200, `GET` 200,
+  `PUT` 200, `DELETE` 204) are byte-for-byte unchanged, so the frontend needs no
+  changes. Error responses did move, by approval: invalid input `500` -> `400`
+  and unknown program `500` -> `404`. A blank code or an inverted date range
+  previously returned `200` and was silently persisted; both are now rejected.
+  Any client that depended on those error codes - or on invalid data being
+  accepted - is affected. `README.md` carries the same qualification.
 
 - [x] Legacy `model` / `repository` / `service` packages removed.
 
@@ -1232,12 +1241,23 @@ box below is evidenced from that tree; nothing is ticked on assertion alone.
   `infrastructure/persistence/repository/SpringDataTrainingProgramRepository.java`,
   which is the WP8 definition-of-done condition met.
 
-- [ ] `docs/architecture/*` published and README points to it.
+- [x] `docs/architecture/*` published and README points to it.
 
-  **Pending on WP-DOCS**, not done. Per D12 the documentation is a separate
-  branch (`refactor/wp-docs`) that merges *after* WP8, so WP8 touched neither
-  `docs/**` nor `README.md`. WP-DOCS ticks this box once it reconciles
-  `package-dependencies.md` against the nine rule names now fixed by `001217a`.
+  Closed by the orchestrator on 2026-08-31 when `refactor/wp-docs` merged
+  (11 commits). Published: `docs/architecture/clean-architecture.md`,
+  `package-dependencies.md`, `domain-model.md`, `persistence.md`. `README.md`
+  carries an Architecture section linking to all four plus the Milestone 3 note.
+  Historical task docs `106`-`110` carry the "superseded" banner with their
+  content intact; `docs/diag-class.md` shows the domain / JPA entity split;
+  `docs/diag-er.md` is unchanged because the schema did not change.
+
+  Verified by the WP-DOCS identifier script: **43 documented identifiers checked
+  against `src/main/java`, `src/test/java` and `pom.xml`, 0 mismatches**, plus
+  negative assertions (no `getStartDate()`/`getEndDate()`; no Spring, JPA,
+  Jackson or Hibernate in `domain` or `application`; legacy packages and
+  `TrainingProgramService` gone). The script caught three real documentation
+  errors on this pass: two wrong use-case signatures and an undocumented
+  `cl.keber.application.query` package.
 
 ## Environment notes (orchestrator)
 
