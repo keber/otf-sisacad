@@ -3,6 +3,10 @@ package cl.keber.domain.model;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -14,11 +18,6 @@ import cl.keber.domain.valueobject.TrainingPeriod;
 import cl.keber.domain.valueobject.TrainingProgramCode;
 import cl.keber.domain.valueobject.TrainingProgramName;
 import cl.keber.domain.valueobject.TrainingProgramStatus;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Pure JUnit: no Spring, no JPA, no reflection over persistence annotations. The domain
@@ -148,6 +147,26 @@ class TrainingProgramTest {
         assertNotEquals(one, otherId);
         assertEquals(unsaved, sameUnsaved, "an unsaved program is equal to itself");
         assertNotEquals(unsaved, anotherUnsaved, "distinct unsaved programs are never equal");
+        assertNotEquals(null, one);
+
+        assertEquals(
+            System.identityHashCode(unsaved),
+            unsaved.hashCode()
+        );
+    }
+
+    @Test
+    @DisplayName("")
+    void toStringRepresentsProgramState() {
+        TrainingProgram program =
+        new TrainingProgramBuilder()
+            .withId(42L)
+            .build();
+
+        assertEquals(
+        "TrainingProgram{id=42, code='PF001', ...}",
+        program.toString()
+        );
     }
 }
 
