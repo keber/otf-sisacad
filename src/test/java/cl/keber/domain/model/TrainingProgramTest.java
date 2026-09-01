@@ -164,7 +164,7 @@ class TrainingProgramTest {
             .build();
 
         assertEquals(
-        "TrainingProgram{id=42, code='PF001', ...}",
+        "TrainingProgram{id=42, code='PF001', name='Valid name', startDate=2025-01-01, endDate=2025-12-31, status='active'}",
         program.toString()
         );
     }
