@@ -10,6 +10,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  lineendings:
+    name: Check Line Endings
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Fail on CRLF in text files
+        run: |
+          matches=$(git grep -lIP '\r$' -- . ':!*.bat' ':!*.cmd' ':!*.ps1' || true)
+          if [ -n "$matches" ]; then
+            echo "::error::CRLF line endings found in:"
+            echo "$matches"
+            exit 1
+          fi
+          echo "All text files use LF."
+
   build:
     name: Build Project
     runs-on: ubuntu-latest

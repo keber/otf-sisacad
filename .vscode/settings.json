@@ -9,5 +9,6 @@
             "matchCommandLine": true
         }
     },
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "files.eol": "\n"
 }
