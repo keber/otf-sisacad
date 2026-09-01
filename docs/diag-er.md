@@ -1,93 +1,98 @@
-## Diagrama ER
+## ER Diagram
 
 ```mermaid
 erDiagram
 
-%% =================== ENTIDADES ===================
+%% =================== ENTITIES ===================
 
-ProgramaFormativo {
+training_program {
     int id PK
-    string nombre
-    string descripcion
-    int version
-    date fecha_vigencia_desde
-    date fecha_vigencia_hasta
-    string estado
+    string code
+    string name
+    string description
+    int revision
+    date valid_from
+    date valid_to
+    date start_date
+    date end_date
+    string status
 }
 
-EdicionCurso {
+course_edition {
     int id PK
-    string codigo
-    date fecha_inicio
-    date fecha_termino
-    int version_programa
-    int programa_formativo_id FK
-    int mandante_id FK
+    string code
+    date start_date
+    date end_date
+    int program_revision
+    int training_program_id FK
+    int client_id FK
 }
 
-Mandante {
+client {
     int id PK
-    string razon_social
-    string rut
-    string contacto
+    string legal_name
+    string tax_id
+    string contact
+    string email
 }
 
-Seccion {
+section {
     int id PK
-    int numero
-    string horario
-    date plazo_acceso_materiales
-    int edicion_curso_id FK
-    int facilitador_id FK
+    int number
+    string schedule
+    date materials_access_deadline
+    int course_edition_id FK
+    int facilitator_id FK
 }
 
-Facilitador {
+facilitator {
     int id PK
-    string nombre
-    string rut
-    string correo
+    string name
+    string tax_id
+    string email
+    string profession
 }
 
-HabilitacionFacilitador {
+facilitator_qualification {
     int id PK
-    int facilitador_id FK
-    int programa_formativo_id FK
-    date fecha_habilitacion
-    string otorgado_por
-    string estado
-    string observaciones
+    int facilitator_id FK
+    int training_program_id FK
+    date qualification_date
+    string granted_by
+    string status
+    string notes
 }
 
-Alumno {
+student {
     int id PK
-    string nombre
-    string rut
-    string correo
-    string empresa
+    string name
+    string tax_id
+    string email
+    string company
 }
 
-Matricula {
+enrollment {
     int id PK
-    int alumno_id FK
-    int edicion_curso_id FK
-    int seccion_id FK
-    float asistencia
-    float puntaje_diagnostico
-    float puntaje_final
-    string estado_final
+    int student_id FK
+    int course_edition_id FK
+    int section_id FK
+    float attendance
+    float diagnostic_score
+    float final_score
+    string final_status
 }
 
-%% =================== RELACIONES ===================
+%% =================== RELATIONSHIPS ===================
 
-ProgramaFormativo ||--o{ EdicionCurso : ofrece
-EdicionCurso }o--|| Mandante : contratado_por
-Alumno ||--o{ Matricula : se_matricula
-EdicionCurso ||--o{ Matricula : corresponde_a
-Seccion ||--o{ Matricula : asignado_a
-EdicionCurso ||--o{ Seccion : incluye
-Facilitador ||--o{ Seccion : imparte
-Facilitador ||--o{ HabilitacionFacilitador : habilitado_para
-ProgramaFormativo ||--o{ HabilitacionFacilitador : asociado_a
+training_program ||--o{ course_edition : offers
+course_edition }o--|| client : contracted_by
+student ||--o{ enrollment : enrolls
+course_edition ||--o{ enrollment : corresponds_to
+section ||--o{ enrollment : assigned_to
+course_edition ||--o{ section : includes
+facilitator ||--o{ section : teaches
+facilitator ||--o{ facilitator_qualification : qualified_for
+training_program ||--o{ facilitator_qualification : associated_with
 
 
 ```

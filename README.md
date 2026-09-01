@@ -6,43 +6,69 @@
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=keber_otf-sisacad&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=keber_otf-sisacad)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=keber_otf-sisacad&metric=bugs)](https://sonarcloud.io/summary/new_code?id=keber_otf-sisacad)
 
-# OTEC TuFuturo - Sistema Académico
+# OTEC TuFuturo - Academic System
 
-## Introducción y Contexto
-OTEC TuFuturo es una organización recientemente creada cuyo propósito es brindar formación virtual a trabajadores en materias de salud y seguridad ocupacional en operaciones mineras.
+## Introduction and Context
+OTEC TuFuturo is a recently created organization whose purpose is to provide virtual training to workers in occupational health and safety in mining operations.
 
-Con este objetivo, la organización ha solicitado el desarrollo de un sistema académico que permita registrar y gestionar las actividades de capacitación impartidas, incluyendo programas formativos, sus ediciones, mandantes, facilitadores y alumnos. El sistema deberá registrar además la participación individual de los alumnos, su asistencia, puntajes en evaluaciones diagnósticas y finales, así como el estado final de aprobación o reprobación del curso.
+To this end, the organization has requested the development of an academic system that allows recording and managing the training activities delivered, including training programs, their editions, client organizations, facilitators and students. The system must also record each student's individual participation, their attendance, scores in diagnostic and final assessments, as well as the final pass/fail status of the course.
 
-## Características del Negocio
-Cada programa formativo corresponde a una materia específica (por ejemplo, Ley 16.744, Ley 21.643, Uso y manejo de extintores, entre otros) y podrá tener múltiples versiones, según se requiera su actualización por cambios en la normativa o contenidos pedagógicos.
+## Business Characteristics
+Each training program corresponds to a specific subject (for example, Law 16.744, Law 21.643, Use and handling of fire extinguishers, among others) and may have multiple versions, as updates are required due to changes in regulations or pedagogical content.
 
-Los programas se ofrecen a través de ediciones de curso, que pueden impartirse varias veces al año y ser contratadas por uno o varios mandantes. Un mismo mandante puede solicitar múltiples ediciones durante el año, pero no se permitirá mezclar alumnos de distintos mandantes en una misma clase.
+Programs are offered through course editions, which can be delivered several times a year and be contracted by one or more client organizations. The same client may request multiple editions during the year, but mixing students from different clients in the same class is not allowed.
 
-Dado que cada clase admite un máximo de 20 participantes, los alumnos de un mandante serán divididos en una o más secciones, según corresponda. Cada sección contará con un facilitador, quien debe estar habilitado para impartir uno o varios programas formativos. Un mismo facilitador puede estar a cargo de varias secciones, siempre que no se superpongan en el horario.
+Since each class admits a maximum of 20 participants, a client's students are split into one or more sections, as appropriate. Each section has a facilitator, who must be qualified to deliver one or more training programs. The same facilitator may be in charge of several sections, as long as they do not overlap in schedule.
 
-- [ Documento de Requerimientos funcionales ](docs/frd.md)
+- [ Functional Requirements Document ](docs/frd.md)
 - [ Backlog ](docs/backlog.md)
-- [ Diagrama de clases ](docs/diag-class.md)
-- [ Diagrama ER ](docs/diag-er.md)
-- [ Sprint 0 – Registro de configuración inicial](docs/sprint-0.md)
-- [ Sprint 1: 44 Registrar programas formativos: 106 Crear clase ProgramaFormativo](docs/106.md)
-- [ Sprint 1: 44 Registrar programas formativos: 107 Crear repositorio ProgramaFormativoRepository](docs/107.md)
-- [ Sprint 1: 44 Registrar programas formativos: 108 Crear servicio ProgramaFormativoService](docs/108.md)
-- [ Sprint 1: 44 Registrar programas formativos: 109 Crear controlador ProgramaFormativoController](docs/109.md)
-- [ Sprint 1: 44 Registrar programas formativos: 110 Crear DTO y Mapper ProgramaFormativo](docs/110.md)
-- [ Sprint 1: 44 Registrar programas formativos: 112 Crear Frontend para ProgramaFormativo](docs/112.md)
-- [ Sprint 1: 44 Registrar programas formativos: 111 Deuda Técnica](docs/111.md)
+- [ Class diagram ](docs/diag-class.md)
+- [ ER diagram ](docs/diag-er.md)
+- [ Sprint 0 – Initial configuration log](docs/sprint-0.md)
+- [ Sprint 1: 44 Register training programs: 106 Create the TrainingProgram class](docs/106.md)
+- [ Sprint 1: 44 Register training programs: 107 Create the TrainingProgramRepository repository](docs/107.md)
+- [ Sprint 1: 44 Register training programs: 108 Create the TrainingProgramService service](docs/108.md)
+- [ Sprint 1: 44 Register training programs: 109 Create the TrainingProgramController controller](docs/109.md)
+- [ Sprint 1: 44 Register training programs: 110 Create the TrainingProgram DTO and Mapper](docs/110.md)
+- [ Sprint 1: 44 Register training programs: 112 Create the frontend for TrainingProgram](docs/112.md)
+- [ Sprint 1: 44 Register training programs: 111 Technical Debt](docs/111.md)
 
-## Instrucciones de Configuración del Proyecto
+## Architecture
+
+From Milestone 3, the domain model is separated from the JPA representation.
+`TrainingProgram` is no longer a persistence entity; JPA lives in
+`infrastructure.persistence`. The REST contract under `/programs` is unchanged:
+same paths, same JSON fields in the same order, same success status codes, so
+the frontend needs no changes.
+
+Error responses did change, deliberately. Invalid input now answers `400` and an
+unknown program `404`, where both previously surfaced as `500` — or, for a blank
+code or an inverted date range, were silently accepted and stored. See
+[Behaviour that changed on purpose](docs/architecture/clean-architecture.md#behaviour-that-changed-on-purpose).
+
+The code is organised by architectural responsibility — `domain`, `application`
+and `infrastructure` — with dependencies pointing inward. The boundary is
+enforced by nine ArchUnit rules that run in `mvn clean verify`, not by convention
+alone.
+
+- [ Clean Architecture: layering and the dependency rule ](docs/architecture/clean-architecture.md)
+- [ Package structure and dependency rules ](docs/architecture/package-dependencies.md)
+- [ The TrainingProgram domain model ](docs/architecture/domain-model.md)
+- [ Persistence: domain entity, JPA entity and the adapter ](docs/architecture/persistence.md)
+
+The per-task documents above (AB#106 to AB#110) remain as historical
+traceability and are annotated where they describe the previous design.
+
+## Project Setup Instructions
 
 ### Pre requirements
 
 - [x] Operating System: Windows or Linux (WSL included)
-- [x] Java JDK 21 + Maven installed
+- [x] Java JDK 25 + Maven installed
   * Linux Installation (Ubuntu, WSL)
   ```bash
   sudo apt update
-  sudo apt install openjdk-21-jdk maven
+  sudo apt install openjdk-25-jdk maven
   ```
 - [x] Clone the project
   ```bash
