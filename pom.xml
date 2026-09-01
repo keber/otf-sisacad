@@ -182,6 +182,7 @@
                 <version>${surefire.version}</version>
                 <configuration>
                         <outputDirectory>${project.build.directory}/site/surefire-report</outputDirectory>
+                        <linkXRef>false</linkXRef>
                 </configuration>
                 <executions>
                         <execution>
