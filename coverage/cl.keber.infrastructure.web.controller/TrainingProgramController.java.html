@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TrainingProgramController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">otf-sisacad</a> &gt; <a href="index.source.html" class="el_package">cl.keber.infrastructure.web.controller</a> &gt; <span class="el_source">TrainingProgramController.java</span></div><h1>TrainingProgramController.java</h1><pre class="source lang-java linenums">package cl.keber.infrastructure.web.controller;
+
+import cl.keber.application.command.CreateTrainingProgramCommand;
+import cl.keber.application.command.UpdateTrainingProgramCommand;
+import cl.keber.application.usecase.CreateTrainingProgramUseCase;
+import cl.keber.application.usecase.DeleteTrainingProgramUseCase;
+import cl.keber.application.usecase.ListTrainingProgramsUseCase;
+import cl.keber.application.usecase.UpdateTrainingProgramUseCase;
+import cl.keber.infrastructure.web.dto.TrainingProgramDto;
+import cl.keber.infrastructure.web.mapper.TrainingProgramMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+/**
+ * The web entry point for {@code /programs}.
+ *
+ * &lt;p&gt;It depends on the application's use case interfaces only - no service class, no
+ * repository and no persistence type (decision D8). Each endpoint translates the wire DTO
+ * into the command its use case speaks, and maps the returned domain entity back through
+ * {@link TrainingProgramMapper}.
+ *
+ * &lt;p&gt;The DTO binding and the six-field response shape come from decision D7 and are
+ * unchanged here.
+ *
+ * &lt;p&gt;{@code GetTrainingProgramUseCase} is deliberately &lt;em&gt;not&lt;/em&gt; injected: no
+ * {@code GET /programs/{id}} route has ever existed, and adding one would be a new
+ * feature rather than a refactor (decision D5).
+ */
+@RestController
+@RequestMapping(&quot;/programs&quot;)
+public class TrainingProgramController {
+
+    private final CreateTrainingProgramUseCase createTrainingProgram;
+    private final ListTrainingProgramsUseCase listTrainingPrograms;
+    private final UpdateTrainingProgramUseCase updateTrainingProgram;
+    private final DeleteTrainingProgramUseCase deleteTrainingProgram;
+
+    public TrainingProgramController(
+            CreateTrainingProgramUseCase createTrainingProgram,
+            ListTrainingProgramsUseCase listTrainingPrograms,
+            UpdateTrainingProgramUseCase updateTrainingProgram,
+<span class="fc" id="L52">            DeleteTrainingProgramUseCase deleteTrainingProgram) {</span>
+<span class="fc" id="L53">        this.createTrainingProgram = createTrainingProgram;</span>
+<span class="fc" id="L54">        this.listTrainingPrograms = listTrainingPrograms;</span>
+<span class="fc" id="L55">        this.updateTrainingProgram = updateTrainingProgram;</span>
+<span class="fc" id="L56">        this.deleteTrainingProgram = deleteTrainingProgram;</span>
+<span class="fc" id="L57">    }</span>
+
+    /** Creation always inserts; an id in the request body is ignored, as it was before. */
+    @PostMapping
+    public ResponseEntity&lt;TrainingProgramDto&gt; create(@RequestBody TrainingProgramDto program) {
+<span class="fc" id="L62">        return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L63">            TrainingProgramMapper.toDto(createTrainingProgram.execute(new CreateTrainingProgramCommand(</span>
+<span class="fc" id="L64">                program.getCode(),</span>
+<span class="fc" id="L65">                program.getName(),</span>
+<span class="fc" id="L66">                program.getStartDate(),</span>
+<span class="fc" id="L67">                program.getEndDate(),</span>
+<span class="fc" id="L68">                program.getStatus()))),</span>
+            HttpStatus.OK);
+    }
+
+    @GetMapping
+    public List&lt;TrainingProgramDto&gt; list() {
+<span class="fc" id="L74">        return listTrainingPrograms.execute().stream()</span>
+<span class="fc" id="L75">            .map(TrainingProgramMapper::toDto)</span>
+<span class="fc" id="L76">            .toList();</span>
+    }
+
+    /**
+     * The addressed id from the path and the id inside the body stay distinct arguments.
+     * They mean different things, and collapsing them would silently change the contract:
+     * the mismatch guard would disappear, and so would exposed defect 2.
+     */
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;TrainingProgramDto&gt; update(
+            @PathVariable(&quot;id&quot;) Long id,
+            @RequestBody TrainingProgramDto updatedProgram) {
+<span class="fc" id="L88">        return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L89">            TrainingProgramMapper.toDto(updateTrainingProgram.execute(id, new UpdateTrainingProgramCommand(</span>
+<span class="fc" id="L90">                updatedProgram.getId(),</span>
+<span class="fc" id="L91">                updatedProgram.getCode(),</span>
+<span class="fc" id="L92">                updatedProgram.getName(),</span>
+<span class="fc" id="L93">                updatedProgram.getStartDate(),</span>
+<span class="fc" id="L94">                updatedProgram.getEndDate(),</span>
+<span class="fc" id="L95">                updatedProgram.getStatus()))),</span>
+            HttpStatus.OK);
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; delete(@PathVariable(&quot;id&quot;) Long id) {
+<span class="fc" id="L101">        deleteTrainingProgram.execute(id);</span>
+<span class="fc" id="L102">        return new ResponseEntity&lt;&gt;(HttpStatus.NO_CONTENT);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

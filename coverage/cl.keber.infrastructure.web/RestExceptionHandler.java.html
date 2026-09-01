@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">otf-sisacad</a> &gt; <a href="index.source.html" class="el_package">cl.keber.infrastructure.web</a> &gt; <span class="el_source">RestExceptionHandler.java</span></div><h1>RestExceptionHandler.java</h1><pre class="source lang-java linenums">package cl.keber.infrastructure.web;
+
+import cl.keber.domain.exception.TrainingProgramNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.OffsetDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * Translates the exceptions the application layer raises into HTTP status codes
+ * (decision D1).
+ *
+ * &lt;ul&gt;
+ *   &lt;li&gt;{@link IllegalArgumentException} - a value object rejected the request body, or
+ *       the body id contradicted the path id - becomes {@code 400 Bad Request};
+ *   &lt;li&gt;{@link TrainingProgramNotFoundException} becomes {@code 404 Not Found}.
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;Before this class existed both escaped the dispatcher unhandled and surfaced as
+ * {@code 500 Internal Server Error}. The response body deliberately keeps the shape of
+ * Spring Boot's default error body - {@code timestamp}, {@code status}, {@code error},
+ * {@code message}, {@code path} - so that clients parsing errors see no structural change,
+ * only a truthful status code.
+ *
+ * &lt;p&gt;Deserialization failures are not handled here on purpose: malformed JSON never
+ * reaches a controller method, so Jackson's {@code HttpMessageNotReadableException} keeps
+ * producing the {@code 400} it always produced.
+ */
+@RestControllerAdvice
+<span class="fc" id="L35">public class RestExceptionHandler {</span>
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleIllegalArgument(
+            IllegalArgumentException exception, HttpServletRequest request) {
+<span class="fc" id="L40">        return body(HttpStatus.BAD_REQUEST, exception, request);</span>
+    }
+
+    @ExceptionHandler(TrainingProgramNotFoundException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleNotFound(
+            TrainingProgramNotFoundException exception, HttpServletRequest request) {
+<span class="fc" id="L46">        return body(HttpStatus.NOT_FOUND, exception, request);</span>
+    }
+
+    private static ResponseEntity&lt;Map&lt;String, Object&gt;&gt; body(
+            HttpStatus status, RuntimeException exception, HttpServletRequest request) {
+<span class="fc" id="L51">        Map&lt;String, Object&gt; payload = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L52">        payload.put(&quot;timestamp&quot;, OffsetDateTime.now().toString());</span>
+<span class="fc" id="L53">        payload.put(&quot;status&quot;, status.value());</span>
+<span class="fc" id="L54">        payload.put(&quot;error&quot;, status.getReasonPhrase());</span>
+<span class="fc" id="L55">        payload.put(&quot;message&quot;, exception.getMessage());</span>
+<span class="fc" id="L56">        payload.put(&quot;path&quot;, request.getRequestURI());</span>
+<span class="fc" id="L57">        return ResponseEntity.status(status).body(payload);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

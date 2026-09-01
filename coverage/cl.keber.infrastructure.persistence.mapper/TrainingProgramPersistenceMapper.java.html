@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TrainingProgramPersistenceMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">otf-sisacad</a> &gt; <a href="index.source.html" class="el_package">cl.keber.infrastructure.persistence.mapper</a> &gt; <span class="el_source">TrainingProgramPersistenceMapper.java</span></div><h1>TrainingProgramPersistenceMapper.java</h1><pre class="source lang-java linenums">package cl.keber.infrastructure.persistence.mapper;
+
+import cl.keber.domain.model.TrainingProgram;
+import cl.keber.domain.valueobject.TrainingPeriod;
+import cl.keber.domain.valueobject.TrainingProgramCode;
+import cl.keber.domain.valueobject.TrainingProgramName;
+import cl.keber.domain.valueobject.TrainingProgramStatus;
+import cl.keber.infrastructure.persistence.entity.TrainingProgramJpaEntity;
+
+/**
+ * Translates between the domain entity and its JPA row representation.
+ *
+ * &lt;p&gt;Called only by {@code JpaTrainingProgramRepositoryAdapter}, which owns the
+ * translation at the repository boundary. No layer above infrastructure sees the JPA
+ * entity.
+ */
+public final class TrainingProgramPersistenceMapper {
+
+    private TrainingProgramPersistenceMapper() {
+        // Prevents instantiation
+    }
+
+    public static TrainingProgram toDomain(TrainingProgramJpaEntity entity) {
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        if (entity == null) {</span>
+<span class="fc" id="L25">            return null;</span>
+        }
+<span class="fc" id="L27">        return TrainingProgram.restore(</span>
+<span class="fc" id="L28">            entity.getId(),</span>
+<span class="fc" id="L29">            new TrainingProgramCode(entity.getCode()),</span>
+<span class="fc" id="L30">            new TrainingProgramName(entity.getName()),</span>
+<span class="fc" id="L31">            new TrainingPeriod(entity.getStartDate(), entity.getEndDate()),</span>
+<span class="fc" id="L32">            new TrainingProgramStatus(entity.getStatus()));</span>
+    }
+
+    public static TrainingProgramJpaEntity toJpaEntity(TrainingProgram program) {
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        if (program == null) {</span>
+<span class="fc" id="L37">            return null;</span>
+        }
+<span class="fc" id="L39">        TrainingProgramJpaEntity entity = new TrainingProgramJpaEntity();</span>
+<span class="fc" id="L40">        entity.setId(program.getId());</span>
+<span class="fc" id="L41">        entity.setCode(program.getCode().value());</span>
+<span class="fc" id="L42">        entity.setName(program.getName().value());</span>
+<span class="fc" id="L43">        entity.setStartDate(program.getPeriod().startDate());</span>
+<span class="fc" id="L44">        entity.setEndDate(program.getPeriod().endDate());</span>
+<span class="fc" id="L45">        entity.setStatus(program.getStatus().value());</span>
+<span class="fc" id="L46">        return entity;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

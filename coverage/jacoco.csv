@@ -1,0 +1,22 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+otf-sisacad,cl.keber.domain.model,TrainingProgram,2,140,1,9,1,31,1,18,0,14
+otf-sisacad,cl.keber.infrastructure.web.controller,TrainingProgramController,0,79,0,0,0,26,0,5,0,5
+otf-sisacad,cl.keber.domain.exception,TrainingProgramNotFoundException,0,5,0,0,0,2,0,1,0,1
+otf-sisacad,cl.keber.infrastructure.config,WebConfig,0,8,0,0,0,2,0,2,0,2
+otf-sisacad,cl.keber.infrastructure.config,TrainingProgramConfiguration,0,8,0,0,0,2,0,2,0,2
+otf-sisacad,cl.keber.infrastructure.config,WebConfig.new WebMvcConfigurer() {...},0,50,0,0,0,6,0,2,0,2
+otf-sisacad,cl.keber.domain.valueobject,TrainingProgramStatus,0,19,0,4,0,5,0,3,0,1
+otf-sisacad,cl.keber.domain.valueobject,TrainingProgramName,0,19,0,4,0,5,0,3,0,1
+otf-sisacad,cl.keber.domain.valueobject,TrainingProgramCode,0,19,0,4,0,5,0,3,0,1
+otf-sisacad,cl.keber.domain.valueobject,TrainingPeriod,0,32,0,6,0,8,0,4,0,1
+otf-sisacad,cl.keber.infrastructure.persistence.entity,TrainingProgramJpaEntity,0,45,0,0,0,20,0,13,0,13
+otf-sisacad,cl.keber.infrastructure.persistence.adapter,JpaTrainingProgramRepositoryAdapter,0,39,0,0,0,12,0,6,0,6
+otf-sisacad,cl.keber.application.service,TrainingProgramApplicationService,0,123,0,8,0,24,0,10,0,6
+otf-sisacad,cl.keber.application.query,GetTrainingProgramQuery,0,6,0,0,0,1,0,1,0,1
+otf-sisacad,cl.keber.infrastructure.web.dto,TrainingProgramDto,0,66,0,0,0,28,0,14,0,14
+otf-sisacad,cl.keber.infrastructure.web.mapper,TrainingProgramMapper,0,72,0,6,0,16,0,5,0,2
+otf-sisacad,cl.keber.application.command,UpdateTrainingProgramCommand,0,21,0,0,0,1,0,1,0,1
+otf-sisacad,cl.keber.application.command,CreateTrainingProgramCommand,0,18,0,0,0,1,0,1,0,1
+otf-sisacad,cl.keber,OtfSisacadApplication,5,3,0,0,2,1,1,1,1,1
+otf-sisacad,cl.keber.infrastructure.web,RestExceptionHandler,0,53,0,0,0,10,0,4,0,4
+otf-sisacad,cl.keber.infrastructure.persistence.mapper,TrainingProgramPersistenceMapper,0,69,0,4,0,18,0,4,0,2

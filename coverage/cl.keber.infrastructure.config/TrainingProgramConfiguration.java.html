@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TrainingProgramConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">otf-sisacad</a> &gt; <a href="index.source.html" class="el_package">cl.keber.infrastructure.config</a> &gt; <span class="el_source">TrainingProgramConfiguration.java</span></div><h1>TrainingProgramConfiguration.java</h1><pre class="source lang-java linenums">package cl.keber.infrastructure.config;
+
+import cl.keber.application.service.TrainingProgramApplicationService;
+import cl.keber.domain.repository.TrainingProgramRepository;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * Wires the framework-free application layer into Spring (decision D10).
+ *
+ * &lt;p&gt;All Spring knowledge about the use cases lives here. {@code application/**} and
+ * {@code domain/**} carry no framework import at all, which is what makes them testable
+ * with plain JUnit and replaceable without touching the web layer.
+ */
+@Configuration
+<span class="fc" id="L16">public class TrainingProgramConfiguration {</span>
+
+    /**
+     * One instance satisfies all five use case interfaces.
+     *
+     * &lt;p&gt;{@link TrainingProgramApplicationService} implements every one of them, and the
+     * declared return type is the concrete class, so Spring registers a single bean whose
+     * type hierarchy includes {@code CreateTrainingProgramUseCase},
+     * {@code GetTrainingProgramUseCase}, {@code ListTrainingProgramsUseCase},
+     * {@code UpdateTrainingProgramUseCase} and {@code DeleteTrainingProgramUseCase}. A
+     * constructor asking for any of those interfaces resolves to this bean by type.
+     *
+     * @param repository the domain port, supplied by the JPA adapter in
+     *     {@code infrastructure.persistence}
+     */
+    @Bean
+    public TrainingProgramApplicationService trainingProgramApplicationService(
+            TrainingProgramRepository repository) {
+<span class="fc" id="L34">        return new TrainingProgramApplicationService(repository);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

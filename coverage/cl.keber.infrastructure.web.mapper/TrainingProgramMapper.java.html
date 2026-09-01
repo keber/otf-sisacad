@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TrainingProgramMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">otf-sisacad</a> &gt; <a href="index.source.html" class="el_package">cl.keber.infrastructure.web.mapper</a> &gt; <span class="el_source">TrainingProgramMapper.java</span></div><h1>TrainingProgramMapper.java</h1><pre class="source lang-java linenums">package cl.keber.infrastructure.web.mapper;
+
+import cl.keber.domain.model.TrainingProgram;
+import cl.keber.domain.valueobject.TrainingPeriod;
+import cl.keber.domain.valueobject.TrainingProgramCode;
+import cl.keber.domain.valueobject.TrainingProgramName;
+import cl.keber.domain.valueobject.TrainingProgramStatus;
+import cl.keber.infrastructure.web.dto.TrainingProgramDto;
+
+/**
+ * Translates between the wire DTO and the domain entity.
+ *
+ * &lt;p&gt;Building the domain entity runs its value-object validation, so an invalid request
+ * body now fails here instead of being persisted silently. Until WP7 adds a
+ * {@code @RestControllerAdvice}, the resulting {@link IllegalArgumentException} surfaces
+ * as HTTP 500.
+ */
+public class TrainingProgramMapper {
+
+    private TrainingProgramMapper() {
+        // Prevents instantiation
+    }
+
+    public static TrainingProgramDto toDto(TrainingProgram program) {
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        if (program == null) return null;</span>
+<span class="fc" id="L26">        return new TrainingProgramDto(</span>
+<span class="fc" id="L27">            program.getId(),</span>
+<span class="fc" id="L28">            program.getCode().value(),</span>
+<span class="fc" id="L29">            program.getName().value(),</span>
+<span class="fc" id="L30">            program.getPeriod().startDate(),</span>
+<span class="fc" id="L31">            program.getPeriod().endDate(),</span>
+<span class="fc" id="L32">            program.getStatus().value()</span>
+        );
+    }
+
+    /**
+     * Builds the domain entity from a request body. A body carrying an {@code id} is
+     * treated as an already persisted program ({@code restore}); one without is a new
+     * program ({@code create}). That distinction preserves today's PUT semantics, where
+     * the id travels in the body rather than being taken from the path.
+     */
+    public static TrainingProgram toDomain(TrainingProgramDto dto) {
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (dto == null) return null;</span>
+<span class="fc" id="L44">        TrainingProgramCode code = new TrainingProgramCode(dto.getCode());</span>
+<span class="fc" id="L45">        TrainingProgramName name = new TrainingProgramName(dto.getName());</span>
+<span class="fc" id="L46">        TrainingProgramStatus status = new TrainingProgramStatus(dto.getStatus());</span>
+<span class="fc" id="L47">        TrainingPeriod period = new TrainingPeriod(dto.getStartDate(), dto.getEndDate());</span>
+
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        return dto.getId() == null</span>
+<span class="fc" id="L50">            ? TrainingProgram.create(code, name, period, status)</span>
+<span class="fc" id="L51">            : TrainingProgram.restore(dto.getId(), code, name, period, status);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

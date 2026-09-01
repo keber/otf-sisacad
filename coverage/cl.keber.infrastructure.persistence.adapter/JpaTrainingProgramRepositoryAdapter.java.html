@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JpaTrainingProgramRepositoryAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">otf-sisacad</a> &gt; <a href="index.source.html" class="el_package">cl.keber.infrastructure.persistence.adapter</a> &gt; <span class="el_source">JpaTrainingProgramRepositoryAdapter.java</span></div><h1>JpaTrainingProgramRepositoryAdapter.java</h1><pre class="source lang-java linenums">package cl.keber.infrastructure.persistence.adapter;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Repository;
+
+import cl.keber.domain.model.TrainingProgram;
+import cl.keber.domain.repository.TrainingProgramRepository;
+import cl.keber.infrastructure.persistence.mapper.TrainingProgramPersistenceMapper;
+import cl.keber.infrastructure.persistence.repository.SpringDataTrainingProgramRepository;
+
+/**
+ * JPA implementation of the domain repository port.
+ *
+ * &lt;p&gt;This is the only place where a domain {@link TrainingProgram} is translated to and
+ * from its JPA row: it delegates storage to {@link SpringDataTrainingProgramRepository}
+ * and translation to {@link TrainingProgramPersistenceMapper}, so callers see domain
+ * types in and domain types out.
+ */
+@Repository
+public class JpaTrainingProgramRepositoryAdapter implements TrainingProgramRepository {
+
+    private final SpringDataTrainingProgramRepository springDataRepository;
+
+<span class="fc" id="L26">    public JpaTrainingProgramRepositoryAdapter(SpringDataTrainingProgramRepository springDataRepository) {</span>
+<span class="fc" id="L27">        this.springDataRepository = springDataRepository;</span>
+<span class="fc" id="L28">    }</span>
+
+    @Override
+    public TrainingProgram save(TrainingProgram program) {
+<span class="fc" id="L32">        return TrainingProgramPersistenceMapper.toDomain(</span>
+<span class="fc" id="L33">            springDataRepository.save(TrainingProgramPersistenceMapper.toJpaEntity(program)));</span>
+    }
+
+    @Override
+    public Optional&lt;TrainingProgram&gt; findById(Long id) {
+<span class="fc" id="L38">        return springDataRepository.findById(id).map(TrainingProgramPersistenceMapper::toDomain);</span>
+    }
+
+    @Override
+    public List&lt;TrainingProgram&gt; findAll() {
+<span class="fc" id="L43">        return springDataRepository.findAll().stream()</span>
+<span class="fc" id="L44">            .map(TrainingProgramPersistenceMapper::toDomain)</span>
+<span class="fc" id="L45">            .toList();</span>
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+<span class="fc" id="L50">        return springDataRepository.existsById(id);</span>
+    }
+
+    @Override
+    public void deleteById(Long id) {
+<span class="fc" id="L55">        springDataRepository.deleteById(id);</span>
+<span class="fc" id="L56">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TrainingProgramApplicationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">otf-sisacad</a> &gt; <a href="index.source.html" class="el_package">cl.keber.application.service</a> &gt; <span class="el_source">TrainingProgramApplicationService.java</span></div><h1>TrainingProgramApplicationService.java</h1><pre class="source lang-java linenums">package cl.keber.application.service;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import cl.keber.application.command.CreateTrainingProgramCommand;
+import cl.keber.application.command.UpdateTrainingProgramCommand;
+import cl.keber.application.query.GetTrainingProgramQuery;
+import cl.keber.application.usecase.CreateTrainingProgramUseCase;
+import cl.keber.application.usecase.DeleteTrainingProgramUseCase;
+import cl.keber.application.usecase.GetTrainingProgramUseCase;
+import cl.keber.application.usecase.ListTrainingProgramsUseCase;
+import cl.keber.application.usecase.UpdateTrainingProgramUseCase;
+import cl.keber.domain.exception.TrainingProgramNotFoundException;
+import cl.keber.domain.model.TrainingProgram;
+import cl.keber.domain.repository.TrainingProgramRepository;
+import cl.keber.domain.valueobject.TrainingPeriod;
+import cl.keber.domain.valueobject.TrainingProgramCode;
+import cl.keber.domain.valueobject.TrainingProgramName;
+import cl.keber.domain.valueobject.TrainingProgramStatus;
+
+/**
+ * The single implementation of the five training program use cases.
+ *
+ * &lt;p&gt;Plain Java: it carries no framework import and no annotation, and it depends on the
+ * domain repository port only, never on a storage technology. Wiring is somebody else's
+ * job - {@code cl.keber.infrastructure.config.TrainingProgramConfiguration} declares this
+ * class as a single bean that satisfies all five use case interfaces.
+ */
+public class TrainingProgramApplicationService
+    implements CreateTrainingProgramUseCase,
+        GetTrainingProgramUseCase,
+        ListTrainingProgramsUseCase,
+        UpdateTrainingProgramUseCase,
+        DeleteTrainingProgramUseCase {
+
+    private static final String ID_MISMATCH = &quot;program ID does not match the provided ID&quot;;
+
+    private final TrainingProgramRepository repository;
+
+<span class="fc" id="L42">    public TrainingProgramApplicationService(TrainingProgramRepository repository) {</span>
+<span class="fc" id="L43">        this.repository = Objects.requireNonNull(repository, &quot;repository must not be null&quot;);</span>
+<span class="fc" id="L44">    }</span>
+
+    @Override
+    public TrainingProgram execute(CreateTrainingProgramCommand command) {
+<span class="fc" id="L48">        return repository.save(TrainingProgram.create(</span>
+<span class="fc" id="L49">            new TrainingProgramCode(command.code()),</span>
+<span class="fc" id="L50">            new TrainingProgramName(command.name()),</span>
+<span class="fc" id="L51">            new TrainingPeriod(command.startDate(), command.endDate()),</span>
+<span class="fc" id="L52">            new TrainingProgramStatus(command.status())));</span>
+    }
+
+    @Override
+    public Optional&lt;TrainingProgram&gt; execute(GetTrainingProgramQuery query) {
+<span class="fc" id="L57">        return repository.findById(query.id());</span>
+    }
+
+    @Override
+    public List&lt;TrainingProgram&gt; execute() {
+<span class="fc" id="L62">        return repository.findAll();</span>
+    }
+
+    /**
+     * The addressed program must exist; a payload id that contradicts the addressed id is
+     * rejected; and a payload with no id at all is saved as a new program, which is the
+     * behaviour exposed defect 2 describes. All three rules are carried over from the
+     * legacy service unchanged - see {@link UpdateTrainingProgramUseCase}.
+     */
+    @Override
+    public TrainingProgram execute(Long id, UpdateTrainingProgramCommand command) {
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (repository.findById(id).isEmpty()) {</span>
+<span class="fc" id="L74">            throw new TrainingProgramNotFoundException(id);</span>
+        }
+<span class="fc bfc" id="L76" title="All 4 branches covered.">        if (command.id() != null &amp;&amp; !command.id().equals(id)) {</span>
+<span class="fc" id="L77">            throw new IllegalArgumentException(ID_MISMATCH);</span>
+        }
+
+<span class="fc" id="L80">        TrainingProgramCode code = new TrainingProgramCode(command.code());</span>
+<span class="fc" id="L81">        TrainingProgramName name = new TrainingProgramName(command.name());</span>
+<span class="fc" id="L82">        TrainingPeriod period = new TrainingPeriod(command.startDate(), command.endDate());</span>
+<span class="fc" id="L83">        TrainingProgramStatus status = new TrainingProgramStatus(command.status());</span>
+
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        TrainingProgram toSave = command.id() == null</span>
+<span class="fc" id="L86">            ? TrainingProgram.create(code, name, period, status)</span>
+<span class="fc" id="L87">            : TrainingProgram.restore(command.id(), code, name, period, status);</span>
+
+<span class="fc" id="L89">        return repository.save(toSave);</span>
+    }
+
+    @Override
+    public void execute(Long id) {
+<span class="fc" id="L94">        repository.deleteById(id);</span>
+<span class="fc" id="L95">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
