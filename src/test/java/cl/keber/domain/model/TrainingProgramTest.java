@@ -58,8 +58,10 @@ class TrainingProgramTest {
     @Test
     @DisplayName("Date validation happens in the period value object")
     void shouldFailWhenEndDateIsBeforeStartDate() {
+        LocalDate endBeforeStart = LocalDate.of(2024, 12, 31);
+
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-            new TrainingPeriod(LocalDate.of(2025, 1, 1), LocalDate.of(2024, 12, 31)));
+            new TrainingPeriod(START, endBeforeStart));
 
         assertEquals("endDate must be after startDate", exception.getMessage());
     }
@@ -114,8 +116,7 @@ class TrainingProgramTest {
     void rescheduleToInvalidPeriodIsUnconstructable() {
         TrainingProgram program = new TrainingProgramBuilder().build();
 
-        assertThrows(IllegalArgumentException.class, () ->
-            program.reschedule(new TrainingPeriod(END, START)));
+        assertThrows(IllegalArgumentException.class, () -> new TrainingPeriod(END, START));
 
         assertEquals(START, program.getPeriod().startDate(), "the program is left untouched");
         assertEquals(END, program.getPeriod().endDate(), "the program is left untouched");
@@ -139,13 +140,14 @@ class TrainingProgramTest {
         TrainingProgram sameId = new TrainingProgramBuilder().withId(1L).withName("Different name").build();
         TrainingProgram otherId = new TrainingProgramBuilder().withId(2L).build();
         TrainingProgram unsaved = new TrainingProgramBuilder().build();
+        TrainingProgram sameUnsaved = unsaved;
         TrainingProgram anotherUnsaved = new TrainingProgramBuilder().build();
 
         assertEquals(one, sameId);
         assertEquals(one.hashCode(), sameId.hashCode());
         assertNotEquals(one, otherId);
-        assertEquals(unsaved, unsaved);
-        assertNotEquals(unsaved, anotherUnsaved);
+        assertEquals(unsaved, sameUnsaved, "an unsaved program is equal to itself");
+        assertNotEquals(unsaved, anotherUnsaved, "distinct unsaved programs are never equal");
     }
 }
 
